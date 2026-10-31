@@ -137,6 +137,12 @@
   background: var(--color-cobalt-hover);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .tour {
+    animation: none;
+  }
+}
+
 @keyframes tourIn {
   from {
     opacity: 0;

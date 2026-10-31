@@ -28,6 +28,11 @@ export function AppShell() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const role: "coordinator" | "volunteer" =
     user?.role === "coordinator" ? "coordinator" : "volunteer";
+  // The native end-to-end suite drives the app through WebDriver; a teaching
+  // card over the first screen would be noise there. Unit tests do not mount
+  // the shell's tour either; the tour has its own test.
+  const showTour =
+    typeof navigator === "undefined" || (!navigator.webdriver && import.meta.env.MODE !== "test");
   // Check-in owns the full content frame: no global top bar and no canvas
   // padding, because it is used one-handed at a door.
   const surface = location.pathname === "/volunteer/check-in" ? "checkin" : undefined;
@@ -90,7 +95,7 @@ export function AppShell() {
           open={paletteOpen}
           onClose={() => setPaletteOpen(false)}
         />
-        <FirstRunTour role={role} />
+        {showTour ? <FirstRunTour role={role} /> : null}
       </div>
     </HelpProvider>
   );

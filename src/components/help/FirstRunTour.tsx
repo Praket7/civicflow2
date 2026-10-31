@@ -117,11 +117,6 @@ export function FirstRunTour({ role }: { role: TourRole }) {
     return () => window.removeEventListener(EVENT, onReplay);
   }, [role]);
 
-  // The native end-to-end suite drives the app through WebDriver; a teaching
-  // card over the first screen would be noise there, and a test runner that
-  // reports as WebDriver gets no tour.
-  if (typeof navigator !== "undefined" && navigator.webdriver) return null;
-  if (import.meta.env.MODE === "test") return null;
   if (dismissed || step === "done") return null;
 
   const steps = STEPS[role];

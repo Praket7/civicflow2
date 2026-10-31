@@ -216,6 +216,17 @@ CC BY-SA 4.0 and remain under that license. The per-file provenance, creator,
 and source URL are in [public/media/LICENSE.md](public/media/LICENSE.md) and on
 the in-app credits screen.
 
+## Provenance
+
+The Tauri 2 shell follows the standard \`create-tauri-app\` project layout. No sample UI from
+that scaffold is shipped: the screens, components, design tokens, and styles under \`src/\` were
+written for CivicFlow. No third-party dashboard template or UI kit is redistributed.
+
+AutoRoster's assignment step is the successive-shortest-augmenting-path algorithm for min-cost
+max-flow, implemented in \`src-tauri/core/src/matching.rs\` with SPFA. The network formulation and
+correctness argument follow Ahuja, Magnanti, and Orlin, *Network Flows: Theory, Algorithms, and
+Applications* (1993), Chapter 9.
+
 ## Generated inventory
 
 ${table(npm, `JavaScript (${npm.length} packages)`)}

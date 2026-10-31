@@ -20,15 +20,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check configuration
+        id: config
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY repository secrets are required." >&2
-            exit 1
+            echo "::notice title=Reminder dispatch skipped::Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY repository secrets to run the dispatch clock."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          echo "configured=true" >> "$GITHUB_OUTPUT"
       - name: Invoke the dispatcher
+        if: steps.config.outputs.configured == 'true'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

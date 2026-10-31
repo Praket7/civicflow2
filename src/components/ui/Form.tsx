@@ -29,14 +29,27 @@ function Field({
       </label>
       {children}
       {error ? (
-        <p className={styles.error} role="alert">
+        <p id={`${htmlFor}-error`} className={styles.error} role="alert">
           {error}
         </p>
       ) : hint ? (
-        <p className={styles.hint}>{hint}</p>
+        <p id={`${htmlFor}-hint`} className={styles.hint}>
+          {hint}
+        </p>
       ) : null}
     </div>
   );
+}
+
+/** The message that explains the field is the one the input points at. */
+function describedBy(
+  id: string,
+  error: ReactNode,
+  hint: ReactNode,
+  existing: string | undefined,
+): string | undefined {
+  const message = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
+  return [existing, message].filter(Boolean).join(" ") || undefined;
 }
 
 export function TextField({
@@ -44,6 +57,7 @@ export function TextField({
   hint,
   error,
   id,
+  "aria-describedby": describedById,
   ...rest
 }: { label: string; hint?: ReactNode; error?: ReactNode } & InputHTMLAttributes<HTMLInputElement>) {
   const generated = useId();
@@ -51,10 +65,11 @@ export function TextField({
   return (
     <Field label={label} hint={hint} error={error} htmlFor={inputId}>
       <input
+        {...rest}
         id={inputId}
         className={styles.input}
         aria-invalid={error ? true : undefined}
-        {...rest}
+        aria-describedby={describedBy(inputId, error, hint, describedById)}
       />
     </Field>
   );
@@ -65,6 +80,7 @@ export function TextareaField({
   hint,
   error,
   id,
+  "aria-describedby": describedById,
   ...rest
 }: {
   label: string;
@@ -76,10 +92,11 @@ export function TextareaField({
   return (
     <Field label={label} hint={hint} error={error} htmlFor={inputId}>
       <textarea
+        {...rest}
         id={inputId}
         className={styles.textarea}
         aria-invalid={error ? true : undefined}
-        {...rest}
+        aria-describedby={describedBy(inputId, error, hint, describedById)}
       />
     </Field>
   );
@@ -91,6 +108,7 @@ export function SelectField({
   error,
   id,
   children,
+  "aria-describedby": describedById,
   ...rest
 }: {
   label: string;
@@ -102,7 +120,13 @@ export function SelectField({
   const inputId = id ?? generated;
   return (
     <Field label={label} hint={hint} error={error} htmlFor={inputId}>
-      <select id={inputId} className={styles.select} {...rest}>
+      <select
+        {...rest}
+        id={inputId}
+        className={styles.select}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(inputId, error, hint, describedById)}
+      >
         {children}
       </select>
     </Field>

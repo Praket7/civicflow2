@@ -5,7 +5,10 @@ import { routes, searchRoutes } from "../../app/routes";
 import type { RouteMeta } from "../../app/routes";
 import { useAuth } from "../../lib/auth/session";
 import { t } from "../../lib/i18n";
+import { useHelp } from "../help/HelpDialog";
 import styles from "./CommandPalette.module.css";
+
+type PaletteItem = { kind: "help" } | { kind: "route"; route: RouteMeta };
 
 const popular: Record<"coordinator" | "volunteer", string[]> = {
   coordinator: [
@@ -41,21 +44,34 @@ function PaletteDialog({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const listId = useId();
   const { user } = useAuth();
+  const { openHelp } = useHelp();
   const role: "coordinator" | "volunteer" =
     user?.role === "coordinator" ? "coordinator" : "volunteer";
 
-  const results = useMemo(() => {
+  const results = useMemo<PaletteItem[]>(() => {
     // Only screens this account can open, never parameterised paths.
     const visible = (route: RouteMeta) =>
       !route.path.includes(":") &&
       (route.role === role || route.id === "settings" || route.id === "accessibility");
+    const helpMatches = !query.trim() || /help|guide|shortcut|keys/i.test(query);
+    const help: PaletteItem[] = helpMatches ? [{ kind: "help" }] : [];
     if (!query.trim()) {
-      return popular[role]
+      const frequent = popular[role]
         .map((path) => routes.find((route) => route.path === path))
         .filter((route): route is RouteMeta => route !== undefined && visible(route));
+      return [...help, ...frequent.map((route) => ({ kind: "route" as const, route }))];
     }
-    return searchRoutes(query).filter(visible);
+    return [
+      ...help,
+      ...searchRoutes(query)
+        .filter(visible)
+        .map((route) => ({ kind: "route" as const, route })),
+    ];
   }, [query, role]);
+
+  const active = results[activeIndex];
+  const activeId =
+    active?.kind === "help" ? "command-help" : active ? `command-${active.route.id}` : undefined;
 
   useEffect(() => {
     restoreRef.current = document.activeElement as HTMLElement | null;
@@ -74,10 +90,14 @@ function PaletteDialog({ onClose }: { onClose: () => void }) {
   }
 
   function choose(index: number) {
-    const route = results[index];
-    if (!route) return;
+    const item = results[index];
+    if (!item) return;
     close();
-    navigate(route.path);
+    if (item.kind === "help") {
+      openHelp();
+      return;
+    }
+    navigate(item.route.path);
   }
 
   return (
@@ -100,9 +120,7 @@ function PaletteDialog({ onClose }: { onClose: () => void }) {
           aria-expanded="true"
           aria-controls={listId}
           aria-autocomplete="list"
-          aria-activedescendant={
-            results[activeIndex] ? `command-${results[activeIndex].id}` : undefined
-          }
+          aria-activedescendant={activeId}
           placeholder="Search screens, volunteers, actions…"
           value={query}
           onChange={(event) => {
@@ -133,30 +151,47 @@ function PaletteDialog({ onClose }: { onClose: () => void }) {
           </p>
         ) : (
           <ul role="listbox" id={listId} aria-label="Search results">
-            {results.map((route, index) => (
-              <li
-                key={route.id}
-                id={`command-${route.id}`}
-                role="option"
-                aria-selected={index === activeIndex}
-                tabIndex={-1}
-                className={styles.option}
-                onPointerMove={() => setActiveIndex(index)}
-                onClick={() => choose(index)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") choose(index);
-                }}
-              >
-                <span className={styles.number}>{String(route.number).padStart(2, "0")}</span>
-                <span className={styles.optionText}>
-                  <span className={styles.optionTitle}>{t(route.title)}</span>
-                  <span className={styles.optionSpec}>{t(route.spec)}</span>
-                </span>
-                {index === activeIndex ? (
-                  <CornerDownLeft size={15} className={styles.enter} aria-hidden="true" />
-                ) : null}
-              </li>
-            ))}
+            {results.map((item, index) => {
+              const id = item.kind === "help" ? "command-help" : `command-${item.route.id}`;
+              return (
+                <li
+                  key={id}
+                  id={id}
+                  role="option"
+                  aria-selected={index === activeIndex}
+                  tabIndex={-1}
+                  className={styles.option}
+                  onPointerMove={() => setActiveIndex(index)}
+                  onClick={() => choose(index)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") choose(index);
+                  }}
+                >
+                  {item.kind === "help" ? (
+                    <>
+                      <span className={styles.number}>?</span>
+                      <span className={styles.optionText}>
+                        <span className={styles.optionTitle}>{t("Help for this screen (?)")}</span>
+                        <span className={styles.optionSpec}>{t("Help and guides")}</span>
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className={styles.number}>
+                        {String(item.route.number).padStart(2, "0")}
+                      </span>
+                      <span className={styles.optionText}>
+                        <span className={styles.optionTitle}>{t(item.route.title)}</span>
+                        <span className={styles.optionSpec}>{t(item.route.spec)}</span>
+                      </span>
+                    </>
+                  )}
+                  {index === activeIndex ? (
+                    <CornerDownLeft size={15} className={styles.enter} aria-hidden="true" />
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

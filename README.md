@@ -24,6 +24,34 @@ click away. Deployment and the remaining gaps are covered in **Cloud workspace**
 | Application tables | 47 |
 <!-- CIVICFLOW_FACTS_END -->
 
+## What it looks like
+
+![Coordinator home](docs/screenshots/mission-control.png)
+
+*Home answers what needs attention now: the next shift, coverage for the week, and one queue
+for hours waiting on review, applications, coverage gaps, and expiring credentials.*
+
+| AutoRoster | Schedule |
+| --- | --- |
+| ![AutoRoster](docs/screenshots/autoroster.png) | ![Schedule](docs/screenshots/schedule.png) |
+| A plan for the week, with the reason for every assignment. | The calendar, the roster, and the check-in kiosk. |
+
+| Volunteer home | Volunteer schedule |
+| --- | --- |
+| ![Volunteer home](docs/screenshots/volunteer-home.png) | ![Volunteer schedule](docs/screenshots/volunteer-schedule.png) |
+| The installable PWA, working from its offline replica. | Registration, waitlist, and shift detail. |
+
+## Try it in five minutes
+
+1. `pnpm install && pnpm dev`, then open `http://localhost:5173`.
+2. Choose **Open demo workspace**. It signs into the seeded FeedMore WNY organization on this
+   device, with no account and no network.
+3. **Home** shows what needs attention. Open **AutoRoster**, build the week, read the evidence
+   for an assignment, and apply the plan.
+4. **Schedule**, open a shift, then **Kiosk** to show a check-in code and record attendance.
+5. The volunteer side is `http://localhost:5173/pwa.html`. It needs `VITE_SUPABASE_ANON_KEY` to
+   reach the hosted project; the volunteer screenshots above come from that workspace.
+
 ## Product
 
 The coordinator workspace has six primary areas:
@@ -136,11 +164,11 @@ The PWA is a separate entry point, `pwa.html`. Serve it over HTTPS, or from `loc
 service worker and push registration are allowed. It reads `VITE_SUPABASE_URL` and
 `VITE_SUPABASE_ANON_KEY`. Never put the service role key in the frontend environment.
 
-The test organization, Buffalo Community Pantry, has three accounts that all use the password
-`Volunteer!2026`: `maya.volunteer@civicflow.test`, `alice.volunteer@civicflow.test` and
-`jordan.coordinator@civicflow.test`. The coordinator opens `pwa.html#/coordinator` for device
-and delivery health. Rotate or remove these accounts before a real organization uses the
-project.
+The test organization, Buffalo Community Pantry, has three fixture accounts:
+`maya.volunteer@civicflow.test`, `alice.volunteer@civicflow.test` and
+`jordan.coordinator@civicflow.test`. Their passwords are held by the project owner and are
+not published here. The coordinator opens `pwa.html#/coordinator` for device and delivery
+health. Rotate or remove these accounts before a real organization uses the project.
 
 The dispatcher has run against the hosted project and recorded a successful `reminders` job.
 In-app delivery is proven end to end. Push has its VAPID keys stored and reports configured; a
@@ -397,10 +425,10 @@ pnpm tauri build      # installers for the current platform
 pnpm docs:update      # refresh the generated facts block
 ```
 
-Demo accounts after choosing **Explore the demo**:
-
-- `praket@feedmorewny.org` / `civicflow-demo` (coordinator)
-- `maya.chen@gmail.com` / `civicflow-demo` (volunteer)
+**Open demo workspace** signs in as the seeded coordinator, `praket@feedmorewny.org`, with no
+account and no network. The volunteer half of the same workspace is `maya.chen@gmail.com`,
+reachable from the volunteer entry point. The demo seeded here lives only in the local database
+on this machine; it has no hosted counterpart and none of its passwords are published.
 
 Hosted sign-in is optional for the desktop. Set `VITE_SUPABASE_ANON_KEY` to enable Google and
 email links. The project address is fixed in `src/lib/auth/hosted.ts` and
@@ -525,8 +553,8 @@ one organization, a one-seat race that produced exactly one registration and
 one waitlist entry, a lost response retried without a duplicate write, a
 revoked device refused with `stale_authority`, and a restored membership that
 pulled again. The reproduction accounts are `maya.volunteer@civicflow.test`,
-`alice.volunteer@civicflow.test` and `jordan.coordinator@civicflow.test`, all
-with the test password `Volunteer!2026`.
+`alice.volunteer@civicflow.test` and `jordan.coordinator@civicflow.test`. Their
+passwords are not published here.
 
 The volunteer app covers discovery, registration, waitlist, schedule, hours,
 credentials, notifications, profile, settings, check-in and offline queueing.

@@ -79,7 +79,7 @@ describe("publishing a local workspace", () => {
     const result = await publishLocalSchedule(orgId, local);
 
     expect(writeWorkspace).toHaveBeenCalledWith(orgId);
-    expect(startDesktopSync).toHaveBeenCalled();
+    expect(startDesktopSync).toHaveBeenCalledWith(true);
     expect(createSharedOpportunity).toHaveBeenCalledWith(
       expect.objectContaining({ title: "Community Food Distribution", training: ["Safety"] }),
       false,

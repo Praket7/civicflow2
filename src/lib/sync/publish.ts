@@ -37,7 +37,9 @@ export async function publishLocalSchedule(
   // The remembered workspace is what sync configures and what the outbox is
   // bound to. Selecting it is part of publishing, not a separate user step.
   await writeWorkspace(organizationId);
-  await startDesktopSync();
+  // Publishing decides what is already present, so read a fresh snapshot
+  // rather than a cursor replay that may be one poll behind.
+  await startDesktopSync(true);
   const state = desktopSyncSnapshot();
   if (state.organizationId !== organizationId) {
     throw new Error("The shared workspace did not open. Reconnect it under Settings first.");

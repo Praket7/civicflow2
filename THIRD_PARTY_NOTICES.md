@@ -184,16 +184,16 @@ the in-app credits screen.
 | `cairo-rs` | 0.18.5 | MIT | no |
 | `cairo-sys-rs` | 0.18.2 | MIT | no |
 | `camino` | 1.2.6 | MIT OR Apache-2.0 | no |
+| `cargo-platform` | 0.1.9 | MIT OR Apache-2.0 | no |
 | `cargo_metadata` | 0.19.2 | MIT | no |
 | `cargo_toml` | 1.0.1 | Apache-2.0 OR MIT | no |
-| `cargo-platform` | 0.1.9 | MIT OR Apache-2.0 | no |
 | `cc` | 1.9.0 | MIT OR Apache-2.0 | no |
 | `cesu8` | 1.1.0 | Apache-2.0/MIT | no |
 | `cfb` | 0.14.0 | MIT | no |
-| `cfg_aliases` | 0.2.2 | MIT | no |
 | `cfg-expr` | 0.15.8 | MIT OR Apache-2.0 | no |
 | `cfg-expr` | 0.20.10 | MIT OR Apache-2.0 | no |
 | `cfg-if` | 1.0.5 | MIT OR Apache-2.0 | no |
+| `cfg_aliases` | 0.2.2 | MIT | no |
 | `chacha20` | 0.9.1 | Apache-2.0 OR MIT | no |
 | `chacha20poly1305` | 0.10.1 | Apache-2.0 OR MIT | no |
 | `chrono` | 0.4.45 | MIT OR Apache-2.0 | no |
@@ -240,8 +240,8 @@ the in-app credits screen.
 | `dtoa-short` | 0.3.5 | MPL-2.0 | no |
 | `dunce` | 1.0.5 | CC0-1.0 OR MIT-0 OR Apache-2.0 | no |
 | `dyn-clone` | 1.0.20 | MIT OR Apache-2.0 | no |
-| `embed_plist` | 1.2.2 | MIT OR Apache-2.0 | no |
 | `embed-resource` | 3.0.12 | MIT | no |
+| `embed_plist` | 1.2.2 | MIT OR Apache-2.0 | no |
 | `equivalent` | 1.0.3 | Apache-2.0 OR MIT | no |
 | `erased-serde` | 0.4.10 | MIT OR Apache-2.0 | no |
 | `errno` | 0.3.14 | MIT OR Apache-2.0 | no |
@@ -374,10 +374,10 @@ the in-app credits screen.
 | `ndk-sys` | 0.6.0+11769913 | MIT OR Apache-2.0 | no |
 | `new_debug_unreachable` | 1.0.6 | MIT | no |
 | `nix` | 0.31.3 | MIT | no |
-| `num_enum` | 0.7.6 | BSD-3-Clause OR MIT OR Apache-2.0 | no |
-| `num_enum_derive` | 0.7.6 | BSD-3-Clause OR MIT OR Apache-2.0 | no |
 | `num-conv` | 0.2.2 | MIT OR Apache-2.0 | no |
 | `num-traits` | 0.2.19 | MIT OR Apache-2.0 | no |
+| `num_enum` | 0.7.6 | BSD-3-Clause OR MIT OR Apache-2.0 | no |
+| `num_enum_derive` | 0.7.6 | BSD-3-Clause OR MIT OR Apache-2.0 | no |
 | `objc2` | 0.6.5 | MIT | no |
 | `objc2-app-kit` | 0.3.2 | Zlib OR Apache-2.0 OR MIT | no |
 | `objc2-cloud-kit` | 0.3.2 | Zlib OR Apache-2.0 OR MIT | no |
@@ -452,8 +452,8 @@ the in-app credits screen.
 | `ring` | 0.17.14 | Apache-2.0 AND ISC | no |
 | `rusqlite` | 0.37.0 | MIT | no |
 | `rust-ini` | 0.21.3 | MIT | no |
-| `rustc_version` | 0.4.1 | MIT OR Apache-2.0 | no |
 | `rustc-hash` | 2.1.3 | Apache-2.0 OR MIT | no |
+| `rustc_version` | 0.4.1 | MIT OR Apache-2.0 | no |
 | `rustix` | 1.1.5 | Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | no |
 | `rustls` | 0.23.46 | Apache-2.0 OR ISC OR MIT | no |
 | `rustls-native-certs` | 0.8.5 | Apache-2.0 OR ISC OR MIT | no |
@@ -475,6 +475,7 @@ the in-app credits screen.
 | `selectors` | 0.38.0 | MPL-2.0 | no |
 | `semver` | 1.0.28 | MIT OR Apache-2.0 | no |
 | `serde` | 1.0.229 | MIT OR Apache-2.0 | yes |
+| `serde-untagged` | 0.1.9 | MIT OR Apache-2.0 | no |
 | `serde_core` | 1.0.229 | MIT OR Apache-2.0 | no |
 | `serde_derive` | 1.0.229 | MIT OR Apache-2.0 | no |
 | `serde_derive_internals` | 0.29.1 | MIT OR Apache-2.0 | no |
@@ -486,14 +487,13 @@ the in-app credits screen.
 | `serde_urlencoded` | 0.7.1 | MIT/Apache-2.0 | no |
 | `serde_with` | 3.24.0 | MIT OR Apache-2.0 | no |
 | `serde_with_macros` | 3.24.0 | MIT OR Apache-2.0 | no |
-| `serde-untagged` | 0.1.9 | MIT OR Apache-2.0 | no |
 | `serialize-to-javascript` | 0.1.2 | MIT OR Apache-2.0 | no |
 | `serialize-to-javascript-impl` | 0.1.2 | MIT OR Apache-2.0 | no |
 | `servo_arc` | 0.4.3 | MIT OR Apache-2.0 | no |
 | `sha2` | 0.10.9 | MIT OR Apache-2.0 | no |
 | `shlex` | 2.0.1 | MIT OR Apache-2.0 | no |
-| `simd_cesu8` | 1.2.0 | Apache-2.0 OR MIT | no |
 | `simd-adler32` | 0.3.10 | MIT | no |
+| `simd_cesu8` | 1.2.0 | Apache-2.0 OR MIT | no |
 | `simdutf8` | 0.1.5 | MIT OR Apache-2.0 | no |
 | `siphasher` | 1.0.4 | MIT OR Apache-2.0 | no |
 | `slab` | 0.4.12 | MIT | no |
@@ -584,8 +584,8 @@ the in-app credits screen.
 | `utf8_iter` | 1.0.4 | Apache-2.0 OR MIT | no |
 | `uuid` | 1.28.0 | Apache-2.0 OR MIT | no |
 | `vcpkg` | 0.2.15 | MIT/Apache-2.0 | no |
-| `version_check` | 0.9.5 | MIT/Apache-2.0 | no |
 | `version-compare` | 0.2.1 | MIT | no |
+| `version_check` | 0.9.5 | MIT/Apache-2.0 | no |
 | `vswhom` | 0.1.0 | MIT | no |
 | `vswhom-sys` | 0.1.3 | MIT | no |
 | `walkdir` | 2.5.0 | Unlicense/MIT | no |
@@ -598,9 +598,9 @@ the in-app credits screen.
 | `wasm-bindgen-macro-support` | 0.2.129 | MIT OR Apache-2.0 | no |
 | `wasm-bindgen-shared` | 0.2.129 | MIT OR Apache-2.0 | no |
 | `wasm-streams` | 0.5.0 | MIT OR Apache-2.0 | no |
-| `web_atoms` | 0.2.6 | MIT OR Apache-2.0 | no |
 | `web-sys` | 0.3.106 | MIT OR Apache-2.0 | no |
 | `web-time` | 1.1.0 | MIT OR Apache-2.0 | no |
+| `web_atoms` | 0.2.6 | MIT OR Apache-2.0 | no |
 | `webkit2gtk` | 2.0.2 | MIT | no |
 | `webkit2gtk-sys` | 2.0.2 | MIT | no |
 | `webpki-root-certs` | 1.0.11 | CDLA-Permissive-2.0 | no |
@@ -613,6 +613,25 @@ the in-app credits screen.
 | `winapi-x86_64-pc-windows-gnu` | 0.4.0 | MIT/Apache-2.0 | no |
 | `window-vibrancy` | 0.8.1 | Apache-2.0 OR MIT | no |
 | `windows` | 0.62.2 | MIT OR Apache-2.0 | no |
+| `windows-collections` | 0.3.2 | MIT OR Apache-2.0 | no |
+| `windows-core` | 0.62.2 | MIT OR Apache-2.0 | no |
+| `windows-future` | 0.3.2 | MIT OR Apache-2.0 | no |
+| `windows-implement` | 0.60.2 | MIT OR Apache-2.0 | no |
+| `windows-interface` | 0.59.3 | MIT OR Apache-2.0 | no |
+| `windows-link` | 0.2.1 | MIT OR Apache-2.0 | no |
+| `windows-numerics` | 0.3.1 | MIT OR Apache-2.0 | no |
+| `windows-registry` | 0.6.1 | MIT OR Apache-2.0 | no |
+| `windows-result` | 0.4.1 | MIT OR Apache-2.0 | no |
+| `windows-strings` | 0.5.1 | MIT OR Apache-2.0 | no |
+| `windows-sys` | 0.45.0 | MIT OR Apache-2.0 | no |
+| `windows-sys` | 0.52.0 | MIT OR Apache-2.0 | no |
+| `windows-sys` | 0.60.2 | MIT OR Apache-2.0 | no |
+| `windows-sys` | 0.61.2 | MIT OR Apache-2.0 | no |
+| `windows-targets` | 0.42.2 | MIT OR Apache-2.0 | no |
+| `windows-targets` | 0.52.6 | MIT OR Apache-2.0 | no |
+| `windows-targets` | 0.53.5 | MIT OR Apache-2.0 | no |
+| `windows-threading` | 0.2.1 | MIT OR Apache-2.0 | no |
+| `windows-version` | 0.1.7 | MIT OR Apache-2.0 | no |
 | `windows_aarch64_gnullvm` | 0.42.2 | MIT OR Apache-2.0 | no |
 | `windows_aarch64_gnullvm` | 0.52.6 | MIT OR Apache-2.0 | no |
 | `windows_aarch64_gnullvm` | 0.53.1 | MIT OR Apache-2.0 | no |
@@ -636,25 +655,6 @@ the in-app credits screen.
 | `windows_x86_64_msvc` | 0.42.2 | MIT OR Apache-2.0 | no |
 | `windows_x86_64_msvc` | 0.52.6 | MIT OR Apache-2.0 | no |
 | `windows_x86_64_msvc` | 0.53.1 | MIT OR Apache-2.0 | no |
-| `windows-collections` | 0.3.2 | MIT OR Apache-2.0 | no |
-| `windows-core` | 0.62.2 | MIT OR Apache-2.0 | no |
-| `windows-future` | 0.3.2 | MIT OR Apache-2.0 | no |
-| `windows-implement` | 0.60.2 | MIT OR Apache-2.0 | no |
-| `windows-interface` | 0.59.3 | MIT OR Apache-2.0 | no |
-| `windows-link` | 0.2.1 | MIT OR Apache-2.0 | no |
-| `windows-numerics` | 0.3.1 | MIT OR Apache-2.0 | no |
-| `windows-registry` | 0.6.1 | MIT OR Apache-2.0 | no |
-| `windows-result` | 0.4.1 | MIT OR Apache-2.0 | no |
-| `windows-strings` | 0.5.1 | MIT OR Apache-2.0 | no |
-| `windows-sys` | 0.45.0 | MIT OR Apache-2.0 | no |
-| `windows-sys` | 0.52.0 | MIT OR Apache-2.0 | no |
-| `windows-sys` | 0.60.2 | MIT OR Apache-2.0 | no |
-| `windows-sys` | 0.61.2 | MIT OR Apache-2.0 | no |
-| `windows-targets` | 0.42.2 | MIT OR Apache-2.0 | no |
-| `windows-targets` | 0.52.6 | MIT OR Apache-2.0 | no |
-| `windows-targets` | 0.53.5 | MIT OR Apache-2.0 | no |
-| `windows-threading` | 0.2.1 | MIT OR Apache-2.0 | no |
-| `windows-version` | 0.1.7 | MIT OR Apache-2.0 | no |
 | `winnow` | 0.5.40 | MIT | no |
 | `winnow` | 1.0.4 | MIT | no |
 | `winreg` | 0.56.0 | MIT | no |

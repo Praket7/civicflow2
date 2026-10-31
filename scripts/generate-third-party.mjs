@@ -20,6 +20,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const ROOT = resolve(new URL("..", import.meta.url).pathname);
+const generatedAt = null;
 const checkOnly = process.argv.includes("--check");
 const packageJson = JSON.parse(readFileSync(`${ROOT}/package.json`, "utf8"));
 
@@ -113,17 +114,23 @@ function cargoInventory() {
   return rows;
 }
 
+/**
+ * Code-point ordering, not `localeCompare`: the check runs on macOS and Linux
+ * with different ICU versions, and a locale-aware sort can order the same
+ * inventory differently on each. The committed file must be reproducible.
+ */
+const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+
 const unique = (rows) => {
   const seen = new Map();
   for (const row of rows) seen.set(`${row.name}@${row.version}`, row);
   return [...seen.values()].sort(
-    (a, b) => a.name.localeCompare(b.name) || a.version.localeCompare(b.version),
+    (a, b) => compare(a.name, b.name) || compare(a.version, b.version),
   );
 };
 
 const npm = unique(npmInventory());
 const cargo = unique(cargoInventory());
-const generatedAt = null;
 
 const inventory = {
   license: packageJson.license,
@@ -162,7 +169,7 @@ function table(rows, label) {
 }
 
 const rationaleRows = Object.entries(RATIONALE)
-  .sort(([a], [b]) => a.localeCompare(b))
+  .sort(([a], [b]) => compare(a, b))
   .map(([name, reason]) => `| \`${name}\` | ${reason} |`)
   .join("\n");
 
@@ -219,10 +226,22 @@ const json = `${JSON.stringify(inventory, null, 2)}\n`;
 const noticesPath = `${ROOT}/THIRD_PARTY_NOTICES.md`;
 const jsonPath = `${ROOT}/src/data/thirdParty.json`;
 
+function reportDrift(path, current, next) {
+  const before = current.split("\n");
+  const after = next.split("\n");
+  let line = 0;
+  while (line < before.length && line < after.length && before[line] === after[line]) line += 1;
+  console.error(`${path} differs at line ${line + 1}:`);
+  console.error(`  committed: ${before[line] ?? "<end of file>"}`);
+  console.error(`  generated: ${after[line] ?? "<end of file>"}`);
+}
+
 if (checkOnly) {
   const currentNotices = existsSync(noticesPath) ? readFileSync(noticesPath, "utf8") : "";
   const currentJson = existsSync(jsonPath) ? readFileSync(jsonPath, "utf8") : "";
   if (currentNotices !== notices || currentJson !== json) {
+    if (currentNotices !== notices) reportDrift("THIRD_PARTY_NOTICES.md", currentNotices, notices);
+    if (currentJson !== json) reportDrift("src/data/thirdParty.json", currentJson, json);
     console.error("Third-party notices are stale. Run `pnpm third-party:update`.");
     process.exit(1);
   }

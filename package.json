@@ -33,6 +33,7 @@
     "check:help": "node scripts/check-help-coverage.mjs",
     "third-party:update": "node scripts/generate-third-party.mjs",
     "check:third-party": "node scripts/generate-third-party.mjs --check",
+    "check:licenses": "node scripts/check-licenses.mjs",
     "docs:update": "node scripts/update-readme-facts.mjs",
     "docs:check": "node scripts/check-docs.mjs"
   },

@@ -159,6 +159,8 @@ jobs:
           pnpm build:web
       - name: Third-party inventory is current
         run: pnpm check:third-party
+      - name: Licenses are redistributable
+        run: pnpm check:licenses
       - name: Desktop shell compiles
         working-directory: src-tauri
         run: cargo check

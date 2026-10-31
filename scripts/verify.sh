@@ -15,6 +15,7 @@ pnpm test
 pnpm test:sql
 pnpm build:web
 pnpm check:third-party
+pnpm check:licenses
 
 # These need headless Chrome. --best-effort skips only when no browser is
 # installed; a real failure still exits non-zero.

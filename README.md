@@ -422,6 +422,8 @@ against a brute-force oracle, plan staleness, and backup restore.
 Generated checks:
 
 - `pnpm check:generated` rebuilds the demo data and translation catalog and fails on drift.
+- `pnpm check:third-party` fails when the generated notices no longer match the lockfiles.
+- `pnpm check:licenses` fails when a shipped npm package or Rust crate leaves the SPDX allowlist.
 - `pnpm check:hardcodes` rejects fixture ids and ISO dates in production code.
 - `pnpm docs:check` verifies README links and generated facts.
 - `pnpm db:verify` opens the live desktop database read-only and reports integrity, schema

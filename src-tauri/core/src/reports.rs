@@ -819,7 +819,7 @@ mod tests {
         ReportDocument {
             template: "custom".into(),
             title: "Custom report".into(),
-            organization: "FeedMore WNY".into(),
+            organization: "Rivergate Kitchen".into(),
             period: "2026-01-01 – 2026-10-13".into(),
             generated_at: "2026-10-13T07:45:00-04:00".into(),
             headers: vec!["Volunteer".into(), "Note".into()],

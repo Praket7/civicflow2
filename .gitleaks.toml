@@ -1,0 +1,21 @@
+# Gitleaks scans the current tree, not the historical commits whose contents
+# have already been published and rotated. The allowlist covers the authored
+# demo fixtures and tests, where a fake password or example address is data,
+# not a credential.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Authored demo fixtures and their tests"
+paths = [
+  '''src-tauri/core/tests/.*''',
+  '''src-tauri/core/templates/.*''',
+  '''src/lib/.*\.test\.(ts|tsx)''',
+  '''supabase/tests/.*''',
+  '''tests/e2e/.*''',
+  '''shared/demo-workspace\.json''',
+  '''src/lib/workspace/previewRepository\.ts''',
+  '''scripts/generate-demo-data\.mjs''',
+]
+regexTarget = "match"
+regexes = ['''civicflow-demo''']

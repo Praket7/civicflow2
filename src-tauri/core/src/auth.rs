@@ -19,7 +19,7 @@ use std::sync::OnceLock;
 use crate::error::{CoreError, Result};
 
 /// Only the demo seed uses these; they never authorize a real organization.
-pub const DEMO_EMAIL: &str = "praket@feedmorewny.org";
+pub const DEMO_EMAIL: &str = "praket@rivergate.example";
 pub const DEMO_PASSWORD: &str = "civicflow-demo";
 const REMEMBER_DAYS: i64 = 30;
 const SHORT_SESSION_HOURS: i64 = 12;
@@ -1107,7 +1107,7 @@ pub fn seed_demo_accounts(conn: &Connection, now: &str) -> Result<()> {
         .optional()?;
     if let Some(id) = coordinator_id {
         conn.execute(
-            "UPDATE users SET email = 'praket@feedmorewny.org',
+            "UPDATE users SET email = 'praket@rivergate.example',
                               name = COALESCE(NULLIF(name, ''), 'Praket Gauri'),
                               password_hash = COALESCE(password_hash, ?1)
              WHERE id = ?2",
@@ -1118,7 +1118,7 @@ pub fn seed_demo_accounts(conn: &Connection, now: &str) -> Result<()> {
             conn,
             "user-praket",
             "Praket Gauri",
-            "praket@feedmorewny.org",
+            "praket@rivergate.example",
             "coordinator",
             None,
             now,

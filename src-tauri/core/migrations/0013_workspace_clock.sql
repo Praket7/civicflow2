@@ -5,4 +5,4 @@ UPDATE app_settings SET key = 'workspace_clock' WHERE key = 'demo_now';
 
 -- Existing demo organizations keep their flag; a fresh demo seed sets it on
 -- insert. This backfills the row migration 0012 could not know about.
-UPDATE organizations SET is_demo = 1 WHERE id = 'org-feedmore-wny';
+UPDATE organizations SET is_demo = 1 WHERE id = 'org-rivergate-kitchen';

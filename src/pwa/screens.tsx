@@ -1111,6 +1111,75 @@ export function NotificationsScreen() {
   );
 }
 
+export function HelpScreen() {
+  return (
+    <div className={styles.stack}>
+      <PageTitle eyebrow="Help" title="How the volunteer app works." />
+
+      <Card>
+        <h2 className={styles.cardTitle}>Your week, start to finish</h2>
+        <ol className={styles.steps}>
+          <li>Browse Discover for a shift that fits your skills and availability.</li>
+          <li>Open the shift to read the meeting point, checklist, and arrival notes.</li>
+          <li>Check in at the door with the six-digit code from the check-in table.</li>
+          <li>Review My Hours after a coordinator approves the time you served.</li>
+        </ol>
+      </Card>
+
+      <Card>
+        <h2 className={styles.cardTitle}>Rules that matter at the door</h2>
+        <ul className={styles.steps}>
+          <li>Check-in opens 30 minutes before a shift and closes 15 minutes after it starts.</li>
+          <li>The event code is six digits and rotates every 15 minutes.</li>
+          <li>
+            A cancellation frees the seat and offers it to the first eligible person on the
+            waitlist.
+          </li>
+          <li>Only approved hours count toward a verified service record.</li>
+        </ul>
+      </Card>
+
+      <Card>
+        <h2 className={styles.cardTitle}>Common questions</h2>
+        <div className={styles.helpFaq}>
+          <details>
+            <summary>Why can a shift look full but still show an open role?</summary>
+            <p className={styles.body}>
+              Seat count and role coverage answer different questions. A shift can be at capacity
+              and still need a driver, so the role stays open until someone qualified claims it.
+            </p>
+          </details>
+          <details>
+            <summary>What happens when I cancel?</summary>
+            <p className={styles.body}>
+              Your seat is released, the first eligible waitlisted volunteer is offered it, and the
+              change is recorded in the audit log.
+            </p>
+          </details>
+          <details>
+            <summary>Why are my hours still pending?</summary>
+            <p className={styles.body}>
+              Attendance and submitted time are reviewed by a coordinator. Approved time appears in
+              My Hours and on your verification record; pending time does not.
+            </p>
+          </details>
+          <details>
+            <summary>Does the app work without a signal?</summary>
+            <p className={styles.body}>
+              Your schedule and shift details are cached on the device. Changes you make offline are
+              queued under your account and sent when the connection returns.
+            </p>
+          </details>
+        </div>
+      </Card>
+
+      <Link className={styles.helpLink} to="/settings">
+        Back to settings <ArrowRight aria-hidden size={14} />
+      </Link>
+    </div>
+  );
+}
+
 export function SettingsScreen() {
   const {
     workspace,
@@ -1215,6 +1284,19 @@ export function SettingsScreen() {
       ) : null}
 
       <NotificationSettings />
+
+      <Card>
+        <h2 className={styles.cardTitle}>Help</h2>
+        <p className={styles.body}>
+          Every screen has a short guide, and the rules for check-in, waitlists, and hours are
+          written down where you can read them before you need them.
+        </p>
+        <div className={styles.rowActions}>
+          <Link className={styles.helpLink} to="/help">
+            Open help <ArrowRight aria-hidden size={14} />
+          </Link>
+        </div>
+      </Card>
 
       <p className={styles.finePrint}>
         CivicFlow Volunteer · synced workspace · data stays scoped to your account.

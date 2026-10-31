@@ -4,6 +4,7 @@ version = "0.1.1"
 edition = "2021"
 rust-version = "1.77"
 description = "CivicFlow domain rules, SQLite persistence, and read models"
+license = "MIT"
 
 [dependencies]
 # SQLCipher, with OpenSSL built from source so no machine needs a system

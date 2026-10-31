@@ -1,7 +1,24 @@
-import { ArrowRight, CalendarDays, Database, Keyboard, LifeBuoy, ShieldCheck } from "lucide-react";
+import { useState } from "react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Database,
+  Keyboard,
+  LifeBuoy,
+  RotateCcw,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import { routes } from "../../app/routes";
 import { Card, Page, PageHeader } from "../../components/ui";
+import { replayTour } from "../../components/help/FirstRunTour";
+import { useAuth } from "../../lib/auth/session";
+import { helpTopics, validationRules } from "../../lib/help/topics";
 import styles from "./HelpPage.module.css";
+
+const routeById = new Map(routes.map((route) => [route.id, route]));
+const rules = validationRules();
 
 const coordinatorSteps = [
   {
@@ -58,6 +75,19 @@ const volunteerSteps = [
 ];
 
 export function HelpPage() {
+  const { user } = useAuth();
+  const role = user?.role === "coordinator" ? "coordinator" : "volunteer";
+  const [query, setQuery] = useState("");
+  const needle = query.trim().toLowerCase();
+  const matches = needle
+    ? helpTopics.filter((topic) =>
+        [topic.title, topic.purpose, ...topic.steps, ...(topic.rules ?? [])]
+          .join(" ")
+          .toLowerCase()
+          .includes(needle),
+      )
+    : helpTopics;
+
   return (
     <Page>
       <PageHeader
@@ -245,6 +275,135 @@ export function HelpPage() {
           </details>
         </div>
       </Card>
+
+      <section className={styles.topicSection} aria-labelledby="screen-guides">
+        <div className={styles.topicHead}>
+          <div>
+            <p className={styles.kicker}>Every screen</p>
+            <h2 id="screen-guides" className={styles.cardTitle}>
+              Guides in place
+            </h2>
+          </div>
+          <button type="button" className={styles.replay} onClick={() => replayTour(role)}>
+            <RotateCcw size={13} aria-hidden="true" />
+            Replay the guided tour
+          </button>
+        </div>
+        <p className={styles.bodyCopy}>
+          The same guide is one click away on every screen, or press <kbd>?</kbd> while you work.
+          Search below to find the screen that owns a rule.
+        </p>
+        <label className={styles.searchField}>
+          <Search size={15} aria-hidden="true" />
+          <span className={styles.searchLabel}>Search help</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="coverage, waitlist, credential, backup…"
+          />
+        </label>
+        {matches.length === 0 ? (
+          <p className={styles.bodyCopy}>
+            No topic matches “{query.trim()}”. Try a shorter word, or ask CivicFlow in the
+            workspace.
+          </p>
+        ) : (
+          <ul className={styles.topicGrid}>
+            {matches.map((topic) => {
+              const route = routeById.get(topic.id);
+              return (
+                <li key={topic.id} className={styles.topic}>
+                  <h3 className={styles.topicTitle}>
+                    {route && !route.path.includes(":") ? (
+                      <Link to={route.path}>{topic.title}</Link>
+                    ) : (
+                      topic.title
+                    )}
+                  </h3>
+                  <p className={styles.topicPurpose}>{topic.purpose}</p>
+                  <ol className={styles.topicSteps}>
+                    {topic.steps.slice(0, 3).map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      <section className={styles.lowerGrid} aria-label="Reference continued">
+        <Card>
+          <p className={styles.kicker}>Glossary</p>
+          <h2 className={styles.cardTitle}>The words on the screen</h2>
+          <dl className={styles.glossary}>
+            <div>
+              <dt>Role coverage</dt>
+              <dd>
+                Filled required role slots divided by required slots. It ignores extra people in
+                other roles.
+              </dd>
+            </div>
+            <div>
+              <dt>Seat fill</dt>
+              <dd>
+                Confirmed people divided by capacity. A shift can have high seat fill and an empty
+                required role.
+              </dd>
+            </div>
+            <div>
+              <dt>Waitlist</dt>
+              <dd>
+                An ordered line for a full shift. A promotion goes to the first eligible person, not
+                the newest.
+              </dd>
+            </div>
+            <div>
+              <dt>Credential validity</dt>
+              <dd>
+                A credential satisfies a role until its valid-through date. Expiry blocks new
+                assignments.
+              </dd>
+            </div>
+            <div>
+              <dt>Recovery</dt>
+              <dd>
+                A plan that restores coverage while changing as few existing assignments as
+                possible.
+              </dd>
+            </div>
+            <div>
+              <dt>Sealed archive</dt>
+              <dd>
+                An encrypted backup that can leave the device. It opens only with its passphrase.
+              </dd>
+            </div>
+          </dl>
+        </Card>
+
+        <Card>
+          <p className={styles.kicker}>Validation</p>
+          <h2 className={styles.cardTitle}>Rules that reject input</h2>
+          <p className={styles.bodyCopy}>
+            These are enforced before a write, not only described here. The same rules run in the
+            desktop core and the hosted database.
+          </p>
+          <div className={styles.ruleGroups}>
+            {rules.map((group) => (
+              <details key={group.title}>
+                <summary>{group.title}</summary>
+                <ul>
+                  {group.rules.map((rule) => (
+                    <li key={rule}>{rule}</li>
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </div>
+        </Card>
+      </section>
     </Page>
   );
 }

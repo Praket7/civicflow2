@@ -116,13 +116,13 @@ fn an_identity_has_no_workspace_role_until_it_joins_one() {
     let session = create_account(
         database.connection(),
         "  Jordan   Reyes ",
-        "Jordan@FeedMoreWNY.org",
+        "Jordan@rivergate.example",
         "kitchen-table-2026",
     )
     .expect("account is created");
 
     assert_eq!(session.user.name, "Jordan Reyes");
-    assert_eq!(session.user.email, "jordan@feedmorewny.org");
+    assert_eq!(session.user.email, "jordan@rivergate.example");
     assert_eq!(session.user.role, "none", "signup grants no role");
     assert_eq!(session.user.volunteer_id, None);
 
@@ -133,7 +133,7 @@ fn an_identity_has_no_workspace_role_until_it_joins_one() {
 
     let again = sign_in(
         database.connection(),
-        "jordan@feedmorewny.org",
+        "jordan@rivergate.example",
         "kitchen-table-2026",
         false,
     )
@@ -247,7 +247,7 @@ fn an_email_that_already_has_an_account_is_refused() {
     let error = create_account(
         database.connection(),
         "Praket Gauri",
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "another-password",
     )
     .expect_err("duplicate email is refused");
@@ -256,7 +256,7 @@ fn an_email_that_already_has_an_account_is_refused() {
     let error = create_account(
         database.connection(),
         "Maya Chen",
-        "maya.chen@gmail.com",
+        "maya.chen@example.org",
         "another-password",
     )
     .expect_err("the volunteer profile already has an account");
@@ -370,7 +370,7 @@ fn a_session_token_is_256_random_bits_and_never_stored_in_the_clear() {
     let database = seeded();
     let session = sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "civicflow-demo",
         false,
     )
@@ -400,7 +400,7 @@ fn repeated_wrong_passwords_start_a_wait_and_a_real_sign_in_clears_it() {
     for _ in 0..5 {
         let error = sign_in(
             database.connection(),
-            "praket@feedmorewny.org",
+            "praket@rivergate.example",
             "not-the-password",
             false,
         )
@@ -410,7 +410,7 @@ fn repeated_wrong_passwords_start_a_wait_and_a_real_sign_in_clears_it() {
 
     let error = sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "not-the-password",
         false,
     )
@@ -421,7 +421,7 @@ fn repeated_wrong_passwords_start_a_wait_and_a_real_sign_in_clears_it() {
     // nothing from the account already being correct.
     let error = sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "civicflow-demo",
         false,
     )
@@ -438,7 +438,7 @@ fn repeated_wrong_passwords_start_a_wait_and_a_real_sign_in_clears_it() {
         .unwrap();
     sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "civicflow-demo",
         false,
     )
@@ -482,14 +482,14 @@ fn resetting_the_demo_workspace_clears_a_sign_in_lock() {
     for _ in 0..6 {
         let _ = sign_in(
             database.connection(),
-            "praket@feedmorewny.org",
+            "praket@rivergate.example",
             "not-the-password",
             false,
         );
     }
     let error = sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "civicflow-demo",
         false,
     )
@@ -500,7 +500,7 @@ fn resetting_the_demo_workspace_clears_a_sign_in_lock() {
 
     sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "civicflow-demo",
         false,
     )

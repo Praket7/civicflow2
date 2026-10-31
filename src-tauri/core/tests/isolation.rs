@@ -185,7 +185,10 @@ fn snapshot_never_contains_other_org_records() {
 
     work_in(conn, &owner.id, &resident);
     let seeded_workspace = snapshot(conn).unwrap();
-    assert_eq!(seeded_workspace.settings.organization_name, "FeedMore WNY");
+    assert_eq!(
+        seeded_workspace.settings.organization_name,
+        "Rivergate Kitchen"
+    );
     assert!(!seeded_workspace.roster.is_empty());
     assert!(!seeded_workspace.registrations.is_empty());
 }
@@ -277,7 +280,7 @@ fn editing_settings_changes_only_selected_org() {
     // The dashboard settings read the seeded organization when it is open.
     work_in(conn, &owner.id, &workspace_organization(conn));
     let inherited = snapshot(conn).unwrap();
-    assert_eq!(inherited.settings.organization_name, "FeedMore WNY");
+    assert_eq!(inherited.settings.organization_name, "Rivergate Kitchen");
     assert!(
         inherited.settings.hours_require_approval,
         "the shipped approval rule survives a change made in another organization"
@@ -344,7 +347,7 @@ fn only_the_founding_owner_manages_installation_wide_records() {
     let connection = database.connection();
     let founder: String = connection
         .query_row(
-            "SELECT id FROM users WHERE email = 'praket@feedmorewny.org'",
+            "SELECT id FROM users WHERE email = 'praket@rivergate.example'",
             [],
             |row| row.get(0),
         )
@@ -375,7 +378,7 @@ fn installation_backups_are_the_stewards_alone() {
     let connection = database.connection();
     let steward: String = connection
         .query_row(
-            "SELECT id FROM users WHERE email = 'praket@feedmorewny.org'",
+            "SELECT id FROM users WHERE email = 'praket@rivergate.example'",
             [],
             |row| row.get(0),
         )

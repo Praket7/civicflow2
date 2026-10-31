@@ -22,7 +22,7 @@ describe("workspace repository", () => {
     const state = await repository.getSnapshot();
     expect(state.applications).toHaveLength(7);
     expect(state.waitlist).toHaveLength(4);
-    expect(state.settings.organizationName).toBe("FeedMore WNY");
+    expect(state.settings.organizationName).toBe("Rivergate Kitchen");
   });
 
   it("maps every desktop write to its Rust command and camelCase arguments", async () => {
@@ -50,7 +50,7 @@ describe("workspace repository", () => {
       title: "Weekend Pantry Restock",
       cause: "food",
       description: "Restock shelves and load delivery boxes for Saturday routes.",
-      address: "91 Holt St, Buffalo, NY",
+      address: "214 Rivergate Avenue, Buffalo, NY",
       capacity: 12,
       duration: "2 hours",
       requirements: ["Driver"],

@@ -181,7 +181,7 @@ describe("CivicFlow native window", () => {
     const emailField = await $('input[name="email"]');
     await emailField.waitForDisplayed({ timeout: 30_000 });
 
-    await signIn("maya.chen@gmail.com", "civicflow-demo");
+    await signIn("maya.chen@example.org", "civicflow-demo");
     await waitForShell("the volunteer demo account never signed in");
     await openRoute("/volunteer/home");
     await waitForHeading(/Maya/, "volunteer home did not render");

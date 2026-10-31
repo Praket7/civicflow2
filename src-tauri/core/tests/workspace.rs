@@ -55,7 +55,7 @@ fn mission_control_metrics_derive_from_records() {
     assert_eq!(summary.upcoming_shifts, 14);
     assert_eq!(summary.attention_count, 3);
     assert_eq!(summary.unread_notifications, 3);
-    assert_eq!(summary.organization_name, "FeedMore WNY");
+    assert_eq!(summary.organization_name, "Rivergate Kitchen");
     assert_eq!(summary.impact.meals_packed, 24_320);
 }
 
@@ -181,7 +181,7 @@ fn data_survives_close_and_reopen() {
     let reopened = Database::open(&path).unwrap();
     // A reopened connection has no organization until one is chosen; the app
     // does that from the signed-in account.
-    civicflow_core::scope::select(reopened.connection(), Some("org-feedmore-wny")).unwrap();
+    civicflow_core::scope::select(reopened.connection(), Some("org-rivergate-kitchen")).unwrap();
     let summary = get_mission_control(reopened.connection(), "coordinator").unwrap();
     assert_eq!(summary.active_volunteers, 77);
     assert_eq!(summary.hours_this_month, 418);

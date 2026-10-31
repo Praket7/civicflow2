@@ -265,14 +265,14 @@ const seededAccounts: Account[] = [
   {
     id: "user-praket",
     name: "Praket Gauri",
-    email: "praket@feedmorewny.org",
+    email: "praket@rivergate.example",
     role: "coordinator",
     volunteerId: null,
   },
   {
     id: "user-maya",
     name: current?.name ?? "Maya Chen",
-    email: current?.email ?? "maya.chen@gmail.com",
+    email: current?.email ?? "maya.chen@example.org",
     role: "volunteer",
     volunteerId: current?.id ?? workspace.currentVolunteerId,
   },
@@ -1317,7 +1317,7 @@ export const previewRepository: WorkspaceRepository = {
   },
   async openDemoWorkspace(): Promise<AuthSession> {
     const demo = previewAccounts.find(
-      (row) => row.email.toLowerCase() === "praket@feedmorewny.org",
+      (row) => row.email.toLowerCase() === "praket@rivergate.example",
     );
     if (!demo) throw new Error("The browser preview has no demo workspace to open.");
     const live = withLiveRole(demo);

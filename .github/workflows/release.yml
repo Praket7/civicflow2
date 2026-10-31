@@ -31,6 +31,9 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      - name: Tag matches every manifest version
+        run: node scripts/check-release-version.mjs "$GITHUB_REF_NAME"
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -254,7 +257,9 @@ jobs:
             create your own organization or connect a hosted workspace, then
             set a password from Settings → Accounts.
           releaseDraft: false
-          prerelease: false
+          # A tag with a hyphen is a release candidate and must never become
+          # `latest`, because the updater reads releases/latest.
+          prerelease: ${{ contains(github.ref_name, '-') }}
           args: --target ${{ matrix.target }} --config src-tauri/tauri.release.conf.json
 
   checksums:

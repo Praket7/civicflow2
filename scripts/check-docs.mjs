@@ -1,9 +1,11 @@
 /**
  * Documentation gate.
  *
- * README.md is the only project document. This checks that its local links
- * resolve, that the generated facts block is present and current, and that no
- * second project-state document has crept back into the tree.
+ * README.md is the only project-state document. LICENSE, the generated
+ * third-party notice, and the media license are legal artifacts, not a second
+ * description of the product. This checks that README links resolve, that the
+ * generated facts block is current, and that no other project document has
+ * crept back into the tree.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -28,7 +30,9 @@ const required = [
   "## Security",
   "## Accessibility",
   "## Testing",
+  "## Install",
   "## Build and run",
+  "## Validation",
   "## Credits",
   "## Known limits",
 ];
@@ -72,7 +76,10 @@ function* markdown(dir) {
   }
 }
 
-const extra = [...markdown(".")].filter((path) => path !== "README.md");
+const LEGAL_DOCUMENTS = new Set(["THIRD_PARTY_NOTICES.md", "public/media/LICENSE.md"]);
+const extra = [...markdown(".")].filter(
+  (path) => path !== "README.md" && !LEGAL_DOCUMENTS.has(path),
+);
 for (const path of extra) problems.push(`Second project document found: ${path}`);
 
 if (problems.length > 0) {

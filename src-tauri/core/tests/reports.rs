@@ -23,7 +23,7 @@ fn participation_report_uses_approved_rows_and_totals() {
     let database = seeded();
     let report = generate(database.connection(), &request("participation")).expect("report");
     assert_eq!(report.title, "Volunteer participation");
-    assert_eq!(report.organization, "FeedMore WNY");
+    assert_eq!(report.organization, "Rivergate Kitchen");
     assert!(!report.rows.is_empty());
     assert_eq!(report.headers.len(), report.rows[0].len());
     assert!(report

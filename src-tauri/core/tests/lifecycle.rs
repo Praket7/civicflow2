@@ -431,7 +431,7 @@ fn changing_the_matching_policy_invalidates_a_plan_built_on_the_old_rules() {
     policy.max_shifts_per_week = Some(3);
     let coordinator_id: String = connection
         .query_row(
-            "SELECT id FROM users WHERE email = 'praket@feedmorewny.org'",
+            "SELECT id FROM users WHERE email = 'praket@rivergate.example'",
             [],
             |row| row.get(0),
         )
@@ -439,7 +439,7 @@ fn changing_the_matching_policy_invalidates_a_plan_built_on_the_old_rules() {
     let actor = civicflow_core::auth::Account {
         id: coordinator_id,
         name: "Praket Gauri".into(),
-        email: "praket@feedmorewny.org".into(),
+        email: "praket@rivergate.example".into(),
         role: "coordinator".into(),
         volunteer_id: None,
     };

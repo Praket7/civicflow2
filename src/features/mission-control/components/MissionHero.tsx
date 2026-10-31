@@ -123,7 +123,7 @@ export function MissionHero({ data }: MissionHeroProps) {
           fetchPriority="high"
         />
         <figcaption className={styles.heroCaption}>
-          <span>{ownWorkspace ? coverCaption : "Packing day at the Holt Street pantry"}</span>
+          <span>{ownWorkspace ? coverCaption : "Packing day at the Rivergate Avenue pantry"}</span>
           {ownWorkspace ? null : <span>Photo: Pexels / 6646918</span>}
         </figcaption>
       </figure>

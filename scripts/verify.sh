@@ -7,11 +7,14 @@ pnpm format
 pnpm check:copy
 pnpm check:i18n
 pnpm check:hardcodes
+pnpm check:identity
+pnpm check:help
 pnpm check:generated
 pnpm docs:check
 pnpm test
 pnpm test:sql
 pnpm build:web
+pnpm check:third-party
 
 # These need headless Chrome. --best-effort skips only when no browser is
 # installed; a real failure still exits non-zero.

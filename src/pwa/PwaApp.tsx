@@ -15,6 +15,7 @@ import { CoordinatorApp } from "./coordinator";
 import {
   CheckInScreen,
   DiscoverScreen,
+  HelpScreen,
   HomeScreen,
   HoursScreen,
   NotificationsScreen,
@@ -103,6 +104,7 @@ export function PwaApp() {
           <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/notifications" element={<NotificationsScreen />} />
           <Route path="/settings" element={<SettingsScreen />} />
+          <Route path="/help" element={<HelpScreen />} />
           <Route path="/checkin/:id" element={<CheckInScreen />} />
           <Route path="*" element={<HomeScreen />} />
         </Routes>

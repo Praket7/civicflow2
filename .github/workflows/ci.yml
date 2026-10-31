@@ -30,6 +30,8 @@ jobs:
       - run: pnpm check:i18n
       - run: pnpm check:generated
       - run: pnpm check:hardcodes
+      - run: pnpm check:identity
+      - run: pnpm check:help
       - run: pnpm docs:check
       - run: pnpm test
       - run: pnpm test:sql
@@ -42,6 +44,18 @@ jobs:
         run: node scripts/audit-zoom.mjs
       - name: Contrast audit
         run: node scripts/audit-contrast.mjs
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install gitleaks
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz \
+            | tar -xz -C /usr/local/bin gitleaks
+      - name: Scan the working tree
+        run: gitleaks dir . --no-banner --redact --config .gitleaks.toml
 
   security:
     name: Dependency audit
@@ -143,6 +157,8 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm build:web
+      - name: Third-party inventory is current
+        run: pnpm check:third-party
       - name: Desktop shell compiles
         working-directory: src-tauri
         run: cargo check

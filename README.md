@@ -41,10 +41,13 @@ for hours waiting on review, applications, coverage gaps, and expiring credentia
 | ![Volunteer home](docs/screenshots/volunteer-home.png) | ![Volunteer schedule](docs/screenshots/volunteer-schedule.png) |
 | The installable PWA, working from its offline replica. | Registration, waitlist, and shift detail. |
 
+The two volunteer screenshots use the hosted test organization. The desktop demo is the
+separate Rivergate Kitchen workspace described below.
+
 ## Try it in five minutes
 
 1. `pnpm install && pnpm dev`, then open `http://localhost:5173`.
-2. Choose **Open demo workspace**. It signs into the seeded FeedMore WNY organization on this
+2. Choose **Open demo workspace**. It signs into the seeded Rivergate Kitchen organization on this
    device, with no account and no network.
 3. **Home** shows what needs attention. Open **AutoRoster**, build the week, read the evidence
    for an assignment, and apply the plan.
@@ -126,6 +129,17 @@ SQLite workspace                         change log + commands
 Writes go to local SQLite first and the UI refreshes from the returned snapshot. Nothing on a
 normal screen waits for a network request. Hosted sign-in is optional and only used to prove an
 identity. The workspace itself remains on the device.
+
+### Why this stack
+
+| Layer | Choice | Why | Trade-off |
+| --- | --- | --- | --- |
+| Domain core | Rust crate | Invalid states are hard to represent, authorization runs behind the UI, and the solver is deterministic and testable without a screen | Slower to change, longer compiles |
+| Desktop shell | Tauri 2 | Small binary, the operating system WebView, a capability-scoped IPC surface, and a content security policy | WebView differences across platforms |
+| Interface | React 19, TypeScript, Vite | Component model, types across the IPC boundary, and a test stack that includes `jest-axe` | Bundle size |
+| Local data | SQLite with SQLCipher | Embedded ACID transactions, no administrator, offline-first, encryption at rest, and a single-file backup | One device per local workspace |
+| Shared data | Postgres with row-level security | The server decides what a member can read, and the command log makes retries idempotent | Needs a network for shared writes |
+| Assignment | Min-cost max-flow | An exact optimum in polynomial time, deterministic order, and explanations produced by re-solving | More complex than a greedy pass |
 
 ## Cloud workspace
 
@@ -386,7 +400,6 @@ rules and the caller's role allow it.
 - The automated accessibility tree audit visits every registered route and requires names on
   every interactive control. The zoom audit renders at 200 percent and fails on horizontal
   overflow or a missing heading. The contrast audit checks both themes.
-- A human VoiceOver or NVDA pass on a packaged build is still on the release checklist.
 
 ## Testing
 
@@ -414,19 +427,60 @@ Generated checks:
 - `pnpm db:verify` opens the live desktop database read-only and reports integrity, schema
   version, foreign keys, and record counts.
 
+## Install
+
+Download the installer for your platform from the latest GitHub release. Every release attaches
+`SHA256SUMS.txt` beside the installers.
+
+1. Verify the download before opening it:
+   `shasum -a 256 -c SHA256SUMS.txt` on macOS, or `sha256sum -c SHA256SUMS.txt` on Linux.
+2. **macOS.** Open the `.dmg`, drag CivicFlow to Applications, and launch it. An unsigned build
+   is blocked the first time: open System Settings → Privacy & Security, choose **Open Anyway**,
+   or run `xattr -dr com.apple.quarantine /Applications/CivicFlow.app`.
+3. **Windows.** Run the `.msi` or `.exe`. If SmartScreen appears, choose **More info** then
+   **Run anyway**.
+4. **Linux.** Make the AppImage executable (`chmod +x CivicFlow_*.AppImage`) and run it, or
+   install the `.deb` or `.rpm`. The WebKitGTK 4.1 runtime is required.
+
+The first launch asks for a workspace. **Open demo workspace** needs no account, no network, and
+no password. A real organization starts from **Create an organization**; the welcome screen
+never writes into a demo workspace behind your back.
+
 ## Build and run
+
+From source:
 
 ```bash
 pnpm install
-pnpm dev              # desktop preview at http://localhost:5173
-pnpm dev              # volunteer PWA at http://localhost:5173/pwa.html
+pnpm dev              # browser preview at http://localhost:5173 (and /pwa.html)
 pnpm tauri dev        # native desktop window
 pnpm tauri build      # installers for the current platform
 pnpm docs:update      # refresh the generated facts block
 ```
 
-**Open demo workspace** signs in as the seeded coordinator, `praket@feedmorewny.org`, with no
-account and no network. The volunteer half of the same workspace is `maya.chen@gmail.com`,
+## Validation
+
+The product treats validation as three different jobs, and each has a home:
+
+- **Input rules.** The form checks required fields, email shape, password length, positive
+  capacity, valid IANA timezones, a start before an end, and a reason on an hours adjustment or
+  rejection. The Rust core repeats every rule that protects a write, so a browser check is a
+  convenience rather than the boundary.
+- **Semantic rules.** A credential must be valid through the shift date before it satisfies a
+  role. A waitlist promotion must still fit the role. A check-in must fall inside its shift
+  window. An AutoRoster plan carries a workspace revision and a policy version and is refused
+  as `PLAN_STALE` if either moved. A backup is checked for application id, schema version,
+  foreign keys, and table set before it can replace anything.
+- **Format rules.** CSV import checks the header and every row before writing; one bad row
+  refuses the whole file. Sealed archives authenticate their header and ciphertext, so a changed
+  byte or cost parameter fails the same way. Dates cross the IPC boundary as ISO 8601, and
+  amounts of time are integer minutes, never a formatted string.
+
+Every rule that can reject a write is also listed in the in-app help, under **Validation rules**,
+so the contract is visible to the person using the screen.
+
+**Open demo workspace** signs in as the seeded coordinator, `praket@rivergate.example`, with no
+account and no network. The volunteer half of the same workspace is `maya.chen@example.org`,
 reachable from the volunteer entry point. The demo seeded here lives only in the local database
 on this machine; it has no hosted counterpart and none of its passwords are published.
 
@@ -508,7 +562,12 @@ Pexels images use the [Pexels License](https://www.pexels.com/license/). Wikimed
 reads the same list from `src/data/credits.ts`.
 
 Bundled fonts: Geist Variable, Geist Mono Variable, and Source Serif 4 Variable, all under the
-SIL Open Font License 1.1.
+SIL Open Font License 1.1. The license text ships at `public/licenses/OFL-1.1.txt`.
+
+CivicFlow is released under the [MIT License](LICENSE). The full dependency inventory, with the
+reason each direct package is present and the license every transitive package declares, is
+generated into [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and shown in the app on the
+credits screen. SQLCipher, SQLite, and OpenSSL keep their own licenses and are listed there.
 
 Main libraries: React, React Router, TanStack Query, date-fns, Lucide, Tauri, rusqlite,
 chrono, serde, uuid, thiserror, Vitest, Testing Library, and jest-axe. The AutoRoster flow
@@ -580,5 +639,3 @@ been exercised on a physical phone.
 - Kiosk mode is a coordinator route in the main window, not a separate OS-level kiosk.
 - QR scanning needs camera permission. The six-digit code is the fallback.
 - Code signing and notarization require certificates that are not in the repository.
-- The accessibility audits are automated. A recorded screen-reader pass on the packaged build
-  is still pending.

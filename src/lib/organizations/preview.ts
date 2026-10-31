@@ -24,7 +24,7 @@ const INVITES_KEY = "civicflow.organizations.invites.v2";
 const UPDATES_KEY = "civicflow.organization-updates.v2";
 const READ_KEY = "civicflow.organization-updates-read.v2";
 
-const DEMO_ORG = "org-feedmore-wny";
+const DEMO_ORG = "org-rivergate-kitchen";
 const GARDEN_ORG = "org-riverside-garden";
 
 type StoredOrganization = OrganizationProfile;
@@ -115,7 +115,7 @@ function seededMemberships(): StoredMembership[] {
     },
     {
       organizationId: DEMO_ORG,
-      email: (demoWorkspace.volunteers[0]?.email ?? "maya.chen@gmail.com").toLowerCase(),
+      email: (demoWorkspace.volunteers[0]?.email ?? "maya.chen@example.org").toLowerCase(),
       userId: "user-maya",
       role: "volunteer",
       status: "active",

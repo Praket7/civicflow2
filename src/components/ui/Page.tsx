@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { t } from "../../lib/i18n";
+import { HelpButton } from "../help/HelpDialog";
 import styles from "./ui.module.css";
 
 type Width = "default" | "narrow" | "wide";
@@ -67,7 +68,10 @@ export function PageHeader({
           </p>
         ) : null}
       </div>
-      {actions ? <div className={styles.headerActions}>{actions}</div> : null}
+      <div className={styles.headerActions}>
+        <HelpButton />
+        {actions}
+      </div>
     </header>
   );
 }

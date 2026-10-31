@@ -29,7 +29,7 @@ fn coordinator_sign_in_creates_a_session_and_sign_out_revokes_it() {
     let database = seeded();
     let refused = sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "wrong-password",
         false,
     )
@@ -41,7 +41,7 @@ fn coordinator_sign_in_creates_a_session_and_sign_out_revokes_it() {
 
     let session = sign_in(
         database.connection(),
-        "PRAKET@feedmorewny.org",
+        "PRAKET@rivergate.example",
         "civicflow-demo",
         true,
     )
@@ -52,7 +52,7 @@ fn coordinator_sign_in_creates_a_session_and_sign_out_revokes_it() {
     let account = current_user(database.connection(), &session.token)
         .expect("current user")
         .expect("session resolves");
-    assert_eq!(account.email, "praket@feedmorewny.org");
+    assert_eq!(account.email, "praket@rivergate.example");
 
     assert!(sign_out(database.connection(), &session.token, &account).expect("sign out"));
     assert!(current_user(database.connection(), &session.token)
@@ -65,7 +65,7 @@ fn volunteer_cannot_use_coordinator_capabilities() {
     let database = seeded();
     let session = sign_in(
         database.connection(),
-        "maya.chen@gmail.com",
+        "maya.chen@example.org",
         "civicflow-demo",
         false,
     )
@@ -104,7 +104,7 @@ fn a_coordinator_reset_revokes_the_old_session_and_accepts_the_new_password() {
     let database = seeded();
     let coordinator = sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "civicflow-demo",
         false,
     )
@@ -123,7 +123,7 @@ fn a_coordinator_reset_revokes_the_old_session_and_accepts_the_new_password() {
         .is_none());
     assert!(sign_in(
         database.connection(),
-        "maya.chen@gmail.com",
+        "maya.chen@example.org",
         "civicflow-demo",
         false
     )
@@ -131,7 +131,7 @@ fn a_coordinator_reset_revokes_the_old_session_and_accepts_the_new_password() {
 
     let session = sign_in(
         database.connection(),
-        "maya.chen@gmail.com",
+        "maya.chen@example.org",
         "pantry-shift-2026",
         false,
     )

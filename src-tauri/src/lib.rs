@@ -48,7 +48,7 @@ fn lock_error() -> AppError {
 /// The shared-workspace session lives in the operating system's credential
 /// store, never in the webview's local storage. A webview store is readable by
 /// any script that manages to run in the page; the keychain is not.
-const CLOUD_SESSION_SERVICE: &str = "org.feedmore.civicflow";
+const CLOUD_SESSION_SERVICE: &str = "io.github.praket7.civicflow";
 const CLOUD_SESSION_ACCOUNT: &str = "shared-workspace-session";
 
 fn keychain_error(error: keyring::Error) -> AppError {
@@ -99,7 +99,7 @@ fn clear_cloud_session() -> Result<(), AppError> {
 /// The key that seals the workspace file. It is generated once on this machine
 /// and kept in the same credential store as the cloud session; a copy of the
 /// database without it opens as noise.
-const WORKSPACE_KEY_SERVICE: &str = "org.feedmore.civicflow";
+const WORKSPACE_KEY_SERVICE: &str = "io.github.praket7.civicflow";
 const WORKSPACE_KEY_ACCOUNT: &str = "workspace-encryption-key";
 
 fn workspace_key() -> Result<[u8; 32], AppError> {

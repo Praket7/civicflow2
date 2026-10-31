@@ -8,3 +8,7 @@ src/lib/i18n/catalogs
 pnpm-lock.yaml
 README.md
 .secrets
+
+# Generated from the lockfiles by scripts/generate-third-party.mjs.
+THIRD_PARTY_NOTICES.md
+src/data/thirdParty.json

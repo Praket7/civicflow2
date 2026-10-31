@@ -1,5 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { HelpProvider } from "../components/help/HelpDialog";
+import { FirstRunTour } from "../components/help/FirstRunTour";
 import { CommandPalette } from "../components/navigation/CommandPalette";
 import { Sidebar } from "../components/navigation/Sidebar";
 import { TopBar } from "../components/navigation/TopBar";
@@ -54,39 +56,42 @@ export function AppShell() {
   }
 
   return (
-    <div className={`shell ${styles.shell}`} data-collapsed={collapsed}>
-      <a className={styles.skipLink} href="#main-content">
-        Skip to main content
-      </a>
-      <Sidebar
-        key={`sidebar-${copyKey}`}
-        role={role}
-        collapsed={collapsed}
-        mobileOpen={mobileOpen}
-        onToggleCollapsed={toggleCollapsed}
-        onDismissMobile={() => setMobilePath(null)}
-      />
-      <div className={styles.main} data-surface={surface}>
-        {surface ? null : (
-          <TopBar
-            key={`topbar-${copyKey}`}
-            onOpenPalette={() => setPaletteOpen(true)}
-            onOpenSidebar={() => setMobilePath(location.pathname)}
-          />
-        )}
-        <main id="main-content" className={styles.content} data-surface={surface} tabIndex={-1}>
-          <div key={location.pathname} className={styles.pageTransition}>
-            <Fragment key={copyKey}>
-              <Outlet />
-            </Fragment>
-          </div>
-        </main>
+    <HelpProvider>
+      <div className={`shell ${styles.shell}`} data-collapsed={collapsed}>
+        <a className={styles.skipLink} href="#main-content">
+          Skip to main content
+        </a>
+        <Sidebar
+          key={`sidebar-${copyKey}`}
+          role={role}
+          collapsed={collapsed}
+          mobileOpen={mobileOpen}
+          onToggleCollapsed={toggleCollapsed}
+          onDismissMobile={() => setMobilePath(null)}
+        />
+        <div className={styles.main} data-surface={surface}>
+          {surface ? null : (
+            <TopBar
+              key={`topbar-${copyKey}`}
+              onOpenPalette={() => setPaletteOpen(true)}
+              onOpenSidebar={() => setMobilePath(location.pathname)}
+            />
+          )}
+          <main id="main-content" className={styles.content} data-surface={surface} tabIndex={-1}>
+            <div key={location.pathname} className={styles.pageTransition}>
+              <Fragment key={copyKey}>
+                <Outlet />
+              </Fragment>
+            </div>
+          </main>
+        </div>
+        <CommandPalette
+          key={`palette-${copyKey}`}
+          open={paletteOpen}
+          onClose={() => setPaletteOpen(false)}
+        />
+        <FirstRunTour role={role} />
       </div>
-      <CommandPalette
-        key={`palette-${copyKey}`}
-        open={paletteOpen}
-        onClose={() => setPaletteOpen(false)}
-      />
-    </div>
+    </HelpProvider>
   );
 }

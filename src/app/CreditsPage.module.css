@@ -147,3 +147,53 @@
   font-weight: 540;
   text-decoration: none;
 }
+
+.licenseColumns {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.licenseGroup {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: var(--surface-paper);
+  padding: 4px 14px;
+}
+
+.licenseGroup summary {
+  cursor: pointer;
+  padding: 10px 2px;
+  font-size: 13.5px;
+  font-weight: 620;
+  color: var(--text-primary);
+}
+
+.licenseRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) 1fr;
+  gap: 12px;
+  padding: 8px 2px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.licenseName {
+  font-size: 12px;
+  font-weight: 620;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.licensePackages {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .licenseRow {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

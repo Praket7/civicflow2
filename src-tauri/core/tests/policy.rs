@@ -7,7 +7,7 @@ use civicflow_core::policy::{current_policy, save_policy, RosterPolicy};
 use civicflow_core::roster::{plan_roster, policy_for_workspace};
 use civicflow_core::Database;
 
-const ORGANIZATION: &str = "org-feedmore-wny";
+const ORGANIZATION: &str = "org-rivergate-kitchen";
 
 /// Two seats on the same Saturday, so a daily cap has something to bite on.
 fn saturday() -> Vec<String> {
@@ -23,7 +23,7 @@ fn seeded() -> Database {
 fn coordinator(database: &Database) -> Account {
     let session = sign_in(
         database.connection(),
-        "praket@feedmorewny.org",
+        "praket@rivergate.example",
         "civicflow-demo",
         false,
     )

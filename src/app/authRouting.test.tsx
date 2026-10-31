@@ -6,7 +6,7 @@ import { AuthProvider } from "../lib/auth/session";
 import { getWorkspaceRepository } from "../lib/workspace/repository";
 
 async function seedSession(role: "coordinator" | "volunteer") {
-  const email = role === "coordinator" ? "praket@feedmorewny.org" : "maya.chen@gmail.com";
+  const email = role === "coordinator" ? "praket@rivergate.example" : "maya.chen@example.org";
   const session = await getWorkspaceRepository().signIn(email, "civicflow-demo", true);
   localStorage.setItem("civicflow.auth.token", session.token);
 }

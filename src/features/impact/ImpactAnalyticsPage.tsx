@@ -196,7 +196,7 @@ export function ImpactAnalyticsPage() {
         </div>
         {ownWorkspace ? null : (
           <p className={styles.heroCaption}>
-            Packing day at the Holt Street pantry. Photo: Pexels / 6646918.
+            Packing day at the Rivergate Avenue pantry. Photo: Pexels / 6646918.
           </p>
         )}
       </section>

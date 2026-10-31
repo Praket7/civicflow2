@@ -146,11 +146,13 @@
 }
 
 .orgName {
-  font-size: 15.5px;
+  display: -webkit-box;
+  font-size: 14px;
   font-weight: 520;
-  white-space: nowrap;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .orgMeta {

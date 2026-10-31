@@ -7,6 +7,7 @@ import {
   Gauge,
   ImagePlus,
   KeyRound,
+  LifeBuoy,
   RefreshCw,
   RotateCcw,
   Save,
@@ -14,6 +15,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { replayTour } from "../../components/help/FirstRunTour";
 import {
   Badge,
   Button,
@@ -250,9 +252,21 @@ export function SettingsPage() {
         title="Settings"
         description="Defaults for this local workspace. Changes are saved on this device and recorded in the audit log."
         actions={
-          <Badge tone="green" dot>
-            Local workspace
-          </Badge>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+            <ButtonLink to="/help" variant="secondary" icon={<LifeBuoy size={13} />}>
+              Help and guides
+            </ButtonLink>
+            <Button
+              variant="ghost"
+              icon={<RotateCcw size={13} />}
+              onClick={() => replayTour(user?.role === "coordinator" ? "coordinator" : "volunteer")}
+            >
+              Replay tour
+            </Button>
+            <Badge tone="green" dot>
+              Local workspace
+            </Badge>
+          </div>
         }
       />
 

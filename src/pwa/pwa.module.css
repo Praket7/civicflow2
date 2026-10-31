@@ -1685,3 +1685,40 @@
   align-items: flex-end;
   gap: 4px;
 }
+
+.helpFaq {
+  display: grid;
+  gap: 2px;
+  margin-top: 6px;
+}
+
+.helpFaq details {
+  padding: 10px 0;
+  border-top: 1px solid var(--border-soft);
+}
+
+.helpFaq summary {
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+
+.helpFaq details p {
+  margin: 6px 0 0;
+}
+
+.helpLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent-strong);
+  text-decoration: none;
+}
+
+.helpLink:hover {
+  text-decoration: underline;
+}

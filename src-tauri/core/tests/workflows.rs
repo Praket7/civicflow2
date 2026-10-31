@@ -34,7 +34,7 @@ fn snapshot_seeds_every_workflow_owner() {
     assert_eq!(state.applications.len(), 7);
     assert_eq!(state.waitlist.len(), 4);
     assert!(state.audit.len() >= 10);
-    assert_eq!(state.settings.organization_name, "FeedMore WNY");
+    assert_eq!(state.settings.organization_name, "Rivergate Kitchen");
     assert_eq!(state.settings.default_shift_length, 180);
     assert_eq!(state.volunteer_profile.skills[0], "Spanish");
     assert!(!state.volunteer_profile.availability.is_empty());
@@ -261,7 +261,7 @@ fn settings_are_validated_persisted_and_audited() {
     let state = update_settings(
         database.connection(),
         SettingsPatch {
-            organization_name: Some("FeedMore WNY".into()),
+            organization_name: Some("Rivergate Kitchen".into()),
             default_shift_length: Some(240),
             text_scale: Some("large".into()),
             auto_promote_waitlist: Some(false),
@@ -277,7 +277,7 @@ fn settings_are_validated_persisted_and_audited() {
     let stored: String = database
         .connection()
         .query_row(
-            "SELECT value FROM app_settings WHERE key = 'setting.default_shift_length@org-feedmore-wny'",
+            "SELECT value FROM app_settings WHERE key = 'setting.default_shift_length@org-rivergate-kitchen'",
             [],
             |row| row.get(0),
         )
@@ -316,7 +316,7 @@ fn created_programs_are_queryable_after_reopen() {
                 title: "Weekend Pantry Restock".into(),
                 cause: "food".into(),
                 description: "Restock shelves and load delivery boxes for Saturday routes.".into(),
-                address: "91 Holt St, Buffalo, NY".into(),
+                address: "214 Rivergate Avenue, Buffalo, NY".into(),
                 capacity: 12,
                 duration: "2 hours".into(),
                 requirements: vec!["Driver".into(), "Food handling".into()],
@@ -336,7 +336,7 @@ fn created_programs_are_queryable_after_reopen() {
     // A reopened connection has no organization until one is chosen; the app
     // establishes it from the signed-in account, and these tests want the
     // workspace they wrote as.
-    civicflow_core::scope::select(reopened.connection(), Some("org-feedmore-wny")).unwrap();
+    civicflow_core::scope::select(reopened.connection(), Some("org-rivergate-kitchen")).unwrap();
     let state = snapshot(reopened.connection()).unwrap();
     assert!(state.created_opportunities.iter().any(|row| row.id == id));
 }
@@ -456,7 +456,7 @@ fn every_workflow_write_survives_reopen() {
     // A reopened connection has no organization until one is chosen; the app
     // establishes it from the signed-in account, and these tests want the
     // workspace they wrote as.
-    civicflow_core::scope::select(reopened.connection(), Some("org-feedmore-wny")).unwrap();
+    civicflow_core::scope::select(reopened.connection(), Some("org-rivergate-kitchen")).unwrap();
     let state = snapshot(reopened.connection()).unwrap();
     assert!(!state.saved_opportunity_ids.contains(&"opp-garden".into()));
     assert_eq!(

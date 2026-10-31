@@ -3,6 +3,7 @@ name = "civicflow"
 version = "0.1.1"
 description = "CivicFlow — volunteer coordination with explainable staffing"
 authors = ["CivicFlow"]
+license = "MIT"
 edition = "2021"
 rust-version = "1.77"
 

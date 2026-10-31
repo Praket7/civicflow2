@@ -1,6 +1,7 @@
 {
   "name": "civicflow",
   "private": true,
+  "license": "MIT",
   "version": "0.1.1",
   "type": "module",
   "scripts": {
@@ -28,6 +29,10 @@
     "check:i18n": "node scripts/i18n-extract.mjs && git diff --exit-code -- src/lib/i18n/strings.json",
     "check:generated": "node scripts/generate-demo-data.mjs && node scripts/i18n-extract.mjs && git diff --exit-code -- shared/demo-workspace.json src/lib/i18n/strings.json",
     "check:hardcodes": "node scripts/check-runtime-hardcodes.mjs",
+    "check:identity": "node scripts/check-identity.mjs",
+    "check:help": "node scripts/check-help-coverage.mjs",
+    "third-party:update": "node scripts/generate-third-party.mjs",
+    "check:third-party": "node scripts/generate-third-party.mjs --check",
     "docs:update": "node scripts/update-readme-facts.mjs",
     "docs:check": "node scripts/check-docs.mjs"
   },

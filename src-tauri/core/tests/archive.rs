@@ -59,7 +59,10 @@ fn a_sealed_archive_restores_into_an_empty_workspace() {
     )
     .expect("import");
     // The restored workspace is the demo organization, with its people intact.
-    assert_eq!(result.snapshot.settings.organization_name, "FeedMore WNY");
+    assert_eq!(
+        result.snapshot.settings.organization_name,
+        "Rivergate Kitchen"
+    );
     let restored_counts = result
         .backups
         .iter()
@@ -165,6 +168,6 @@ fn the_sealed_archive_does_not_contain_the_volunteer_names() {
 
     let bytes = fs::read(&target).expect("read");
     let haystack = String::from_utf8_lossy(&bytes).to_lowercase();
-    assert!(!haystack.contains("feedmore"));
+    assert!(!haystack.contains("rivergate"));
     assert!(!haystack.contains("buffalo"));
 }

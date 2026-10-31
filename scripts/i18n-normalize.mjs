@@ -45,7 +45,7 @@ export function shouldSkipElement(elementName) {
 /** Values in copy position that are records, not interface text. */
 const NOT_COPY = new Set([
   // Venue fallback for an event with no recorded address.
-  "91 Holt St, Buffalo",
+  "214 Rivergate Avenue, Buffalo",
 ]);
 
 export function isRenderedCopy(value) {

@@ -36,7 +36,7 @@ const ALLOWED = [
 const RULES = [
   { pattern: /\bvol-maya\b/, label: "demo volunteer id" },
   { pattern: /\bsh-sat-food\b/, label: "demo shift id" },
-  { pattern: /\borg-feedmore-wny\b/, label: "demo organization id" },
+  { pattern: /\borg-rivergate-kitchen\b/, label: "demo organization id" },
   // An ISO date literal in production code means a period was hardcoded. The
   // demo clock lives in the authored fixture, not in a screen.
   { pattern: /\b20\d{2}-\d{2}-\d{2}T\d{2}:/, label: "hardcoded timestamp" },

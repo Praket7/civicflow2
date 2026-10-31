@@ -23,7 +23,7 @@ const concurrency = Math.max(1, Number(args.get("concurrency") ?? 1));
 const TOKENS = [
   ["CivicFlow", "__CF0__"],
   ["AutoRoster", "__CF1__"],
-  ["FeedMore WNY", "__CF2__"],
+  ["Rivergate Kitchen", "__CF2__"],
   ["Praket", "__CF3__"],
   ["Maya Chen", "__CF4__"],
   ["Buffalo", "__CF5__"],

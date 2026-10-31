@@ -91,7 +91,7 @@ fn restore_returns_every_workflow_to_the_snapshot_point_and_is_audited() {
             title: "Weekend Pantry Restock".into(),
             cause: "food".into(),
             description: "Restock shelves for Saturday routes.".into(),
-            address: "91 Holt St, Buffalo, NY".into(),
+            address: "214 Rivergate Avenue, Buffalo, NY".into(),
             capacity: 12,
             duration: "2 hours".into(),
             requirements: vec!["Driver".into()],

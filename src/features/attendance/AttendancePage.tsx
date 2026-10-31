@@ -201,7 +201,7 @@ export function AttendancePage() {
             </span>
             <span>
               <MapPin size={12} aria-hidden="true" />{" "}
-              {event.opportunity?.address ?? "91 Holt St, Buffalo"}
+              {event.opportunity?.address ?? "214 Rivergate Avenue, Buffalo"}
             </span>
           </div>
           <div className={styles.eventActions}>

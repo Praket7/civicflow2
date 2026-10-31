@@ -183,7 +183,7 @@ export async function seed(db) {
       db,
       `insert into public.organizations (id, name, initials, mission, city, state, timezone)
        values
-         ($1, 'Feedmore WNY', 'FW', 'Food for every neighbor', 'Buffalo', 'NY', 'America/New_York'),
+         ($1, 'Rivergate Kitchen', 'RK', 'Food for every neighbor', 'Buffalo', 'NY', 'America/New_York'),
          ($2, 'Harbor Lights', 'HL', 'Light for the harbor', 'Erie', 'PA', 'America/New_York')`,
       [ids.orgA, ids.orgB],
     );
@@ -233,7 +233,7 @@ export async function seed(db) {
       `insert into public.opportunities
          (id, organization_id, slug, title, cause, organization_name, description, address)
        values
-         ($1, $2, 'saturday-pantry', 'Saturday Pantry', 'Hunger', 'Feedmore WNY', 'Sort and pack', '1 Main St'),
+         ($1, $2, 'saturday-pantry', 'Saturday Pantry', 'Hunger', 'Rivergate Kitchen', 'Sort and pack', '1 Main St'),
          ($3, $4, 'harbor-cleanup', 'Harbor Cleanup', 'Environment', 'Harbor Lights', 'Pick up', '2 Dock St')`,
       [ids.opportunityA, ids.orgA, ids.opportunityB, ids.orgB],
     );

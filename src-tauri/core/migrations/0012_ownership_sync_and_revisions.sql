@@ -12,7 +12,7 @@ ALTER TABLE organizations ADD COLUMN synced_at TEXT;
 
 UPDATE organizations
 SET is_demo = 1
-WHERE id = 'org-feedmore-wny';
+WHERE id = 'org-rivergate-kitchen';
 
 -- SQLite cannot widen a CHECK constraint in place, so the membership table is
 -- rebuilt. The rebuild also gives every row an epoch.

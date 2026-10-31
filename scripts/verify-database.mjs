@@ -23,10 +23,16 @@ const explicit =
 
 const candidates = [
   explicit,
-  path.join(homedir(), "Library", "Application Support", "org.feedmore.civicflow", "civicflow.db"),
-  path.join(homedir(), ".local", "share", "org.feedmore.civicflow", "civicflow.db"),
+  path.join(
+    homedir(),
+    "Library",
+    "Application Support",
+    "io.github.praket7.civicflow",
+    "civicflow.db",
+  ),
+  path.join(homedir(), ".local", "share", "io.github.praket7.civicflow", "civicflow.db"),
   process.env.APPDATA
-    ? path.join(process.env.APPDATA, "org.feedmore.civicflow", "civicflow.db")
+    ? path.join(process.env.APPDATA, "io.github.praket7.civicflow", "civicflow.db")
     : undefined,
 ].filter(Boolean);
 

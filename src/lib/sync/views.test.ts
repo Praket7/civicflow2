@@ -26,7 +26,7 @@ function baseRows(): Parameters<typeof buildVolunteerView>[0]["rows"] {
         id: "opp-1",
         title: "Saturday food bank",
         cause: "food",
-        organization_name: "FeedMore WNY",
+        organization_name: "Rivergate Kitchen",
         address: "100 Main St",
         description: "Pack boxes.",
         impact_metric: "120 meals packed",

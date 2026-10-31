@@ -1,7 +1,26 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { OPEN_SOURCE_CREDITS } from "../data/credits";
+import thirdParty from "../data/thirdParty.json";
 import styles from "./CreditsPage.module.css";
+
+/** Group packages by the license they declare, newest metadata first. */
+function byLicense(packages: { name: string; version: string; license: string }[]) {
+  const groups = new Map<string, string[]>();
+  for (const item of packages) {
+    const key = item.license.split(" OR ")[0].split(" AND ")[0];
+    const list = groups.get(key) ?? [];
+    list.push(`${item.name} ${item.version}`);
+    groups.set(key, list);
+  }
+  return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+}
+
+const javascriptLicenses = byLicense(thirdParty.npm);
+const rustLicenses = byLicense(thirdParty.cargo);
+const directCount =
+  thirdParty.npm.filter((item) => item.direct).length +
+  thirdParty.cargo.filter((item) => item.direct).length;
 
 export function CreditsPage() {
   // Crops of one photograph are credited once, with all their files.
@@ -85,14 +104,50 @@ export function CreditsPage() {
 
       <section className={styles.panel} aria-labelledby="font-credits">
         <h2 id="font-credits" className={styles.sectionTitle}>
-          Fonts &amp; software
+          Fonts
         </h2>
         <p className={styles.note}>
-          Geist, Geist Mono, and Source Serif 4 are bundled under the SIL Open Font License 1.1.
-          React, React Router, TanStack Query, date-fns, Lucide, Tauri, rusqlite, chrono, serde,
-          uuid, and thiserror are used under their respective MIT, Apache-2.0, ISC, or public-domain
-          terms. The full list lives in <code>README.md</code>.
+          Geist, Geist Mono, and Source Serif 4 are bundled under the SIL Open Font License 1.1. The
+          full license text ships at <code>public/licenses/OFL-1.1.txt</code>.
         </p>
+      </section>
+
+      <section className={styles.panel} aria-labelledby="software-credits">
+        <div className={styles.sectionHead}>
+          <h2 id="software-credits" className={styles.sectionTitle}>
+            Software
+          </h2>
+          <p className={styles.sectionMeta}>
+            {thirdParty.npm.length} npm packages · {thirdParty.cargo.length} crates · {directCount}{" "}
+            direct
+          </p>
+        </div>
+        <p className={styles.note}>
+          CivicFlow is released under the MIT License. Every package below is listed with the
+          license it declares; the generated notice in <code>THIRD_PARTY_NOTICES.md</code> adds the
+          reason each direct dependency is in the build. SQLCipher, SQLite, and OpenSSL are linked
+          through <code>rusqlite</code> and keep their own licenses.
+        </p>
+        <div className={styles.licenseColumns}>
+          <details className={styles.licenseGroup}>
+            <summary>JavaScript packages ({thirdParty.npm.length})</summary>
+            {javascriptLicenses.map(([license, names]) => (
+              <div key={license} className={styles.licenseRow}>
+                <h3 className={styles.licenseName}>{license}</h3>
+                <p className={styles.licensePackages}>{names.join(" · ")}</p>
+              </div>
+            ))}
+          </details>
+          <details className={styles.licenseGroup}>
+            <summary>Rust crates ({thirdParty.cargo.length})</summary>
+            {rustLicenses.map(([license, names]) => (
+              <div key={license} className={styles.licenseRow}>
+                <h3 className={styles.licenseName}>{license}</h3>
+                <p className={styles.licensePackages}>{names.join(" · ")}</p>
+              </div>
+            ))}
+          </details>
+        </div>
       </section>
 
       <Link className={styles.back} to="/coordinator/mission-control">

@@ -320,27 +320,6 @@ fn with_active_profile(conn: &Connection, mut account: Account) -> Result<Accoun
     Ok(account)
 }
 
-fn load_account(conn: &Connection, user_id: &str) -> Result<Option<Account>> {
-    Ok(conn
-        .query_row(
-            &format!(
-                "SELECT u.id, u.name, u.email, {ROLE_SQL}, u.volunteer_id
-                 FROM users u WHERE u.id = ?1"
-            ),
-            params![user_id],
-            |row| {
-                Ok(Account {
-                    id: row.get(0)?,
-                    name: row.get(1)?,
-                    email: row.get(2)?,
-                    role: row.get(3)?,
-                    volunteer_id: row.get(4)?,
-                })
-            },
-        )
-        .optional()?)
-}
-
 type SignInRow = (
     String,
     String,
@@ -836,11 +815,21 @@ pub fn sign_out(conn: &Connection, token: &str, actor: &Account) -> Result<bool>
 
 pub fn list_accounts(conn: &Connection, token: &str) -> Result<Vec<Account>> {
     require_coordinator(conn, token)?;
-    let mut statement = conn.prepare(&format!(
-        "SELECT u.id, u.name, u.email, {ROLE_SQL}, u.volunteer_id
-         FROM users u ORDER BY {ROLE_SQL}, u.name"
-    ))?;
-    let mut rows = statement.query([])?;
+    // Only the people who belong to the organization that is open. Holding a
+    // coordinator role somewhere else must not turn this screen into a list of
+    // every identity on the installation.
+    let organization = crate::scope::require(conn)?;
+    let mut statement = conn.prepare(
+        "SELECT u.id, u.name, u.email,
+                CASE WHEN m.role IN ('owner', 'coordinator') THEN 'coordinator' ELSE 'volunteer' END,
+                m.volunteer_id
+         FROM users u
+         JOIN organization_memberships m ON m.user_id = u.id
+         WHERE m.organization_id = ?1 AND m.status = 'active'
+         ORDER BY CASE m.role WHEN 'owner' THEN 0 WHEN 'coordinator' THEN 1 ELSE 2 END,
+                  u.name, u.id",
+    )?;
+    let mut rows = statement.query(params![organization])?;
     let mut accounts = Vec::new();
     while let Some(row) = rows.next()? {
         accounts.push(Account {
@@ -854,6 +843,36 @@ pub fn list_accounts(conn: &Connection, token: &str) -> Result<Vec<Account>> {
     Ok(accounts)
 }
 
+/// An account is only manageable from an organization it belongs to. A target
+/// outside the open organization is reported exactly like an unknown one, so a
+/// coordinator cannot probe for identities elsewhere.
+fn load_member_account(
+    conn: &Connection,
+    user_id: &str,
+    organization_id: &str,
+) -> Result<Option<Account>> {
+    Ok(conn
+        .query_row(
+            "SELECT u.id, u.name, u.email,
+                    CASE WHEN m.role IN ('owner', 'coordinator') THEN 'coordinator' ELSE 'volunteer' END,
+                    m.volunteer_id
+             FROM users u
+             JOIN organization_memberships m ON m.user_id = u.id
+             WHERE u.id = ?1 AND m.organization_id = ?2 AND m.status = 'active'",
+            params![user_id, organization_id],
+            |row| {
+                Ok(Account {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                    email: row.get(2)?,
+                    role: row.get(3)?,
+                    volunteer_id: row.get(4)?,
+                })
+            },
+        )
+        .optional()?)
+}
+
 pub fn reset_password(
     conn: &Connection,
     token: &str,
@@ -862,7 +881,8 @@ pub fn reset_password(
 ) -> Result<()> {
     let actor = require_coordinator(conn, token)?;
     validate_password(new_password)?;
-    let account = load_account(conn, user_id)?
+    let organization = crate::scope::require(conn)?;
+    let account = load_member_account(conn, user_id, &organization)?
         .ok_or_else(|| CoreError::NotFound(format!("Account {user_id}")))?;
     let hash = hash_password(new_password)?;
     let now = Utc::now().to_rfc3339();

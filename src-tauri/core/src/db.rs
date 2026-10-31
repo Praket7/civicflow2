@@ -384,6 +384,18 @@ impl Database {
         // an upgraded database does after the membership migration.
         crate::organizations::backfill_memberships(&self.conn)?;
         self.seed_workflow_defaults()?;
+        // Startup establishes the installation's own workspace for this
+        // connection. The first authenticated command replaces it with the
+        // organization the account selected, and a sign-out clears it.
+        let organization: Option<String> = self
+            .conn
+            .query_row(
+                "SELECT id FROM organizations ORDER BY created_at, id LIMIT 1",
+                [],
+                |row| row.get(0),
+            )
+            .optional()?;
+        crate::scope::select(&self.conn, organization.as_deref())?;
         Ok(seeded)
     }
 

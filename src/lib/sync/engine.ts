@@ -11,12 +11,12 @@ import {
 
 export interface SyncStore {
   recoverStaleSending(cutoff: number, now: number): Promise<number>;
-  nextReady(organizationId: string, now: number): Promise<OutboxRow | null>;
+  nextReady(userId: string, organizationId: string, now: number): Promise<OutboxRow | null>;
   markSending(id: number): Promise<void>;
   markSent(id: number, result: CommandResult): Promise<void>;
   markRetry(id: number, error: string, nextAttemptAt: number): Promise<void>;
   markRefused(id: number, result: CommandResult, conflict: ConflictRow): Promise<void>;
-  pendingCount(organizationId: string): Promise<number>;
+  pendingCount(userId: string, organizationId: string): Promise<number>;
   openConflictCount(organizationId: string): Promise<number>;
   readCursor(organizationId: string): Promise<number>;
   applyPull(organizationId: string, changes: Change[], cursor: number): Promise<void>;
@@ -103,6 +103,7 @@ export class SyncEngine {
   private readonly pollMs: number;
   private readonly listeners = new Set<Listener>();
   private organizationId: string | null = null;
+  private userId: string | null = null;
   private revision = 0;
   private timer: number | null = null;
   private unsubscribeRealtime: (() => void) | null = null;
@@ -145,17 +146,26 @@ export class SyncEngine {
       this.emit({ type: "status", status: this.snapshot() });
       return;
     }
+    const userId = this.userId;
+    if (!userId) {
+      this.status = { ...this.status, ...patch, pending: 0, conflicts: 0 };
+      this.emit({ type: "status", status: this.snapshot() });
+      return;
+    }
     const [pending, conflicts] = await Promise.all([
-      this.store.pendingCount(this.organizationId),
+      this.store.pendingCount(userId, this.organizationId),
       this.store.openConflictCount(this.organizationId),
     ]);
     this.status = { ...this.status, ...patch, pending, conflicts };
     this.emit({ type: "status", status: this.snapshot() });
   }
 
-  async start(organizationId: string): Promise<void> {
-    if (this.organizationId === organizationId && this.timer !== null) return;
+  async start(userId: string, organizationId: string): Promise<void> {
+    if (this.userId === userId && this.organizationId === organizationId && this.timer !== null) {
+      return;
+    }
     this.stop();
+    this.userId = userId;
     this.organizationId = organizationId;
     this.revision = await this.store.readRevision(organizationId);
     await this.publish({ organizationId, revision: this.revision });
@@ -175,6 +185,7 @@ export class SyncEngine {
     this.unsubscribeRealtime?.();
     this.unsubscribeRealtime = null;
     this.organizationId = null;
+    this.userId = null;
   }
 
   /** Called after a local write queues a command. */
@@ -196,11 +207,12 @@ export class SyncEngine {
 
   private async pass(): Promise<void> {
     const organizationId = this.organizationId;
-    if (!organizationId) return;
+    const userId = this.userId;
+    if (!organizationId || !userId) return;
     await this.publish({ running: true });
     try {
       await this.store.recoverStaleSending(this.now() - SENDING_STALE_MS, this.now());
-      await this.drain(organizationId);
+      await this.drain(userId, organizationId);
       await this.pullAll(organizationId);
       await this.publish({
         online: true,
@@ -218,13 +230,15 @@ export class SyncEngine {
     }
   }
 
-  private async drain(organizationId: string): Promise<void> {
+  private async drain(userId: string, organizationId: string): Promise<void> {
     for (let index = 0; index < MAX_COMMANDS_PER_PASS; index += 1) {
-      const row = await this.store.nextReady(organizationId, this.now());
+      const row = await this.store.nextReady(userId, organizationId, this.now());
       if (!row) return;
-      // A row from another organization is not this pass's work. It stays
-      // bound to its own organization and is never rewritten.
-      if (row.organizationId !== organizationId || row.id === undefined) return;
+      // A row from another account or organization is not this pass's work. It
+      // stays bound to its owner and is never rewritten.
+      if (row.userId !== userId || row.organizationId !== organizationId || row.id === undefined) {
+        return;
+      }
       await this.store.markSending(row.id);
       let result: CommandResult;
       try {

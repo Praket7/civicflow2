@@ -103,6 +103,58 @@ fn vacate(database: &Database, seat: &Seat) {
 }
 
 #[test]
+fn credential_risk_stays_inside_the_open_organization() {
+    let database = seeded();
+    let conn = database.connection();
+    let clock = now(conn);
+
+    let (shift_id, volunteer_id, credential_type): (String, String, String) = conn
+        .query_row(
+            "SELECT r.shift_id, r.volunteer_id, rr.credential_type_id
+             FROM registrations r
+             JOIN shifts s ON s.id = r.shift_id
+             JOIN role_requirements rr ON rr.shift_id = r.shift_id AND rr.role_name = r.role
+             WHERE r.status = 'registered' AND s.status = 'scheduled' AND s.starts_at > ?1
+               AND rr.credential_type_id IS NOT NULL
+             ORDER BY s.starts_at LIMIT 1",
+            [clock.to_rfc3339()],
+            |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+        )
+        .expect("a future assignment that needs a credential");
+
+    conn.execute(
+        "INSERT INTO volunteer_credentials
+         (id, volunteer_id, credential_type_id, identifier, issued_at, valid_from, valid_through)
+         VALUES ('cred-risk-test', ?1, ?2, 'RISK-TEST', '2000-01-01', '2000-01-01', '2000-01-01')",
+        params![volunteer_id, credential_type],
+    )
+    .expect("an expired credential");
+
+    let home = recovery::detect(conn).expect("detect in the home organization");
+    assert!(home
+        .at_risk
+        .iter()
+        .any(|row| row.shift_id == shift_id && row.volunteer_id == volunteer_id));
+
+    conn.execute(
+        "INSERT INTO organizations
+         (id, name, initials, mission, city, state, address, website, email, timezone, created_at)
+         VALUES ('org-foreign', 'Harbor Lights', 'HL', '', 'Erie', 'PA', '', '', '',
+                 'America/New_York', '2030-01-01T00:00:00+00:00')",
+        [],
+    )
+    .expect("a second organization");
+
+    civicflow_core::scope::select(conn, Some("org-foreign")).expect("scope the other organization");
+    let foreign = recovery::detect(conn).expect("detect in the other organization");
+    assert!(foreign.shifts.is_empty());
+    assert!(
+        foreign.at_risk.is_empty(),
+        "another organization's credential risk is not this one's to read"
+    );
+}
+
+#[test]
 fn detection_names_the_open_required_seat_and_why() {
     let database = seeded();
     let seat = a_filled_required_seat(&database);

@@ -333,6 +333,10 @@ fn created_programs_are_queryable_after_reopen() {
     }
 
     let reopened = Database::open(&path).unwrap();
+    // A reopened connection has no organization until one is chosen; the app
+    // establishes it from the signed-in account, and these tests want the
+    // workspace they wrote as.
+    civicflow_core::scope::select(reopened.connection(), Some("org-feedmore-wny")).unwrap();
     let state = snapshot(reopened.connection()).unwrap();
     assert!(state.created_opportunities.iter().any(|row| row.id == id));
 }
@@ -449,6 +453,10 @@ fn every_workflow_write_survives_reopen() {
     }
 
     let reopened = Database::open(&path).unwrap();
+    // A reopened connection has no organization until one is chosen; the app
+    // establishes it from the signed-in account, and these tests want the
+    // workspace they wrote as.
+    civicflow_core::scope::select(reopened.connection(), Some("org-feedmore-wny")).unwrap();
     let state = snapshot(reopened.connection()).unwrap();
     assert!(!state.saved_opportunity_ids.contains(&"opp-garden".into()));
     assert_eq!(

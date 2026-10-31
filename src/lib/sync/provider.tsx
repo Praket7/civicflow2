@@ -124,6 +124,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
   const starting = useRef(false);
   const organizationRef = useRef<string | null>(null);
   const lastReport = useRef<string>("");
+  const userId = session?.user.id ?? null;
 
   const engine = useMemo(
     () =>
@@ -144,14 +145,15 @@ export function CloudProvider({ children }: { children: ReactNode }) {
     setConflicts(rows.sort((left, right) => right.createdAt.localeCompare(left.createdAt)));
   }, []);
 
-  const loadPending = useCallback(async (organizationId: string) => {
+  const loadPending = useCallback(async (organizationId: string, owner: string) => {
+    // Only this account's queued work is shown or uploaded.
     const rows = await volunteerDb()
-      .outbox.where("[organizationId+state]")
-      .equals([organizationId, "pending"])
+      .outbox.where("[userId+organizationId+state]")
+      .equals([owner, organizationId, "pending"])
       .toArray();
     const sending = await volunteerDb()
-      .outbox.where("[organizationId+state]")
-      .equals([organizationId, "sending"])
+      .outbox.where("[userId+organizationId+state]")
+      .equals([owner, organizationId, "sending"])
       .toArray();
     const ids = [...rows, ...sending]
       .map((row) => row.envelope.payload.shiftId)
@@ -232,9 +234,10 @@ export function CloudProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!workspace) return;
+    if (!userId) return;
     let active = true;
     void (async () => {
-      await loadPending(workspace.organizationId);
+      await loadPending(workspace.organizationId, userId);
       await loadConflicts(workspace.organizationId);
       if (!active) return;
       await loadView(workspace);
@@ -242,10 +245,10 @@ export function CloudProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, [workspace, dataVersion, loadConflicts, loadPending, loadView]);
+  }, [workspace, userId, dataVersion, loadConflicts, loadPending, loadView]);
 
   const openWorkspace = useCallback(
-    async (chosen: Workspace) => {
+    async (chosen: Workspace, owner: string) => {
       setWorkspace(chosen);
       organizationRef.current = chosen.organizationId;
       await writeWorkspace(chosen.organizationId);
@@ -261,7 +264,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      await engine.start(chosen.organizationId);
+      await engine.start(owner, chosen.organizationId);
       setPhase("ready");
       setError(null);
       // The coordinator's health view is only useful if a device says who it
@@ -328,7 +331,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
           );
           return;
         }
-        await openWorkspace(chosen);
+        await openWorkspace(chosen, next.user.id);
       } catch (caught) {
         setPhase("error");
         setError(caught instanceof Error ? caught.message : String(caught));
@@ -407,10 +410,11 @@ export function CloudProvider({ children }: { children: ReactNode }) {
     async (organizationId: string) => {
       const chosen = workspaces.find((entry) => entry.organizationId === organizationId);
       if (!chosen) throw new Error("That workspace is not available to this account.");
-      await openWorkspace(chosen);
+      if (!userId) throw new Error("Sign in again to open a workspace.");
+      await openWorkspace(chosen, userId);
       setDataVersion((value) => value + 1);
     },
-    [openWorkspace, workspaces],
+    [openWorkspace, userId, workspaces],
   );
 
   const queue = useCallback(
@@ -420,7 +424,9 @@ export function CloudProvider({ children }: { children: ReactNode }) {
       entityVersions: Record<string, number> = {},
     ) => {
       if (!workspace) throw new Error("Open a workspace first.");
+      if (!userId) throw new Error("Sign in again to record this change.");
       await queueCommand({
+        userId,
         organizationId: workspace.organizationId,
         membershipEpoch: workspace.membershipEpoch,
         command,
@@ -428,10 +434,10 @@ export function CloudProvider({ children }: { children: ReactNode }) {
         entityVersions,
         baseRevision: status.revision,
       });
-      await loadPending(workspace.organizationId);
+      await loadPending(workspace.organizationId, userId);
       void engine.wake();
     },
-    [engine, loadPending, status.revision, workspace],
+    [engine, loadPending, status.revision, userId, workspace],
   );
 
   const dismissConflict = useCallback(
@@ -447,12 +453,13 @@ export function CloudProvider({ children }: { children: ReactNode }) {
 
   const retryConflict = useCallback(
     async (conflict: ConflictRow) => {
-      if (!workspace) return;
+      if (!workspace || !userId) return;
       await volunteerDb().conflicts.update(conflict.id, {
         status: "resolved",
         resolvedAt: new Date().toISOString(),
       });
       await queueCommand({
+        userId,
         organizationId: workspace.organizationId,
         membershipEpoch: workspace.membershipEpoch,
         command: conflict.command as CommandType,
@@ -461,9 +468,9 @@ export function CloudProvider({ children }: { children: ReactNode }) {
       });
       void engine.wake();
       await loadConflicts(workspace.organizationId);
-      await loadPending(workspace.organizationId);
+      await loadPending(workspace.organizationId, userId);
     },
-    [engine, loadConflicts, loadPending, status.revision, workspace],
+    [engine, loadConflicts, loadPending, status.revision, userId, workspace],
   );
 
   // A refused command can mean the membership moved. Refresh the epoch so the

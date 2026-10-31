@@ -200,24 +200,20 @@ describe("volunteer view", () => {
   });
 
   it("opens check-in only inside the server's window", () => {
-    const before = shiftWindow(
-      "2026-10-31T11:00:00.000Z",
-      "2026-10-31T13:00:00.000Z",
-      "2026-10-31T17:00:00.000Z",
-    );
-    const open = shiftWindow(
-      "2026-10-31T12:30:00.000Z",
-      "2026-10-31T13:00:00.000Z",
-      "2026-10-31T17:00:00.000Z",
-    );
-    const after = shiftWindow(
-      "2026-10-31T18:00:00.000Z",
-      "2026-10-31T13:00:00.000Z",
-      "2026-10-31T17:00:00.000Z",
-    );
+    const startsAt = "2026-10-31T13:00:00.000Z";
+    const endsAt = "2026-10-31T17:00:00.000Z";
+    const before = shiftWindow("2026-10-31T11:00:00.000Z", startsAt, endsAt);
+    const opening = shiftWindow("2026-10-31T12:30:00.000Z", startsAt, endsAt);
+    const open = shiftWindow("2026-10-31T13:00:00.000Z", startsAt, endsAt);
+    const closing = shiftWindow("2026-10-31T13:15:00.000Z", startsAt, endsAt);
+    const after = shiftWindow("2026-10-31T13:16:00.000Z", startsAt, endsAt);
     expect(before.canCheckIn).toBe(false);
+    expect(opening.canCheckIn).toBe(true);
     expect(open.canCheckIn).toBe(true);
+    expect(closing.canCheckIn).toBe(true);
     expect(after.canCheckIn).toBe(false);
+    // Checking out is still possible until the shift ends.
+    expect(after.canCheckOut).toBe(true);
   });
 
   it("formats a shift in the organization's timezone", () => {

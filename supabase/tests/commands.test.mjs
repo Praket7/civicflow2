@@ -7,6 +7,7 @@ import {
   ids,
   issueCheckinCode,
   query,
+  randomUUID,
   seed,
   sendCommand,
 } from "./harness.mjs";
@@ -155,7 +156,7 @@ test("the last seat goes to one volunteer and the other is waitlisted", async ()
   await db.close();
 });
 
-test("check-in opens an hour before and requires the current code", async () => {
+test("check-in opens thirty minutes before and requires the current code", async () => {
   const db = await fresh();
 
   await sendCommand(db, ids.volunteerUserA, {
@@ -253,6 +254,129 @@ test("check-in is refused before the window opens and after the shift ends", asy
     payload: { shiftId: ids.shiftPast },
   });
   assert.equal(late.code, "check_in_closed");
+
+  await db.close();
+});
+
+test("the waitlist is a line: the first waiting volunteer is promoted first", async () => {
+  const db = await fresh();
+  const thirdUser = randomUUID();
+  const thirdVolunteer = randomUUID();
+
+  await asOwner(db, async () => {
+    await query(
+      db,
+      "insert into auth.users (id, email, raw_user_meta_data) values ($1, $2, $3::jsonb)",
+      [thirdUser, "vol-a3@example.org", JSON.stringify({ name: "Tess Third" })],
+    );
+    await query(
+      db,
+      `insert into public.volunteers
+         (id, organization_id, name, first_name, initials, email, phone, joined_at, status, tone, availability)
+       values ($1, $2, 'Tess Third', 'Tess', 'TT', 'vol-a3@example.org', '555-0103', now(), 'active', 'sky', '[]'::jsonb)`,
+      [thirdVolunteer, ids.orgA],
+    );
+    await query(
+      db,
+      `insert into public.organization_memberships
+         (organization_id, user_id, role, status, joined_at, volunteer_id)
+       values ($1, $2, 'volunteer', 'active', now(), $3)`,
+      [ids.orgA, thirdUser, thirdVolunteer],
+    );
+  });
+
+  const alice = await sendCommand(db, ids.volunteerUserA, {
+    organizationId: ids.orgA,
+    command: "REGISTER_FOR_SHIFT",
+    payload: { shiftId: ids.shiftSingle },
+  });
+  assert.equal(alice.status, "applied");
+
+  const bob = await sendCommand(db, ids.volunteerUserA2, {
+    organizationId: ids.orgA,
+    command: "REGISTER_FOR_SHIFT",
+    payload: { shiftId: ids.shiftSingle, allowWaitlist: true },
+  });
+  assert.equal(bob.data.position, 1, "the first volunteer in line is first");
+
+  const tess = await sendCommand(db, thirdUser, {
+    organizationId: ids.orgA,
+    command: "REGISTER_FOR_SHIFT",
+    payload: { shiftId: ids.shiftSingle, allowWaitlist: true },
+  });
+  assert.equal(tess.data.position, 2, "a second join takes the back");
+
+  const first = await sendCommand(db, ids.volunteerUserA, {
+    organizationId: ids.orgA,
+    command: "CANCEL_REGISTRATION",
+    payload: { shiftId: ids.shiftSingle },
+  });
+  assert.equal(first.data.promoted, ids.volunteerA2, "the first in line takes the seat");
+
+  const [waiting] = await query(
+    db,
+    "select volunteer_id from public.waitlist_entries where shift_id = $1 and status = 'waiting'",
+    [ids.shiftSingle],
+  );
+  assert.equal(waiting.volunteer_id, thirdVolunteer, "the second person is still waiting");
+
+  const second = await sendCommand(db, ids.volunteerUserA2, {
+    organizationId: ids.orgA,
+    command: "CANCEL_REGISTRATION",
+    payload: { shiftId: ids.shiftSingle },
+  });
+  assert.equal(second.data.promoted, thirdVolunteer, "then the second in line");
+
+  // Coming back after being promoted is a new wait, so it goes to the back
+  // instead of jumping ahead on the old position.
+  const rejoined = await sendCommand(db, ids.volunteerUserA2, {
+    organizationId: ids.orgA,
+    command: "REGISTER_FOR_SHIFT",
+    payload: { shiftId: ids.shiftSingle, allowWaitlist: true },
+  });
+  assert.equal(rejoined.data.position, 3);
+
+  await db.close();
+});
+
+test("self check-in closes fifteen minutes in while a coordinator can still record it", async () => {
+  const db = await fresh();
+  const shift = randomUUID();
+  const started = new Date(Date.now() - 30 * 60_000).toISOString();
+  const ends = new Date(Date.now() + 2 * 3600_000).toISOString();
+
+  await asOwner(db, async () => {
+    await query(
+      db,
+      `insert into public.shifts
+         (id, organization_id, opportunity_id, starts_at, ends_at, capacity, status)
+       values ($1, $2, $3, $4, $5, 5, 'scheduled')`,
+      [shift, ids.orgA, ids.opportunityA, started, ends],
+    );
+  });
+
+  const registered = await sendCommand(db, ids.volunteerUserA, {
+    organizationId: ids.orgA,
+    command: "REGISTER_FOR_SHIFT",
+    payload: { shiftId: shift },
+  });
+  assert.equal(registered.status, "applied");
+
+  await issueCheckinCode(db, shift, { code: "515151", token: "tok-late" });
+
+  const late = await sendCommand(db, ids.volunteerUserA, {
+    organizationId: ids.orgA,
+    command: "CHECK_IN",
+    payload: { shiftId: shift, code: "515151" },
+  });
+  assert.equal(late.code, "check_in_closed");
+
+  const manual = await sendCommand(db, ids.coordinatorA, {
+    organizationId: ids.orgA,
+    command: "CHECK_IN",
+    payload: { shiftId: shift, volunteerId: ids.volunteerA },
+  });
+  assert.equal(manual.status, "applied");
 
   await db.close();
 });

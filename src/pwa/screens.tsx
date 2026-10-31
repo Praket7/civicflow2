@@ -1475,8 +1475,9 @@ export function CheckInScreen() {
       />
       {shift.canCheckIn ? null : (
         <p className={styles.offlineNote}>
-          Check-in opens an hour before the shift. The server enforces the window, so an early scan
-          will be refused rather than silently accepted.
+          Self check-in opens 30 minutes before the shift and closes 15 minutes after it starts. The
+          server enforces the window, so a scan outside it will be refused rather than silently
+          accepted.
         </p>
       )}
       {problem ? <p className={styles.error}>{problem}</p> : null}

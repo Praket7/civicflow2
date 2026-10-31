@@ -36,10 +36,12 @@ export class DexieSyncStore implements SyncStore {
     return stale.length;
   }
 
-  async nextReady(organizationId: string, now: number): Promise<OutboxRow | null> {
+  async nextReady(userId: string, organizationId: string, now: number): Promise<OutboxRow | null> {
+    // Scoped by account as well as organization: work queued by one person is
+    // never uploaded by whoever signs in next, even in the same organization.
     const rows = await this.outbox
-      .where("[organizationId+state]")
-      .equals([organizationId, "pending"])
+      .where("[userId+organizationId+state]")
+      .equals([userId, organizationId, "pending"])
       .filter((row) => row.nextAttemptAt <= now)
       .sortBy("id");
     return rows[0] ?? null;
@@ -77,8 +79,11 @@ export class DexieSyncStore implements SyncStore {
     });
   }
 
-  async pendingCount(organizationId: string): Promise<number> {
-    return this.outbox.where("[organizationId+state]").equals([organizationId, "pending"]).count();
+  async pendingCount(userId: string, organizationId: string): Promise<number> {
+    return this.outbox
+      .where("[userId+organizationId+state]")
+      .equals([userId, organizationId, "pending"])
+      .count();
   }
 
   async openConflictCount(organizationId: string): Promise<number> {
@@ -109,6 +114,8 @@ export class DexieSyncStore implements SyncStore {
 }
 
 export interface QueueInput {
+  /** The account doing the work; the row is only ever drained for this user. */
+  userId: string;
   organizationId: string;
   membershipEpoch: number;
   command: CommandType;
@@ -139,6 +146,7 @@ export async function queueCommand(input: QueueInput): Promise<OutboxRow> {
   const row: OutboxRow = {
     operationId: envelope.operationId,
     organizationId: input.organizationId,
+    userId: input.userId,
     command: input.command,
     envelope,
     createdAt: envelope.clientCreatedAt,

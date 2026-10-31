@@ -1,8 +1,8 @@
 use chrono::Utc;
 use civicflow_core::auth::{
-    clear_hosted_handoff, create_account, current_user, hosted_handoff_pending,
-    remember_hosted_handoff, sign_in, sign_in_with_hosted, store_hosted_link, take_hosted_link,
-    Account, AuthSession,
+    clear_hosted_handoff, create_account, current_user, hosted_handoff_pending, list_accounts,
+    remember_hosted_handoff, reset_password, sign_in, sign_in_with_hosted, store_hosted_link,
+    take_hosted_link, Account, AuthSession, DEMO_EMAIL, DEMO_PASSWORD,
 };
 use civicflow_core::error::CoreError;
 use civicflow_core::organizations::{self, NewOrganization};
@@ -56,6 +56,58 @@ fn owner(conn: &rusqlite::Connection, name: &str, email: &str, password: &str) -
     organizations::create_organization(conn, &account, &new_organization(name, email))
         .expect("organization is created");
     session
+}
+
+#[test]
+fn a_coordinator_only_sees_and_resets_their_own_organization() {
+    let database = seeded();
+    let conn = database.connection();
+
+    // A volunteer who belongs to the seeded organization, and nowhere else.
+    let member = create_account(
+        conn,
+        "Vera Volunteer",
+        "vera@example.org",
+        "kitchen-table-2026",
+    )
+    .expect("the volunteer identity")
+    .user;
+    organizations::join_as_volunteer(conn, &member.id, &demo_organization(conn))
+        .expect("the volunteer joins the home roster");
+
+    let coordinator =
+        sign_in(conn, DEMO_EMAIL, DEMO_PASSWORD, false).expect("the seeded coordinator signs in");
+    let home = list_accounts(conn, &coordinator.token).expect("the home roster");
+    let volunteer = home
+        .iter()
+        .find(|account| account.email == "vera@example.org")
+        .expect("the volunteer who joined")
+        .clone();
+    assert!(home.iter().any(|account| account.email == DEMO_EMAIL));
+
+    // A second organization with its own owner, and no membership anywhere
+    // else. Its roster is itself, not everybody on the installation.
+    let stranger = owner(
+        conn,
+        "Maria Santos",
+        "maria@example.org",
+        "kitchen-table-2026",
+    );
+    let foreign = list_accounts(conn, &stranger.token).expect("the second roster");
+    assert_eq!(foreign.len(), 1);
+    assert_eq!(foreign[0].email, "maria@example.org");
+
+    // Resetting somebody who only belongs to the other organization is refused
+    // the same way an unknown account is.
+    let refused = reset_password(conn, &stranger.token, &volunteer.id, "new-password-2026")
+        .expect_err("a coordinator cannot reset another organization's volunteer");
+    assert!(matches!(refused, CoreError::NotFound(_)));
+
+    // The coordinator who shares an organization with that volunteer can.
+    reset_password(conn, &coordinator.token, &volunteer.id, "new-password-2026")
+        .expect("the home coordinator can reset the volunteer");
+    sign_in(conn, &volunteer.email, "new-password-2026", false)
+        .expect("the volunteer can sign in with the new password");
 }
 
 #[test]

@@ -159,9 +159,12 @@ export function shiftWindow(
   if (!Number.isFinite(start) || !Number.isFinite(end)) {
     return { canCheckIn: false, canCheckOut: false, started: false, ended: false };
   }
+  // The hosted command and the desktop share one policy: self check-in opens
+  // 30 minutes before the shift and closes 15 minutes after it starts. Checking
+  // out stays available until the shift ends.
   return {
-    canCheckIn: current >= start - 60 * 60_000 && current <= end,
-    canCheckOut: current >= start - 60 * 60_000 && current <= end,
+    canCheckIn: current >= start - 30 * 60_000 && current <= start + 15 * 60_000,
+    canCheckOut: current >= start - 30 * 60_000 && current <= end,
     started: current >= start,
     ended: current > end,
   };

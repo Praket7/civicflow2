@@ -25,6 +25,13 @@ export interface OutboxRow {
   id?: number;
   operationId: string;
   organizationId: string;
+  /**
+   * The account that performed the work. A queued command survives sign-out,
+   * so without an owner the next person to sign in could upload it as their
+   * own. Empty only on rows written before this field existed; those are never
+   * uploaded.
+   */
+  userId: string;
   command: CommandType;
   envelope: CommandEnvelope;
   createdAt: string;
@@ -74,6 +81,30 @@ export class VolunteerDatabase extends Dexie {
       conflicts: "id, organizationId, status, createdAt",
       meta: "key",
     });
+    this.version(2)
+      .stores({
+        entities: "[organizationId+entity+id], [organizationId+entity], organizationId, sequence",
+        outbox:
+          "++id, &operationId, [organizationId+state], [userId+organizationId+state], state, nextAttemptAt, sendingAt",
+        conflicts: "id, organizationId, status, createdAt",
+        meta: "key",
+      })
+      .upgrade(async (transaction) => {
+        // A command queued before the outbox recorded its owner cannot be
+        // attributed to anybody. Keep the row for inspection, but never upload
+        // it under whichever session happens to be open next.
+        await transaction
+          .table("outbox")
+          .toCollection()
+          .modify((row: OutboxRow) => {
+            if (!row.userId) {
+              row.userId = "";
+              row.state = "failed";
+              row.lastError =
+                "This change was queued before the app recorded who made it. Please enter it again.";
+            }
+          });
+      });
   }
 }
 

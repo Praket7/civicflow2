@@ -10,6 +10,10 @@
 //! The scope lives in a temporary table so it belongs to the connection that is
 //! serving one command. The command layer serializes calls behind one mutex, so
 //! the value cannot change underneath a query half-way through.
+//!
+//! A connection that explicitly chose no organization reads nothing. It never
+//! falls back to whichever organization happened to be created first: a guessed
+//! scope is how a screen ends up showing somebody else's roster.
 
 use rusqlite::{params, Connection, OptionalExtension};
 
@@ -18,34 +22,30 @@ use crate::error::Result;
 const TABLE: &str = "session_scope";
 
 /// Records the organization for the rest of this connection's work. `None`
-/// clears the scope, which a signed-out connection does.
+/// records an explicit "no organization", which a signed-out or unaffiliated
+/// connection does; the empty marker is what makes that choice stick.
 pub fn select(conn: &Connection, organization_id: Option<&str>) -> Result<()> {
     conn.execute_batch(&format!(
         "CREATE TEMP TABLE IF NOT EXISTS {TABLE} (organization_id TEXT NOT NULL);"
     ))?;
     conn.execute(&format!("DELETE FROM {TABLE}"), [])?;
-    if let Some(id) = organization_id {
-        conn.execute(
-            &format!("INSERT INTO {TABLE} (organization_id) VALUES (?1)"),
-            params![id],
-        )?;
-    }
+    conn.execute(
+        &format!("INSERT INTO {TABLE} (organization_id) VALUES (?1)"),
+        params![organization_id.unwrap_or("")],
+    )?;
     Ok(())
 }
 
 /// Signed in with no organization; access must be empty, not the installation's
 /// own workspace.
 pub fn select_none(conn: &Connection) -> Result<()> {
-    select(conn, None)?;
-    conn.execute(
-        &format!("INSERT INTO {TABLE} (organization_id) VALUES ('')"),
-        [],
-    )?;
-    Ok(())
+    select(conn, None)
 }
 
-/// Falls back to the installation's own (oldest) organization when nothing was
-/// selected.
+/// The organization this connection is working in, or `None` when it chose not
+/// to work in one. A connection that never chose has no scope either; the only
+/// way to establish one is [`select`], which seeding and every authenticated
+/// command do.
 pub fn current(conn: &Connection) -> Result<Option<String>> {
     let exists: bool = conn.query_row(
         "SELECT EXISTS (SELECT 1 FROM sqlite_temp_master
@@ -53,28 +53,20 @@ pub fn current(conn: &Connection) -> Result<Option<String>> {
         params![TABLE],
         |row| row.get(0),
     )?;
-    if exists {
-        let scoped: Option<String> = conn
-            .query_row(
-                &format!("SELECT organization_id FROM {TABLE} LIMIT 1"),
-                [],
-                |row| row.get(0),
-            )
-            .optional()?;
-        match scoped.as_deref() {
-            // Signed in, no membership.
-            Some("") => return Ok(None),
-            Some(id) => return Ok(Some(id.to_string())),
-            None => {}
-        }
+    if !exists {
+        return Ok(None);
     }
-    Ok(conn
+    let scoped: Option<String> = conn
         .query_row(
-            "SELECT id FROM organizations ORDER BY created_at, id LIMIT 1",
+            &format!("SELECT organization_id FROM {TABLE} LIMIT 1"),
             [],
             |row| row.get(0),
         )
-        .optional()?)
+        .optional()?;
+    match scoped.as_deref() {
+        None | Some("") => Ok(None),
+        Some(id) => Ok(Some(id.to_string())),
+    }
 }
 
 /// Derived from the record itself, so an invite is never filed under whichever
@@ -115,13 +107,21 @@ mod tests {
     use crate::db::Database;
 
     #[test]
-    fn a_connection_without_a_selection_uses_the_workspace_organization() {
+    fn seeding_establishes_the_workspace_organization() {
         let mut database = Database::in_memory().unwrap();
         database.seed_demo_if_empty().unwrap();
         let conn = database.connection();
         let organization = current(conn).unwrap().expect("the demo organization");
         assert!(organization.starts_with("org-"));
         assert_eq!(require(conn).unwrap(), organization);
+    }
+
+    #[test]
+    fn a_connection_that_never_chose_has_no_scope() {
+        let database = Database::in_memory().unwrap();
+        let conn = database.connection();
+        assert_eq!(current(conn).unwrap(), None);
+        assert!(require(conn).is_err());
     }
 
     #[test]
@@ -141,8 +141,10 @@ mod tests {
         assert_eq!(current(conn).unwrap().as_deref(), Some("org-second"));
         select_none(conn).unwrap();
         assert_eq!(current(conn).unwrap(), None);
+        // An explicit "no organization" never falls back to the seeded one.
         select(conn, None).unwrap();
-        assert_ne!(current(conn).unwrap().as_deref(), Some("org-second"));
+        assert_eq!(current(conn).unwrap(), None);
+        assert!(require(conn).is_err());
     }
 
     #[test]

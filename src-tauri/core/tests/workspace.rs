@@ -179,6 +179,9 @@ fn data_survives_close_and_reopen() {
         database.seed_demo_if_empty().unwrap();
     }
     let reopened = Database::open(&path).unwrap();
+    // A reopened connection has no organization until one is chosen; the app
+    // does that from the signed-in account.
+    civicflow_core::scope::select(reopened.connection(), Some("org-feedmore-wny")).unwrap();
     let summary = get_mission_control(reopened.connection(), "coordinator").unwrap();
     assert_eq!(summary.active_volunteers, 77);
     assert_eq!(summary.hours_this_month, 418);

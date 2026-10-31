@@ -14,6 +14,7 @@ class MemoryStore implements SyncStore {
     organizationId: string,
     command: OutboxRow["command"],
     payload: Record<string, unknown>,
+    userId = USER,
   ): OutboxRow {
     const envelope: CommandEnvelope = {
       operationId: crypto.randomUUID(),
@@ -29,6 +30,7 @@ class MemoryStore implements SyncStore {
       id: this.nextId++,
       operationId: envelope.operationId,
       organizationId,
+      userId,
       command,
       envelope,
       createdAt: envelope.clientCreatedAt,
@@ -54,11 +56,12 @@ class MemoryStore implements SyncStore {
     return recovered;
   }
 
-  async nextReady(organizationId: string, now: number): Promise<OutboxRow | null> {
+  async nextReady(userId: string, organizationId: string, now: number): Promise<OutboxRow | null> {
     return (
       this.rows
         .filter(
           (row) =>
+            row.userId === userId &&
             row.organizationId === organizationId &&
             row.state === "pending" &&
             row.nextAttemptAt <= now,
@@ -100,9 +103,10 @@ class MemoryStore implements SyncStore {
     this.conflicts.push(conflict);
   }
 
-  async pendingCount(organizationId: string): Promise<number> {
+  async pendingCount(userId: string, organizationId: string): Promise<number> {
     return this.rows.filter(
-      (row) => row.organizationId === organizationId && row.state === "pending",
+      (row) =>
+        row.userId === userId && row.organizationId === organizationId && row.state === "pending",
     ).length;
   }
 
@@ -131,6 +135,7 @@ class MemoryStore implements SyncStore {
 }
 
 const ORG = "11111111-1111-4111-8111-111111111111";
+const USER = "user-alice";
 
 function transport(
   push: (envelope: CommandEnvelope) => Promise<CommandResult>,
@@ -165,13 +170,13 @@ describe("sync engine", () => {
     });
 
     const first = engineFor(store, sync, () => 0);
-    await first.start(ORG);
+    await first.start(USER, ORG);
     first.stop();
     expect(calls).toBe(1);
     expect(store.rows[0]?.state).toBe("sent");
 
     const second = engineFor(store, sync, () => 0);
-    await second.start(ORG);
+    await second.start(USER, ORG);
     second.stop();
     expect(calls).toBe(1);
   });
@@ -181,7 +186,7 @@ describe("sync engine", () => {
     store.enqueue(ORG, "REGISTER_FOR_SHIFT", { shiftId: "shift-1" });
     const sync = transport(async () => ({ status: "already_applied", cursor: 9 }));
     const engine = engineFor(store, sync, () => 0);
-    await engine.start(ORG);
+    await engine.start(USER, ORG);
     engine.stop();
     expect(store.rows[0]?.state).toBe("sent");
     expect(store.conflicts).toHaveLength(0);
@@ -213,7 +218,7 @@ describe("sync engine", () => {
 
     const engineA = engineFor(alice, sync, () => 0);
     const engineB = engineFor(bob, sync, () => 0);
-    await Promise.all([engineA.start(ORG), engineB.start(ORG)]);
+    await Promise.all([engineA.start(USER, ORG), engineB.start(USER, ORG)]);
     engineA.stop();
     engineB.stop();
 
@@ -245,7 +250,7 @@ describe("sync engine", () => {
     });
 
     const engine = engineFor(store, sync, () => clock);
-    await engine.start(ORG);
+    await engine.start(USER, ORG);
     expect(commit).toBe(1);
     expect(store.rows[0]?.state).toBe("pending");
     expect(store.rows[0]?.attempts).toBe(1);
@@ -268,7 +273,7 @@ describe("sync engine", () => {
       membershipEpoch: 4,
     }));
     const engine = engineFor(store, sync, () => 0);
-    await engine.start(ORG);
+    await engine.start(USER, ORG);
     engine.stop();
     expect(store.conflicts[0]?.classification).toBe("invariant");
     expect(store.conflicts[0]?.code).toBe("stale_authority");
@@ -286,10 +291,35 @@ describe("sync engine", () => {
       return { status: "applied" };
     });
     const engine = engineFor(store, sync, () => 0);
-    await engine.start(ORG);
+    await engine.start(USER, ORG);
     engine.stop();
     expect(calls).toBe(0);
     expect(store.rows[0]?.state).toBe("pending");
+  });
+
+  it("does not upload work queued by the previous account on this device", async () => {
+    const store = new MemoryStore();
+    // Alice went offline, queued a registration, then signed out before it sent.
+    store.enqueue(ORG, "REGISTER_FOR_SHIFT", { shiftId: "shift-1" }, "user-alice");
+    let calls = 0;
+    const sync = transport(async () => {
+      calls += 1;
+      return { status: "applied" };
+    });
+
+    const bob = engineFor(store, sync, () => 0);
+    await bob.start("user-bob", ORG);
+    bob.stop();
+    expect(calls).toBe(0);
+    expect(store.rows[0]?.state).toBe("pending");
+    expect(store.rows[0]?.userId).toBe("user-alice");
+
+    // Alice signing back in finishes her own work.
+    const alice = engineFor(store, sync, () => 0);
+    await alice.start("user-alice", ORG);
+    alice.stop();
+    expect(calls).toBe(1);
+    expect(store.rows[0]?.state).toBe("sent");
   });
 
   it("recovers a sending row left behind by a crash", async () => {
@@ -303,7 +333,7 @@ describe("sync engine", () => {
       return { status: "applied" };
     });
     const engine = engineFor(store, sync, () => 5 * 60_000);
-    await engine.start(ORG);
+    await engine.start(USER, ORG);
     engine.stop();
     expect(calls).toBe(1);
     expect(store.rows[0]?.state).toBe("sent");

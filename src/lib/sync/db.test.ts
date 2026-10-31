@@ -97,8 +97,9 @@ describe("volunteer replica", () => {
     expect(await readCursor(ORG)).toBe(2);
   });
 
-  it("keeps an unsent command across a fresh database handle", async () => {
+  it("keeps an unsent command, and its owner, across a fresh database handle", async () => {
     await queueCommand({
+      userId: "user-alice",
       organizationId: ORG,
       membershipEpoch: 2,
       command: "REGISTER_FOR_SHIFT",
@@ -110,6 +111,7 @@ describe("volunteer replica", () => {
       const rows = await reopened.outbox.toArray();
       expect(rows).toHaveLength(1);
       expect(rows[0]?.state).toBe("pending");
+      expect(rows[0]?.userId).toBe("user-alice");
       expect(rows[0]?.envelope.payload.membershipEpoch).toBe(2);
       expect(rows[0]?.envelope.organizationId).toBe(ORG);
     } finally {

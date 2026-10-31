@@ -249,10 +249,10 @@ jobs:
             Verify a download against SHA256SUMS.txt:
             `sha256sum -c SHA256SUMS.txt`
 
-            The demo accounts are `praket@feedmorewny.org` (coordinator) and
-            `maya.chen@gmail.com` (volunteer), both with the password
-            `civicflow-demo`. Change the coordinator password from Settings →
-            Accounts before entering real volunteer data.
+            First launch seeds a local demo workspace, and the welcome screen
+            opens it without a password. Before entering real volunteer data,
+            create your own organization or connect a hosted workspace, then
+            set a password from Settings → Accounts.
           releaseDraft: false
           prerelease: false
           args: --target ${{ matrix.target }} --config src-tauri/tauri.release.conf.json

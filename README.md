@@ -18,7 +18,7 @@ click away. Deployment and the remaining gaps are covered in **Cloud workspace**
 | Fact | Value |
 | --- | --- |
 | Package version | `0.1.1` |
-| Registered routes | 50 |
+| Registered routes | 55 |
 | Migration files | 15 |
 | Database schema | v15 |
 | Application tables | 51 |
@@ -207,10 +207,22 @@ sign-in covers both surfaces and only the credential store keeps a refresh token
 refreshes in the desktop are forwarded, and a signed-out desktop tells the frame so it can show
 its own sign-in instead of a blank window.
 
-Two things stay local on purpose. AutoRoster and reporting are Rust code over the local SQLite
-workspace, and the hosted coordinator view is health and delivery, not a full roster editor.
-Planning, rosters and reports therefore run on the local workspace and travel as exports, until
-the planner has a server-side home.
+The native coordinator screens at `/shared/schedule` and `/shared/participation` write to the
+hosted organization instead. A write becomes a command in the same durable outbox the volunteer
+app uses: the screen keeps working offline, the server checks the membership epoch, row versions
+and workspace revision, and a refusal lands in `/shared/conflicts` with both values instead of
+being merged silently. The commands cover opportunities, shifts, atomic weekly series,
+attendance, hours review and `APPLY_ROSTER_PLAN`.
+
+AutoRoster and reporting still run as Rust code over the local SQLite workspace. On the shared
+screens, Quick plan and Rescue upcoming gaps build a deterministic plan over the replica, then
+send it through one revision-guarded `APPLY_ROSTER_PLAN`; the server applies every assignment or
+refuses the whole plan. Reports remain exports until the server has a reporting read model.
+
+**Settings → Shared workspace → Publish local schedule** copies this computer's opportunities,
+shifts and roles into the selected hosted organization. It skips a program with the same title
+and a shift with the same opportunity and start instant, so publishing twice does not duplicate
+the schedule. Volunteers, hours and attendance stay on the machine that owns them.
 
 ### The native desktop replica
 
@@ -231,9 +243,10 @@ fixtures in `shared/sync-contract`. The replica is bound to the signed-in accoun
 organization: switching accounts clears it, and a bootstrap or pull row from another
 organization is refused before it reaches the database.
 
-The screen is read-only on purpose. There is no coordinator mutation path through the native
-replica yet, so a local edit cannot silently disagree with the hosted organization. The framed
-workspace in `/shared` is still where coordinators write.
+`/shared/replica` is a read-only view of that same replica. Coordinator writes live on the
+schedule and participation screens, not in the replica viewer, so a local copy can be inspected
+without becoming a second source of truth. The framed client at `/shared` remains the volunteer
+surface and the health view.
 
 **Records → Backups** writes a sealed archive anywhere the coordinator chooses. The snapshot is
 encrypted with a passphrase (Argon2id, then XChaCha20-Poly1305) and the plaintext copy is deleted
@@ -656,12 +669,14 @@ been exercised on a physical phone.
 
 - The local SQLite workspace is local to one device. The shared hosted workspace is live and
   available in both shells: the desktop signs in once (keychain) and mounts the hosted client,
-  which carries the same offline outbox and command authority as the phone. Its coordinator
-  view stops at device and delivery health rather than roster editing, so planning, AutoRoster
-  and reports still run on the local workspace and travel as exports.
-- The native desktop replica at `/shared/replica` is read-only. It bootstraps, pulls, survives a
-  restart and shows the server's rows, but no coordinator screen writes through it yet. Moving
-  opportunities, shifts and participation onto server commands is the next phase.
+  which carries the same offline outbox and command authority as the phone. Native coordinator
+  screens write opportunities, shifts, series, attendance, hours decisions and roster plans
+  through the same command log. Reports and the local AutoRoster still run on the local
+  workspace and travel as exports.
+- The native desktop replica at `/shared/replica` is read-only by design. It bootstraps, pulls,
+  survives a restart and shows the server's rows. Writes happen on `/shared/schedule` and
+  `/shared/participation`, which share the replica's cursor and outbox but never edit it from the
+  viewer.
 - Organization switching is scoped by membership in the UI and core, but all organizations in
   one installation share the same SQLite file. A future workspace manager will split them into
   per-organization databases.

@@ -68,6 +68,7 @@ export function conflictClassFor(command: string, code?: string): ConflictClass 
     case "CHECK_OUT":
     case "MARK_NO_SHOW":
     case "APPLY_ROSTER_PLAN":
+    case "CREATE_SHIFT_SERIES":
     case "REVIEW_HOURS":
     case "UPDATE_CREDENTIAL":
       return "invariant";

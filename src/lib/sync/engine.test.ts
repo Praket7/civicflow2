@@ -265,6 +265,40 @@ describe("sync engine", () => {
     expect(store.rows[0]?.result?.status).toBe("already_applied");
   });
 
+  it("refuses a second device's roster plan after the revision moved", async () => {
+    let revision = 0;
+    const sync = transport(async (envelope) => {
+      if (envelope.baseWorkspaceRevision < revision) {
+        return {
+          status: "stale_plan",
+          code: "stale_plan",
+          message: "The organization changed after this plan was built.",
+          authoritative: { revision },
+        };
+      }
+      revision += 1;
+      return { status: "applied", cursor: revision, serverRevision: revision };
+    });
+
+    const first = new MemoryStore();
+    first.enqueue(ORG, "APPLY_ROSTER_PLAN", { assignments: [{ volunteerId: "alice" }] });
+    const firstEngine = engineFor(first, sync, () => 0);
+    await firstEngine.start(USER, ORG);
+    firstEngine.stop();
+    expect(first.rows[0]?.state).toBe("sent");
+
+    const second = new MemoryStore();
+    second.enqueue(ORG, "APPLY_ROSTER_PLAN", { assignments: [{ volunteerId: "bob" }] });
+    const secondEngine = engineFor(second, sync, () => 0);
+    await secondEngine.start(USER, ORG);
+    secondEngine.stop();
+
+    expect(second.rows[0]?.state).toBe("conflict");
+    expect(second.conflicts[0]?.code).toBe("stale_plan");
+    expect(second.conflicts[0]?.classification).toBe("invariant");
+    expect(second.conflicts[0]?.authoritative).toEqual({ revision: 1 });
+  });
+
   it("records stale authority as an invariant conflict", async () => {
     const store = new MemoryStore();
     store.enqueue(ORG, "CREATE_OPPORTUNITY", { title: "Pantry" });

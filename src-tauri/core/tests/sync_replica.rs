@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use civicflow_core::error::CoreError;
 use civicflow_core::sync::protocol::{Change, CommandEnvelope, CommandType};
 use civicflow_core::sync::replica;
@@ -281,6 +283,117 @@ fn a_bootstrap_from_another_organization_is_refused_atomically() {
             .len(),
         1
     );
+}
+
+#[test]
+fn a_queued_command_is_built_from_the_bound_workspace() {
+    let database = database();
+    let conn = database.connection();
+    replica::configure(conn, ORG, USER, 3).expect("configure");
+    replica::apply_bootstrap(conn, ORG, USER, 3, &bootstrap(10, 4)).expect("bootstrap");
+
+    let versions = BTreeMap::from([(format!("shift:{SHIFT}"), 2)]);
+    let first = replica::enqueue_command(
+        conn,
+        ORG,
+        CommandType::UpdateShift,
+        &json!({ "id": SHIFT, "capacity": 6 }),
+        &versions,
+        Some(4),
+    )
+    .expect("enqueue");
+    let second = replica::enqueue_command(
+        conn,
+        ORG,
+        CommandType::UpdateShift,
+        &json!({ "id": SHIFT, "capacity": 7 }),
+        &versions,
+        None,
+    )
+    .expect("enqueue");
+    assert_ne!(first, second);
+    assert_eq!(replica::pending_count(conn, USER, ORG).unwrap(), 2);
+
+    let ready = replica::next_ready(conn, USER, ORG, 0)
+        .unwrap()
+        .expect("first command");
+    assert_eq!(ready.user_id, USER);
+    assert_eq!(ready.organization_id, ORG);
+    assert_eq!(ready.envelope.membership_epoch, 3);
+    assert_eq!(ready.envelope.base_workspace_revision, 4);
+    assert_eq!(ready.envelope.payload["membershipEpoch"], 3);
+    assert_eq!(ready.envelope.entity_versions[&format!("shift:{SHIFT}")], 2);
+    assert_eq!(ready.envelope.operation_id, ready.operation_id);
+
+    // The next command falls back to the revision last pulled, and its
+    // sequence keeps the local causal order even after the first is sent.
+    replica::mark_sent(conn, first, &json!({ "status": "applied" })).expect("sent");
+    let ready = replica::next_ready(conn, USER, ORG, 0)
+        .unwrap()
+        .expect("second command");
+    assert_eq!(ready.envelope.base_workspace_revision, 4);
+    assert_eq!(ready.envelope.operation_id, ready.operation_id);
+    assert_ne!(ready.operation_id, String::new());
+}
+
+#[test]
+fn conflicts_can_be_listed_and_closed() {
+    let database = database();
+    let conn = database.connection();
+    replica::configure(conn, ORG, USER, 3).expect("configure");
+
+    let id = replica::enqueue_command(
+        conn,
+        ORG,
+        CommandType::UpdateShift,
+        &json!({ "id": SHIFT, "capacity": 6 }),
+        &BTreeMap::new(),
+        None,
+    )
+    .expect("enqueue");
+    let conflict = json!({
+        "id": "30000000-0000-4000-8000-000000000001",
+        "organizationId": ORG,
+        "operationId": "10000000-0000-4000-8000-000000000001",
+        "command": "UPDATE_SHIFT",
+        "entity": SHIFT,
+        "code": "version_conflict",
+        "message": "Someone changed this shift after your copy was loaded.",
+        "classification": "field",
+        "localPayload": { "capacity": 6 },
+        "authoritative": { "capacity": 5 },
+        "createdAt": "2026-11-01T09:05:00.000Z"
+    });
+    replica::mark_refused(
+        conn,
+        id,
+        &json!({ "status": "version_conflict" }),
+        &conflict,
+    )
+    .expect("refused");
+
+    let open = replica::list_conflicts(conn, ORG).expect("list");
+    assert_eq!(open.len(), 1);
+    assert_eq!(open[0]["code"], "version_conflict");
+    assert_eq!(open[0]["classification"], "field");
+    assert_eq!(open[0]["localPayload"]["capacity"], 6);
+    assert_eq!(open[0]["authoritative"]["capacity"], 5);
+    assert_eq!(open[0]["status"], "open");
+
+    replica::resolve_conflict(
+        conn,
+        ORG,
+        "30000000-0000-4000-8000-000000000001",
+        "resolved",
+    )
+    .expect("resolve");
+    assert_eq!(replica::open_conflict_count(conn, ORG).unwrap(), 0);
+    let closed = replica::list_conflicts(conn, ORG).expect("closed list");
+    assert_eq!(closed[0]["status"], "resolved");
+    assert!(closed[0]["resolvedAt"].is_string());
+
+    let missing = replica::resolve_conflict(conn, ORG, "missing", "resolved").unwrap_err();
+    assert_eq!(error_code(missing), "NOT_FOUND");
 }
 
 #[test]

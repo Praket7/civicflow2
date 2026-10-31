@@ -1,0 +1,376 @@
+.shell {
+  display: grid;
+  gap: 18px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 12.5px;
+  text-decoration: none;
+  background: var(--surface-raised);
+  transition:
+    color 140ms ease,
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+.navLink:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.navLinkActive {
+  color: var(--text);
+  border-color: var(--text);
+  background: var(--surface-sunken);
+}
+
+.navSpacer {
+  margin-left: auto;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 10px;
+}
+
+.stat {
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--surface-raised);
+  padding: 12px 14px;
+}
+
+.statLabel {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.statValue {
+  margin: 3px 0 0;
+  font-size: 19px;
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+}
+
+.statHint {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.panel {
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.panelHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px 12px;
+  flex-wrap: wrap;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 610;
+}
+
+.panelCopy {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 64ch;
+}
+
+.panelBody {
+  padding: 0 18px 18px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.spanTwo {
+  grid-column: 1 / -1;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.opportunityList {
+  display: grid;
+  gap: 10px;
+}
+
+.opportunity {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: 13px;
+  background: var(--surface);
+}
+
+.opportunityTitle {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.opportunityMeta {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.8px;
+}
+
+.table th {
+  padding: 9px 12px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 560;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-soft);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tr:hover td {
+  background: color-mix(in srgb, var(--surface-sunken) 55%, transparent);
+}
+
+.strong {
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.mono {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 11.5px;
+  word-break: break-word;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.pillOpen {
+  color: var(--tone-amber-ink);
+  border-color: color-mix(in srgb, var(--tone-amber-ink) 34%, transparent);
+}
+
+.pillGood {
+  color: var(--tone-green-ink);
+  border-color: color-mix(in srgb, var(--tone-green-ink) 34%, transparent);
+}
+
+.pillBad {
+  color: var(--tone-red-ink);
+  border-color: color-mix(in srgb, var(--tone-red-ink) 34%, transparent);
+}
+
+.notice {
+  margin: 0;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--surface-sunken);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.noticeError {
+  color: var(--tone-red-ink);
+}
+
+.noticeGood {
+  color: var(--tone-green-ink);
+}
+
+.conflictList {
+  display: grid;
+  gap: 12px;
+}
+
+.conflict {
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--tone-amber-ink);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.conflictHead {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.conflictTitle {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 610;
+}
+
+.conflictCopy {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.compareBox {
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 9px 11px;
+  background: var(--surface-sunken);
+}
+
+.compareLabel {
+  margin: 0 0 4px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.compareValue {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 12px;
+}
+
+.spaceTop {
+  margin-top: 14px;
+}
+
+.sectionLabel {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.rosterRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 9px 0;
+  border-top: 1px solid var(--border-soft);
+}
+
+.rosterRow:first-child {
+  border-top: 0;
+}
+
+.rosterName {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 570;
+}
+
+.rosterMeta {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.planList {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.planItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: var(--surface-sunken);
+  font-size: 12.5px;
+}
+
+@media (max-width: 760px) {
+  .formGrid,
+  .compare {
+    grid-template-columns: 1fr;
+  }
+
+  .opportunity {
+    grid-template-columns: 1fr;
+  }
+}

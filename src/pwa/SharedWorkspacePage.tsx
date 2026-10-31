@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowLeft, Cloud, CloudOff, Database } from "lucide-react";
+import { ArrowLeft, CalendarDays, Cloud, CloudOff, Database } from "lucide-react";
 import { Link } from "react-router-dom";
 import { isTauri } from "../lib/platform";
 import { cloudEmail, cloudSession, onCloudSessionChange } from "../lib/cloud/client";
@@ -112,6 +112,19 @@ export function SharedWorkspacePage() {
           <Cloud aria-hidden size={13} />
           Hosted workspace · offline changes stay on this device until it reconnects
         </span>
+        <Link
+          to="/shared/schedule"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            color: "var(--text-muted)",
+            textDecoration: "none",
+          }}
+        >
+          <CalendarDays aria-hidden size={13} />
+          Shared schedule
+        </Link>
         <Link
           to="/shared/replica"
           style={{

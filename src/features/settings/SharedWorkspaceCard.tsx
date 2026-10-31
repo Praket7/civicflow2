@@ -12,10 +12,13 @@ import {
   type CloudWorkspace,
 } from "../../lib/cloud/client";
 import { desktopDevice } from "../../lib/cloud/device";
+import { publishLocalSchedule, type PublishResult } from "../../lib/sync/publish";
 import { replicaId, writeWorkspace } from "../../lib/sync/db";
+import { useWorkspace } from "../../lib/workspace/session";
 
 export function SharedWorkspaceCard() {
   const available = cloudAvailable();
+  const { workspace: localWorkspace } = useWorkspace();
   const [session, setSession] = useState<Session | null>(null);
   const [workspaces, setWorkspaces] = useState<CloudWorkspace[]>([]);
   const [email, setEmail] = useState("");
@@ -25,6 +28,8 @@ export function SharedWorkspaceCard() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [registered, setRegistered] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState<CloudWorkspace | null>(null);
+  const [publishResult, setPublishResult] = useState<PublishResult | null>(null);
 
   const loadWorkspaces = useCallback(async () => {
     try {
@@ -77,6 +82,26 @@ export function SharedWorkspaceCard() {
       setWorkspaces([]);
       setRegistered(null);
       setNotice("Disconnected this desktop from the shared workspace.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function publish(workspace: CloudWorkspace) {
+    setBusy(true);
+    setError("");
+    setNotice("");
+    setPublishResult(null);
+    try {
+      const result = await publishLocalSchedule(workspace.organizationId, localWorkspace);
+      setPublishResult(result);
+      setRegistered(workspace.organizationId);
+      setPublishing(null);
+      setNotice(
+        `Queued ${result.opportunities} opportunities and ${result.shifts} shifts for ${workspace.organization.name}. ${result.skipped} rows were already there or had no hosted match.`,
+      );
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught));
     } finally {
@@ -166,17 +191,77 @@ export function SharedWorkspaceCard() {
                       {workspace.role} · {workspace.status}
                     </span>
                   </span>
-                  <Button
-                    variant={registered === workspace.organizationId ? "ghost" : "secondary"}
-                    disabled={busy || workspace.status !== "active"}
-                    onClick={() => void register(workspace)}
-                  >
-                    {registered === workspace.organizationId ? "Registered" : "Register desktop"}
-                  </Button>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    <Button
+                      variant={registered === workspace.organizationId ? "ghost" : "secondary"}
+                      disabled={busy || workspace.status !== "active"}
+                      onClick={() => void register(workspace)}
+                    >
+                      {registered === workspace.organizationId ? "Registered" : "Register desktop"}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      disabled={busy || workspace.status !== "active"}
+                      onClick={() => {
+                        setPublishing(workspace);
+                        setNotice("");
+                        setError("");
+                        setPublishResult(null);
+                      }}
+                    >
+                      Publish local schedule
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>
           )}
+
+          {publishing ? (
+            <div
+              role="group"
+              aria-label="Publish local schedule"
+              style={{
+                marginTop: 12,
+                padding: 12,
+                border: "1px solid var(--border-soft)",
+                borderRadius: 8,
+                background: "var(--surface-sunken)",
+              }}
+            >
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 590 }}>
+                Publish to {publishing.organization.name}?
+              </p>
+              <p
+                style={{
+                  margin: "4px 0 10px",
+                  fontSize: 12.5,
+                  color: "var(--text-muted)",
+                  lineHeight: 1.5,
+                }}
+              >
+                Copies {localWorkspace.opportunities.length} opportunities and{" "}
+                {localWorkspace.shifts.filter((shift) => shift.status !== "canceled").length} shifts
+                from this computer. Volunteers, hours, and attendance stay local. Rows already in
+                the organization are skipped.
+              </p>
+              <div style={{ display: "flex", gap: 8 }}>
+                <Button variant="primary" disabled={busy} onClick={() => void publish(publishing)}>
+                  {busy ? "Publishing…" : "Publish schedule"}
+                </Button>
+                <Button variant="ghost" disabled={busy} onClick={() => setPublishing(null)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : null}
+
+          {publishResult ? (
+            <p role="status" style={{ marginTop: 10, fontSize: 12.5 }}>
+              {publishResult.opportunities} opportunities and {publishResult.shifts} shifts queued
+              for the organization. They upload from the shared workspace.
+            </p>
+          ) : null}
           <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
             <ButtonLink to="/shared" variant="secondary">
               Open shared workspace

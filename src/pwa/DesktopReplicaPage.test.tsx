@@ -15,9 +15,8 @@ describe("desktop replica page", () => {
       await screen.findByRole("heading", { name: "This screen lives in the desktop app" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Synced copy" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Hosted workspace" })).toHaveAttribute(
-      "href",
-      "/shared",
-    );
+    for (const link of screen.getAllByRole("link", { name: "Hosted workspace" })) {
+      expect(link).toHaveAttribute("href", "/shared");
+    }
   });
 });

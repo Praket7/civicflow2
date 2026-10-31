@@ -678,6 +678,83 @@ export const helpTopics: HelpTopic[] = [
       "Answers are computed from stored records, not generated. The same question returns the same answer.",
     ],
   },
+  {
+    id: "shared-workspace",
+    title: "Shared workspace",
+    purpose:
+      "Opens the hosted organization's app inside the desktop window using the session already in the credential store.",
+    steps: [
+      "Connect the hosted account under Settings first.",
+      "Choose Open shared workspace.",
+      "Use Shared schedule for coordinator writes, or the framed app for the volunteer view.",
+    ],
+    tips: ["The frame adopts the desktop session. It never asks for a second password."],
+  },
+  {
+    id: "shared-schedule",
+    title: "Shared schedule",
+    purpose:
+      "Creates opportunities and shifts in the hosted organization while keeping a durable local queue for offline work.",
+    steps: [
+      "Create an opportunity, or choose an existing one and add a shift.",
+      "Enter times in this computer's timezone; the command stores an absolute instant.",
+      "Choose Sync now if the connection was down, then check the synced copy for the server's rows.",
+    ],
+    rules: [
+      "A shift must end after it starts and has at least one seat.",
+      "A slot cannot shrink below the volunteers already registered.",
+      "An edit carries the row version it was opened at. The server refuses the edit when someone else changed the row first.",
+      "Creating a shift needs at least one seat and an opportunity in the same organization.",
+    ],
+  },
+  {
+    id: "shared-participation",
+    title: "Shared participation",
+    purpose:
+      "Records attendance, reviews hours, and applies a reviewed roster plan for one shift at a time.",
+    steps: [
+      "Choose the shift at the top of the screen.",
+      "Check volunteers in or out, mark a no-show, or cancel a seat.",
+      "Review pending hours, then approve the submitted total or reject with a reason.",
+      "Use Quick plan to fill open role slots, review the names, and apply the plan.",
+    ],
+    rules: [
+      "Check-in is refused before the window opens and after the shift ends.",
+      "A no-show needs a registration and is recorded as an event.",
+      "Approved minutes cannot exceed the submitted total, and a rejection needs a reason.",
+      "A roster plan applies at the revision it was built from. If the revision moved, no assignment is applied.",
+    ],
+  },
+  {
+    id: "shared-conflicts",
+    title: "Sync issues",
+    purpose:
+      "Shows every command the server refused, with the value this device held and the value the organization now has.",
+    steps: [
+      "Read the code and both values.",
+      "Choose Keep server when the organization's value is correct, or Dismiss to close the issue without changing anything.",
+      "Choose Rebuild from server if the replica itself needs to be taken again.",
+    ],
+    rules: [
+      "A conflict is closed locally. Closing it does not edit the organization.",
+      "A revoked membership makes queued privileged work stale; rebuilding takes the current authority and rows.",
+    ],
+  },
+  {
+    id: "shared-replica",
+    title: "Synced copy",
+    purpose:
+      "Shows the hosted organization held in this computer's encrypted SQLite database and whether it is current.",
+    steps: [
+      "Read the connection state, cursor, revision, and last sync time.",
+      "Choose Refresh to pull new changes, or Rebuild from server to replace the copy with current state.",
+      "Use Shared schedule or Shared participation to make changes.",
+    ],
+    rules: [
+      "Pulled rows and the cursor commit together, so an interrupted pull leaves the previous consistent copy.",
+      "Switching hosted accounts clears the previous account's rows.",
+    ],
+  },
 ];
 
 const byId = new Map(helpTopics.map((topic) => [topic.id, topic]));

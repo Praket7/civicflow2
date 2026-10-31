@@ -12,6 +12,9 @@ import { AutoRosterPage } from "../features/coverage/AutoRosterPage";
 import { BackupPage } from "../features/records/BackupPage";
 import { CheckInPage } from "../features/volunteer/CheckInPage";
 import { DesktopReplicaPage } from "../pwa/DesktopReplicaPage";
+import { SharedConflictsPage } from "../features/shared/SharedConflictsPage";
+import { SharedParticipationPage } from "../features/shared/SharedParticipationPage";
+import { SharedSchedulePage } from "../features/shared/SharedSchedulePage";
 import { CoveragePage } from "../features/coverage/CoveragePage";
 import { CreateOpportunityPage } from "../features/schedule/CreateOpportunityPage";
 import { CredentialsPage } from "../features/credentials/CredentialsPage";
@@ -62,6 +65,10 @@ import { CreditsPage } from "./CreditsPage";
 import { routes } from "./routes";
 
 const standaloneNumbers = new Set([1, 2, 3, 4, 5, 31, 43, 44, 45, 46, 47, 48, 49]);
+
+// The hosted workspace mounts its own history and never enters the local app
+// shell, so these routes are registered once, below, instead of twice.
+const sharedNumbers = new Set([52, 53, 54, 55, 56]);
 
 // Exported so tests can mount every registered screen without duplicating the map.
 export const pages: Record<string, ReactNode> = {
@@ -115,6 +122,11 @@ export const pages: Record<string, ReactNode> = {
   settings: <SettingsPage />,
   accessibility: <AccessibilityPage />,
   ask: <AskPage />,
+  "shared-workspace": <SharedWorkspacePage />,
+  "shared-schedule": <SharedSchedulePage />,
+  "shared-participation": <SharedParticipationPage />,
+  "shared-conflicts": <SharedConflictsPage />,
+  "shared-replica": <DesktopReplicaPage />,
 };
 
 /** Each account goes to its own home, not a fixed coordinator route. */
@@ -153,7 +165,7 @@ const standaloneRoutes = routes
   .map((route) => ({ path: route.path, element: guarded(route) }));
 
 const shellRoutes = routes
-  .filter((route) => !standaloneNumbers.has(route.number))
+  .filter((route) => !standaloneNumbers.has(route.number) && !sharedNumbers.has(route.number))
   .map((route) => ({ path: route.path, element: guarded(route) }));
 
 const routeConfig = [
@@ -170,8 +182,32 @@ const routeConfig = [
     ),
   },
   {
-    // The desktop's own replica is a read-only preview; the hosted workspace
-    // in `/shared` remains the coordinator surface.
+    path: "/shared/schedule",
+    element: (
+      <RequireAuth>
+        <SharedSchedulePage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: "/shared/participation",
+    element: (
+      <RequireAuth>
+        <SharedParticipationPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: "/shared/conflicts",
+    element: (
+      <RequireAuth>
+        <SharedConflictsPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    // The desktop's own replica is readable offline and shows what the
+    // organization has accepted. Coordinator writes live on the shared screens.
     path: "/shared/replica",
     element: (
       <RequireAuth>

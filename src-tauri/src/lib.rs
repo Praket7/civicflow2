@@ -24,12 +24,13 @@ use civicflow_core::policy::{self, PriorityLevel, RosterPolicy};
 use civicflow_core::recovery::{self, DisruptionReport, RecoveryChangeRequest, RecoveryPlan};
 use civicflow_core::recurrence::{self, RecurrenceRule, SeriesResult, ShiftSeriesRecord};
 use civicflow_core::reports::{self, ExportFormat, ReportDocument, ReportRequest};
-use civicflow_core::sync::protocol::Change;
+use civicflow_core::sync::protocol::{Change, CommandType};
 use civicflow_core::sync::replica::{self as sync_replica, OutboxItem, SyncStatus};
 use civicflow_core::Database;
 use civicflow_core::{auth, backups, roster, services, workflows};
 use serde::Serialize;
 use serde_json::Value;
+use std::collections::BTreeMap;
 use tauri::{Manager, State};
 #[cfg(desktop)]
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -1704,6 +1705,53 @@ fn sync_write_revision(
 }
 
 #[tauri::command]
+fn sync_enqueue_command(
+    state: State<'_, AppState>,
+    organization_id: String,
+    command: CommandType,
+    payload: Value,
+    entity_versions: BTreeMap<String, i64>,
+    base_revision: Option<i64>,
+) -> Result<i64, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::enqueue_command(
+        database.connection(),
+        &organization_id,
+        command,
+        &payload,
+        &entity_versions,
+        base_revision,
+    )
+    .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_list_conflicts(
+    state: State<'_, AppState>,
+    organization_id: String,
+) -> Result<Vec<Value>, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::list_conflicts(database.connection(), &organization_id).map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_resolve_conflict(
+    state: State<'_, AppState>,
+    organization_id: String,
+    conflict_id: String,
+    resolution: String,
+) -> Result<(), AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::resolve_conflict(
+        database.connection(),
+        &organization_id,
+        &conflict_id,
+        &resolution,
+    )
+    .map_err(AppError::from)
+}
+
+#[tauri::command]
 fn sync_recover_stale_sending(
     state: State<'_, AppState>,
     cutoff: i64,
@@ -1919,6 +1967,9 @@ pub fn run() {
             sync_read_cursor,
             sync_read_revision,
             sync_write_revision,
+            sync_enqueue_command,
+            sync_list_conflicts,
+            sync_resolve_conflict,
             sync_recover_stale_sending,
             sync_next_ready,
             sync_mark_sending,

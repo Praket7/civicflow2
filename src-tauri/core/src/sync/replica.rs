@@ -977,8 +977,176 @@ pub fn open_conflict_count(conn: &Connection, organization_id: &str) -> Result<i
     )?)
 }
 
-/// A queue row is written by the coordinator write path in a later phase. It
-/// is exposed here so the outbox format has one owner and one test.
+/// Everything a conflict screen needs, including the values both sides held.
+/// The payloads are parsed before they leave Rust so the screen never has to
+/// guess whether a column is text or JSON.
+pub fn list_conflicts(conn: &Connection, organization_id: &str) -> Result<Vec<Value>> {
+    validate_organization(organization_id)?;
+    let mut statement = conn.prepare(
+        "SELECT id, operation_id, command, entity_type, entity_id, code, summary,
+                local_payload, authoritative_payload, classification, status,
+                created_at, resolved_at
+         FROM sync_conflicts
+         WHERE organization_id = ?1
+         ORDER BY status = 'open' DESC, created_at DESC",
+    )?;
+    let rows = statement.query_map(params![organization_id], |row| {
+        Ok((
+            row.get::<_, String>(0)?,
+            row.get::<_, Option<String>>(1)?,
+            row.get::<_, Option<String>>(2)?,
+            row.get::<_, String>(3)?,
+            row.get::<_, String>(4)?,
+            row.get::<_, String>(5)?,
+            row.get::<_, String>(6)?,
+            row.get::<_, Option<String>>(7)?,
+            row.get::<_, Option<String>>(8)?,
+            row.get::<_, Option<String>>(9)?,
+            row.get::<_, String>(10)?,
+            row.get::<_, String>(11)?,
+            row.get::<_, Option<String>>(12)?,
+        ))
+    })?;
+    let mut values = Vec::new();
+    for row in rows {
+        let (
+            id,
+            operation_id,
+            command,
+            entity_type,
+            entity_id,
+            code,
+            summary,
+            local,
+            authoritative,
+            classification,
+            status,
+            created_at,
+            resolved_at,
+        ) = row?;
+        let local = local
+            .and_then(|text| serde_json::from_str::<Value>(&text).ok())
+            .unwrap_or(Value::Null);
+        let authoritative = authoritative
+            .and_then(|text| serde_json::from_str::<Value>(&text).ok())
+            .unwrap_or(Value::Null);
+        values.push(serde_json::json!({
+            "id": id,
+            "operationId": operation_id,
+            "command": command,
+            "entityType": entity_type,
+            "entityId": entity_id,
+            "code": code,
+            "message": summary,
+            "localPayload": local,
+            "authoritative": authoritative,
+            "classification": classification.unwrap_or_else(|| "invariant".into()),
+            "status": status,
+            "createdAt": created_at,
+            "resolvedAt": resolved_at,
+        }));
+    }
+    Ok(values)
+}
+
+/// Closing a conflict is a local acknowledgement. It never edits the server
+/// row; if the server state needs to move, the screen rebuilds from bootstrap.
+pub fn resolve_conflict(
+    conn: &Connection,
+    organization_id: &str,
+    conflict_id: &str,
+    resolution: &str,
+) -> Result<()> {
+    validate_organization(organization_id)?;
+    if resolution != "resolved" && resolution != "dismissed" {
+        return Err(CoreError::Validation(
+            "A conflict can be resolved or dismissed, not deleted.".into(),
+        ));
+    }
+    let changed = conn.execute(
+        "UPDATE sync_conflicts
+         SET status = ?3, resolved_at = ?4
+         WHERE organization_id = ?1 AND id = ?2 AND status = 'open'",
+        params![organization_id, conflict_id, resolution, now()],
+    )?;
+    if changed == 0 {
+        return Err(CoreError::rule(
+            "NOT_FOUND",
+            "That conflict is not open on this desktop.",
+            None,
+            Some("REFRESH".into()),
+        ));
+    }
+    Ok(())
+}
+
+/// Builds the envelope for this device and account, then writes it to the
+/// outbox. The caller supplies only what the user intended: the command, its
+/// payload and the row versions it was built against. Identity, replica id and
+/// authority are read from the configured workspace, never from the screen.
+pub fn enqueue_command(
+    conn: &Connection,
+    organization_id: &str,
+    command: CommandType,
+    payload: &Value,
+    entity_versions: &BTreeMap<String, i64>,
+    base_revision: Option<i64>,
+) -> Result<i64> {
+    validate_organization(organization_id)?;
+    if !payload.is_object() {
+        return Err(CoreError::Validation(
+            "A command payload has to be an object.".into(),
+        ));
+    }
+    let configured: Option<(String, String, i64, i64)> = conn
+        .query_row(
+            "SELECT user_id, replica_id, membership_epoch, revision
+             FROM shared_workspaces WHERE organization_id = ?1 AND mode = 'shared'",
+            params![organization_id],
+            |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?)),
+        )
+        .optional()?;
+    let Some((user_id, replica_id, membership_epoch, revision)) = configured else {
+        return Err(CoreError::rule(
+            "NOT_CONFIGURED",
+            "Connect a shared workspace before changing the organization.",
+            None,
+            Some("CONNECT_SHARED".into()),
+        ));
+    };
+    let base_revision = base_revision.unwrap_or(revision);
+    if base_revision < 0 {
+        return Err(CoreError::Validation(
+            "A workspace revision cannot be negative.".into(),
+        ));
+    }
+    let mut payload = payload.clone();
+    if let Some(object) = payload.as_object_mut() {
+        object.insert("membershipEpoch".into(), Value::from(membership_epoch));
+    }
+    let envelope = CommandEnvelope {
+        operation_id: Uuid::new_v4().to_string(),
+        replica_id,
+        user_id: user_id.clone(),
+        organization_id: organization_id.to_string(),
+        command,
+        membership_epoch,
+        base_workspace_revision: base_revision,
+        entity_versions: entity_versions.clone(),
+        payload,
+        client_created_at: now(),
+    };
+    let sequence: i64 = conn.query_row(
+        "SELECT coalesce(max(sequence_number), 0) + 1 FROM sync_outbox
+         WHERE organization_id = ?1",
+        params![organization_id],
+        |row| row.get(0),
+    )?;
+    enqueue(conn, &user_id, organization_id, sequence, &envelope)
+}
+
+/// One queue row per intent. Kept public because the outbox format has one
+/// owner and one test.
 pub fn enqueue(
     conn: &Connection,
     user_id: &str,

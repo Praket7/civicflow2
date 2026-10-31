@@ -77,7 +77,12 @@ test("a revoked coordinator's queued command is stale authority, not a retry", a
 test("a volunteer cannot use a coordinator command", async () => {
   const db = await fresh();
 
-  for (const command of ["CREATE_SHIFT", "REVIEW_HOURS", "APPLY_ROSTER_PLAN"]) {
+  for (const command of [
+    "CREATE_SHIFT",
+    "CREATE_SHIFT_SERIES",
+    "REVIEW_HOURS",
+    "APPLY_ROSTER_PLAN",
+  ]) {
     const response = await sendCommand(db, ids.volunteerUserA, {
       organizationId: ids.orgA,
       command,

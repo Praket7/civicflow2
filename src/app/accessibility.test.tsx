@@ -67,7 +67,13 @@ describe("route accessibility", () => {
         );
         await settleQueries(queryClient);
 
-        const results = await axe(container);
+        // The hosted workspace is an iframe around the volunteer client, a
+        // separate document jsdom cannot frame-scan. The framed client has its
+        // own axe pass in the PWA suite.
+        const results = await axe(
+          container,
+          route.id === "shared-workspace" ? { iframes: false } : undefined,
+        );
         const blocking = results.violations.filter(
           (violation) => violation.impact === "serious" || violation.impact === "critical",
         );

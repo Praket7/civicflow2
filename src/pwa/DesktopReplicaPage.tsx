@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Cloud, CloudOff, Database, RefreshCw, RotateCcw } from "lucide-react";
 import { Button, ButtonLink, Page, PageHeader } from "../components/ui";
+import { SharedNav } from "../features/shared/SharedNav";
+import styles from "../features/shared/shared.module.css";
 import { isTauri } from "../lib/platform";
 import { readReplicaEntities } from "../lib/sync/desktopStore";
 import {
@@ -162,6 +164,8 @@ export function DesktopReplicaPage() {
           </div>
         }
       />
+
+      <SharedNav conflicts={sync.conflicts} />
 
       {!isTauri() ? (
         <section
@@ -339,9 +343,17 @@ export function DesktopReplicaPage() {
           </section>
 
           <p style={{ margin: 0, fontSize: 12.5, color: "var(--text-muted)" }}>
-            Writing coordinators still use the hosted workspace. This copy accepts server changes
-            only, so a local edit can never silently disagree with the organization.
+            This copy accepts server changes only. Writing coordinators use the shared schedule,
+            participation, and conflict screens, which queue commands and let the server decide.
           </p>
+          <div className={styles.actions}>
+            <ButtonLink to="/shared/schedule" variant="secondary">
+              Open shared schedule
+            </ButtonLink>
+            <ButtonLink to="/shared/conflicts" variant="ghost">
+              Review sync issues
+            </ButtonLink>
+          </div>
         </div>
       )}
     </Page>

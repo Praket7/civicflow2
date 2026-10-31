@@ -1,6 +1,7 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
+use civicflow_core::archive;
 use civicflow_core::auth::{Account, AuthSession};
 use civicflow_core::error::{AppError, CoreError};
 use civicflow_core::explain::CandidateAnswer;
@@ -41,6 +42,100 @@ fn lock_error() -> AppError {
         message: "The workspace database is busy. Close any open dialog and try again.".into(),
         field: None,
         action: Some("RETRY".into()),
+    }
+}
+
+/// The shared-workspace session lives in the operating system's credential
+/// store, never in the webview's local storage. A webview store is readable by
+/// any script that manages to run in the page; the keychain is not.
+const CLOUD_SESSION_SERVICE: &str = "org.feedmore.civicflow";
+const CLOUD_SESSION_ACCOUNT: &str = "shared-workspace-session";
+
+fn keychain_error(error: keyring::Error) -> AppError {
+    AppError {
+        code: "KEYCHAIN".into(),
+        message: format!("The operating system credential store refused the request: {error}"),
+        field: None,
+        action: Some("RETRY".into()),
+    }
+}
+
+#[tauri::command]
+fn save_cloud_session(value: String) -> Result<(), AppError> {
+    if value.trim().is_empty() {
+        return Err(AppError {
+            code: "VALIDATION".into(),
+            message: "A cloud session cannot be empty.".into(),
+            field: None,
+            action: None,
+        });
+    }
+    let entry = keyring::Entry::new(CLOUD_SESSION_SERVICE, CLOUD_SESSION_ACCOUNT)
+        .map_err(keychain_error)?;
+    entry.set_password(&value).map_err(keychain_error)
+}
+
+#[tauri::command]
+fn load_cloud_session() -> Result<Option<String>, AppError> {
+    let entry = keyring::Entry::new(CLOUD_SESSION_SERVICE, CLOUD_SESSION_ACCOUNT)
+        .map_err(keychain_error)?;
+    match entry.get_password() {
+        Ok(value) => Ok(Some(value)),
+        Err(keyring::Error::NoEntry) => Ok(None),
+        Err(error) => Err(keychain_error(error)),
+    }
+}
+
+#[tauri::command]
+fn clear_cloud_session() -> Result<(), AppError> {
+    let entry = keyring::Entry::new(CLOUD_SESSION_SERVICE, CLOUD_SESSION_ACCOUNT)
+        .map_err(keychain_error)?;
+    match entry.delete_credential() {
+        Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
+        Err(error) => Err(keychain_error(error)),
+    }
+}
+
+/// The key that seals the workspace file. It is generated once on this machine
+/// and kept in the same credential store as the cloud session; a copy of the
+/// database without it opens as noise.
+const WORKSPACE_KEY_SERVICE: &str = "org.feedmore.civicflow";
+const WORKSPACE_KEY_ACCOUNT: &str = "workspace-encryption-key";
+
+fn workspace_key() -> Result<[u8; 32], AppError> {
+    // The native test suite names its own key so a run never reads or writes
+    // the credential store of the machine it happens to be running on.
+    if let Some(value) = std::env::var_os("CIVICFLOW_WORKSPACE_KEY") {
+        let value = value.to_string_lossy().to_string();
+        return civicflow_core::db::parse_key(&value).ok_or_else(|| AppError {
+            code: "KEYCHAIN".into(),
+            message: "CIVICFLOW_WORKSPACE_KEY must be 64 hexadecimal characters.".into(),
+            field: None,
+            action: None,
+        });
+    }
+    let entry = keyring::Entry::new(WORKSPACE_KEY_SERVICE, WORKSPACE_KEY_ACCOUNT)
+        .map_err(keychain_error)?;
+    match entry.get_password() {
+        Ok(stored) => civicflow_core::db::parse_key(&stored).ok_or_else(|| AppError {
+            code: "KEYCHAIN".into(),
+            message: "The stored workspace key is not readable. Restore the key from your backup before opening this workspace.".into(),
+            field: None,
+            action: Some("OPEN_BACKUP".into()),
+        }),
+        Err(keyring::Error::NoEntry) => {
+            let mut key = [0u8; 32];
+            getrandom::getrandom(&mut key).map_err(|error| AppError {
+                code: "KEYCHAIN".into(),
+                message: format!("This machine could not produce a workspace key: {error}"),
+                field: None,
+                action: Some("RETRY".into()),
+            })?;
+            let stored: String = key.iter().map(|byte| format!("{byte:02x}")).collect();
+            entry.set_password(&stored).map_err(keychain_error)?;
+            Ok(key)
+        }
+        Err(error) => Err(keychain_error(error)),
     }
 }
 
@@ -1453,9 +1548,52 @@ fn restore_backup(
     backups::restore(database.connection_mut(), &state.backup_dir, &id).map_err(AppError::from)
 }
 
+/// Writes a sealed copy the coordinator chooses where to keep — a second disk,
+/// a safe, a teammate's machine — without the file being readable in transit.
+#[tauri::command]
+fn export_encrypted_backup(
+    state: State<'_, AppState>,
+    token: String,
+    path: String,
+    passphrase: String,
+) -> Result<archive::ExportReceipt, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    require_installation_steward(&database, &token)?;
+    archive::export(
+        database.connection(),
+        Path::new(&path),
+        &passphrase,
+        "Encrypted copy",
+    )
+    .map_err(AppError::from)
+}
+
+/// Opens a sealed archive through the same validation a local snapshot passes,
+/// so a file that was truncated in transit cannot replace the workspace.
+#[tauri::command]
+fn import_encrypted_backup(
+    state: State<'_, AppState>,
+    token: String,
+    path: String,
+    passphrase: String,
+) -> Result<BackupRestoreResult, AppError> {
+    let mut database = state.database.lock().map_err(|_| lock_error())?;
+    require_installation_steward(&database, &token)?;
+    archive::import(
+        database.connection_mut(),
+        &state.backup_dir,
+        Path::new(&path),
+        &passphrase,
+    )
+    .map_err(AppError::from)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let builder = tauri::Builder::default().plugin(tauri_plugin_dialog::init());
+    let builder = tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build());
 
     // The embedded WebDriver server exists only in debug builds. The plugin is
     // linked in release builds so the capability stays valid, but its server is
@@ -1474,7 +1612,12 @@ pub fn run() {
             std::fs::create_dir_all(&data_dir)?;
             // Startup never invents records. A new installation is empty until
             // the person creates an organization or explicitly opens the demo.
-            let database = Database::open(data_dir.join("civicflow.db"))?;
+            // The workspace is SQLCipher-encrypted with this machine's key; a
+            // plaintext file from an earlier build is rewritten on the way in.
+            // `AppError` is shaped for the webview, not for a startup failure, so
+            // its message is carried into the boxed error the setup hook returns.
+            let key = workspace_key().map_err(|error| std::io::Error::other(error.message))?;
+            let database = Database::open_with_key(data_dir.join("civicflow.db"), key)?;
             let backup_dir = data_dir.join("backups");
             if backups::list(&backup_dir)?.is_empty() {
                 backups::create(
@@ -1493,6 +1636,9 @@ pub fn run() {
         .plugin(tauri_plugin_deep_link::init())
         .invoke_handler(tauri::generate_handler![
             open_external_url,
+            save_cloud_session,
+            load_cloud_session,
+            clear_cloud_session,
             sign_in,
             sign_in_with_hosted,
             open_demo_workspace,
@@ -1573,7 +1719,9 @@ pub fn run() {
             installation_access,
             list_backups,
             create_backup,
-            restore_backup
+            restore_backup,
+            export_encrypted_backup,
+            import_encrypted_backup
         ])
         .build(tauri::generate_context!())
         .expect("CivicFlow failed to launch");

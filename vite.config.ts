@@ -22,6 +22,14 @@ export default defineConfig({
   build: {
     target: ["es2021", "chrome100", "safari15"],
     sourcemap: false,
+    rollupOptions: {
+      // The coordinator demo and the installable volunteer app are separate
+      // documents with separate entry points; neither ships the other's code.
+      input: {
+        main: fileURLToPath(new URL("./index.html", import.meta.url)),
+        pwa: fileURLToPath(new URL("./pwa.html", import.meta.url)),
+      },
+    },
   },
   test: {
     environment: "jsdom",

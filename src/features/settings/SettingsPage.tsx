@@ -7,6 +7,7 @@ import {
   Gauge,
   ImagePlus,
   KeyRound,
+  RefreshCw,
   RotateCcw,
   Save,
   Settings2,
@@ -35,6 +36,8 @@ import { getWorkspaceRepository } from "../../lib/workspace/repository";
 import { useWorkspace } from "../../lib/workspace/session";
 import { getHourRows } from "../../lib/workspace/selectors";
 import { ReminderRulesCard } from "./ReminderRulesCard";
+import { SharedWorkspaceCard } from "./SharedWorkspaceCard";
+import { UpdateCard } from "./UpdateCard";
 import { VolunteerImportCard } from "./VolunteerImportCard";
 import type { PriorityLevel, RosterPolicy } from "../../types/domain";
 import type { Account } from "../../types/domain";
@@ -60,6 +63,7 @@ const CATEGORIES = [
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "accessibility", label: "Accessibility", icon: Accessibility },
   { id: "data", label: "Local data", icon: Database },
+  { id: "updates", label: "Updates", icon: RefreshCw },
 ];
 
 export function SettingsPage() {
@@ -623,6 +627,7 @@ export function SettingsPage() {
                   {saved}
                 </p>
               ) : null}
+              <SharedWorkspaceCard />
             </>
           ) : null}
 
@@ -986,6 +991,18 @@ export function SettingsPage() {
                 <ButtonLink to="/coordinator/accessibility" variant="primary">
                   Open accessibility studio
                 </ButtonLink>
+              </div>
+            </>
+          ) : null}
+
+          {category === "updates" ? (
+            <>
+              <h2 className={styles.settingsTitle}>Application updates</h2>
+              <p className={styles.settingsSub}>
+                Check the signed release feed. Nothing is downloaded until you choose to install it.
+              </p>
+              <div style={{ marginTop: 12 }}>
+                <UpdateCard />
               </div>
             </>
           ) : null}

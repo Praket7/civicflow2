@@ -2367,6 +2367,12 @@ export const previewRepository: WorkspaceRepository = {
     writeBackups([created, ...backups]);
     return listBackupMeta();
   },
+  async exportEncryptedBackup() {
+    throw new Error("Encrypted archives are written by the desktop app.");
+  },
+  async importEncryptedBackup() {
+    throw new Error("Encrypted archives are opened by the desktop app.");
+  },
   async restoreBackup(id): Promise<BackupRestoreResult> {
     const backups = ensureBackups();
     const target = backups.find((entry) => entry.meta.id === id);

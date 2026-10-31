@@ -1,0 +1,107 @@
+/**
+ * The wire protocol. These names mirror the SQL functions exactly; a client
+ * that invents its own status strings cannot tell a retry from a revocation.
+ */
+
+export type CommandStatus =
+  | "applied"
+  | "already_applied"
+  | "conflict"
+  | "validation_error"
+  | "forbidden"
+  | "stale_authority"
+  | "stale_plan"
+  | "retryable_error";
+
+export type CommandType =
+  | "CREATE_OPPORTUNITY"
+  | "UPDATE_OPPORTUNITY"
+  | "CREATE_SHIFT"
+  | "UPDATE_SHIFT"
+  | "REGISTER_FOR_SHIFT"
+  | "CANCEL_REGISTRATION"
+  | "JOIN_WAITLIST"
+  | "CHECK_IN"
+  | "CHECK_OUT"
+  | "MARK_NO_SHOW"
+  | "SAVE_VOLUNTEER_PROFILE"
+  | "UPDATE_CREDENTIAL"
+  | "REVIEW_HOURS"
+  | "UPDATE_ROSTER_POLICY"
+  | "APPLY_ROSTER_PLAN";
+
+export interface CommandEnvelope {
+  operationId: string;
+  replicaId: string;
+  organizationId: string;
+  command: CommandType;
+  baseWorkspaceRevision: number;
+  entityVersions: Record<string, number>;
+  payload: Record<string, unknown>;
+  clientCreatedAt: string;
+}
+
+/**
+ * A membership epoch travels inside the payload because that is where the
+ * server looks for it. Keeping it out of `payload` would let a revoked device
+ * pass the epoch check with a null claim.
+ */
+export function withMembershipEpoch(
+  envelope: CommandEnvelope,
+  membershipEpoch: number,
+): CommandEnvelope {
+  return {
+    ...envelope,
+    payload: { ...envelope.payload, membershipEpoch },
+  };
+}
+
+export interface CommandResult {
+  status: CommandStatus;
+  code?: string;
+  message?: string;
+  operationId?: string;
+  command?: string;
+  serverRevision?: number;
+  cursor?: number;
+  serverTime?: string;
+  authoritative?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+export interface Change {
+  sequence: number;
+  entity: string;
+  id: string;
+  operation: "insert" | "update" | "delete";
+  rowVersion?: number;
+  payload?: Record<string, unknown>;
+}
+
+export interface PullResult {
+  status: "ok" | "forbidden";
+  cursor: number;
+  hasMore: boolean;
+  revision: number;
+  changes: Change[];
+}
+
+/** Outcomes that will never succeed if the same bytes are sent again. */
+export function isTerminalRefusal(status: CommandStatus): boolean {
+  return (
+    status === "conflict" ||
+    status === "validation_error" ||
+    status === "forbidden" ||
+    status === "stale_authority" ||
+    status === "stale_plan"
+  );
+}
+
+/** Outcomes that mean the server did the work, or already had. */
+export function isAccepted(status: CommandStatus): boolean {
+  return status === "applied" || status === "already_applied";
+}
+
+export function isRetryable(status: CommandStatus): boolean {
+  return status === "retryable_error";
+}

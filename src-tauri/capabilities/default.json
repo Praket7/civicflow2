@@ -6,7 +6,10 @@
   "permissions": [
     "core:default",
     "dialog:allow-save",
+    "dialog:allow-open",
     "deep-link:default",
+    "updater:default",
+    "process:default",
     "wdio-webdriver:default"
   ]
 }

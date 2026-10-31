@@ -627,6 +627,14 @@ export interface BackupRestoreResult {
   backups: BackupSnapshot[];
 }
 
+/** What the app wrote when it sealed a snapshot with a passphrase. */
+export interface EncryptedBackupReceipt {
+  path: string;
+  bytes: number;
+  snapshot: string;
+  createdAt: string;
+}
+
 export interface ReportRequest {
   template: string;
   fields: string[];

@@ -10,6 +10,7 @@ pnpm check:hardcodes
 pnpm check:generated
 pnpm docs:check
 pnpm test
+pnpm test:sql
 pnpm build:web
 
 # These need headless Chrome. --best-effort skips only when no browser is

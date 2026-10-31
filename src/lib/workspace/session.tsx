@@ -10,6 +10,7 @@ import type {
   CredentialReadiness,
   DemoWorkspace,
   DisruptionReport,
+  EncryptedBackupReceipt,
   EngagementMetrics,
   HoursDecision,
   NewOpportunityInput,
@@ -137,6 +138,10 @@ interface WorkspaceSessionValue {
     resetDemo(): Promise<void>;
     createBackup(note?: string): Promise<BackupSnapshot[]>;
     restoreBackup(id: string): Promise<BackupRestoreResult>;
+    /** Writes a sealed copy the coordinator decides where to keep. */
+    exportEncryptedBackup(passphrase: string): Promise<EncryptedBackupReceipt | null>;
+    /** Restores from a sealed file; null means the dialog was dismissed. */
+    importEncryptedBackup(passphrase: string): Promise<BackupRestoreResult | null>;
     /** Checks a volunteer spreadsheet without writing anything. */
     previewVolunteerImport(text: string): Promise<VolunteerImportPreview>;
     /** Adds the file as one transaction, then refreshes the roster screens. */
@@ -410,6 +415,15 @@ export function WorkspaceSessionProvider({ children }: { children: ReactNode }) 
       restoreBackup: (id) =>
         enqueue(async () => {
           const result = await repository.restoreBackup(id);
+          setBackups(result.backups);
+          apply(result.snapshot);
+          return result;
+        }),
+      exportEncryptedBackup: (passphrase) => repository.exportEncryptedBackup(passphrase),
+      importEncryptedBackup: (passphrase) =>
+        enqueue(async () => {
+          const result = await repository.importEncryptedBackup(passphrase);
+          if (!result) return null;
           setBackups(result.backups);
           apply(result.snapshot);
           return result;

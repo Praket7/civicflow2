@@ -1,7 +1,10 @@
+use std::fs::File;
+use std::io::Read;
 use std::path::Path;
+use std::sync::OnceLock;
 
 use chrono::{Duration, Utc};
-use rusqlite::{params, Connection, OptionalExtension};
+use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
 
 use crate::error::{CoreError, Result};
 use crate::models::{SeedWorkflow, SeedWorkspace, WorkspaceHealth};
@@ -144,17 +147,165 @@ pub fn apply_migrations(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
+/// A file that starts with this is a plain SQLite database; anything else this
+/// build opens is SQLCipher ciphertext.
+const SQLITE_HEADER: &[u8; 16] = b"SQLite format 3\0";
+
+/// The key that seals the workspace file. It is installed once at startup from
+/// the operating system credential store; without it an encrypted workspace
+/// cannot be read at all, which is the point.
+static DATABASE_KEY: OnceLock<[u8; 32]> = OnceLock::new();
+
+pub fn install_key(key: [u8; 32]) {
+    let _ = DATABASE_KEY.set(key);
+}
+
+fn hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+fn decode_hex(value: &str) -> Option<[u8; 32]> {
+    if value.len() != 64 {
+        return None;
+    }
+    let mut key = [0u8; 32];
+    for (index, chunk) in value.as_bytes().chunks(2).enumerate() {
+        key[index] = u8::from_str_radix(std::str::from_utf8(chunk).ok()?, 16).ok()?;
+    }
+    Some(key)
+}
+
+/// Accepts either form the desktop may have stored: 32 raw bytes as hex, or
+/// the passphrase-style text a person typed. A passphrase is stretched by
+/// SQLCipher's own KDF, so both are safe to hand to `PRAGMA key`.
+pub fn parse_key(value: &str) -> Option<[u8; 32]> {
+    decode_hex(value.trim())
+}
+
+/// The literal form SQLCipher reads as a raw 32-byte key.
+fn raw_key(key: &[u8; 32]) -> String {
+    format!("x'{}'", hex(key))
+}
+
+fn is_plaintext(path: &Path) -> bool {
+    let mut header = [0u8; 16];
+    File::open(path)
+        .and_then(|mut file| file.read_exact(&mut header))
+        .map(|()| &header == SQLITE_HEADER)
+        .unwrap_or(false)
+}
+
+fn quote(value: &str) -> String {
+    format!("'{}'", value.replace('\'', "''"))
+}
+
+/// Applies the installed key and forces SQLCipher to prove it now, so a wrong
+/// key is reported here rather than as a confusing error on a later query.
+fn apply_key(conn: &Connection) -> Result<()> {
+    let Some(key) = DATABASE_KEY.get() else {
+        return Ok(());
+    };
+    conn.execute_batch(&format!("PRAGMA key = \"{}\";", raw_key(key)))?;
+    conn.query_row("SELECT count(*) FROM sqlite_master", [], |row| {
+        row.get::<_, i64>(0)
+    })?;
+    Ok(())
+}
+
+/// Opens a workspace file, keying it only when it is not plaintext. A file this
+/// app has not written yet (a new installation, or a test fixture) is keyed at
+/// creation so it is never briefly unencrypted on disk.
+fn open_path(path: &Path, flags: OpenFlags) -> Result<Connection> {
+    let conn = Connection::open_with_flags(path, flags)?;
+    if !is_plaintext(path) {
+        apply_key(&conn)?;
+    }
+    Ok(conn)
+}
+
+pub(crate) fn open_read_only(path: &Path) -> Result<Connection> {
+    open_path(path, OpenFlags::SQLITE_OPEN_READ_ONLY)
+}
+
+pub(crate) fn open_existing(path: &Path) -> Result<Connection> {
+    open_path(path, OpenFlags::SQLITE_OPEN_READ_WRITE)
+}
+
+/// A destination connection for a copy: new and empty, so it is keyed before
+/// the first page is written.
+pub(crate) fn open_new(path: &Path) -> Result<Connection> {
+    open_path(
+        path,
+        OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_CREATE,
+    )
+}
+
+/// Rewrites a plaintext workspace as ciphertext. The copy is written beside the
+/// original, checked by reopening it, and only then swapped in, so a failure
+/// leaves the readable file untouched.
+fn encrypt_in_place(path: &Path) -> Result<()> {
+    let key = DATABASE_KEY.get().ok_or_else(|| {
+        CoreError::rule(
+            "WORKSPACE_KEY",
+            "This workspace cannot be encrypted without its key.",
+            None,
+            None,
+        )
+    })?;
+    let staged = path.with_extension("encrypting");
+    let _ = std::fs::remove_file(&staged);
+    {
+        let conn = Connection::open(path)?;
+        // A write-ahead log would otherwise be left behind as plaintext.
+        let _ = conn.execute_batch("PRAGMA wal_checkpoint(TRUNCATE);");
+        conn.execute_batch(&format!(
+            "ATTACH DATABASE {} AS encrypted KEY \"{}\";\n             SELECT sqlcipher_export('encrypted');\n             DETACH DATABASE encrypted;",
+            quote(&staged.to_string_lossy()),
+            raw_key(key)
+        ))?;
+    }
+    if is_plaintext(&staged) {
+        let _ = std::fs::remove_file(&staged);
+        return Err(CoreError::rule(
+            "WORKSPACE_KEY",
+            "This build could not encrypt the workspace.",
+            None,
+            None,
+        ));
+    }
+    for suffix in ["-wal", "-shm"] {
+        let _ = std::fs::remove_file(format!("{}{suffix}", path.display()));
+    }
+    std::fs::rename(&staged, path)?;
+    Ok(())
+}
+
 pub struct Database {
     conn: Connection,
 }
 
 impl Database {
     pub fn open(path: impl AsRef<Path>) -> Result<Self> {
-        let conn = Connection::open(path)?;
+        let path = path.as_ref();
+        let conn = open_path(
+            path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_CREATE,
+        )?;
         let database = Self { conn };
         database.configure()?;
         database.migrate()?;
         Ok(database)
+    }
+
+    /// Opens the workspace that belongs to a key, upgrading a plaintext file
+    /// left by an earlier build on the way in.
+    pub fn open_with_key(path: impl AsRef<Path>, key: [u8; 32]) -> Result<Self> {
+        install_key(key);
+        let path = path.as_ref();
+        if path.is_file() && is_plaintext(path) {
+            encrypt_in_place(path)?;
+        }
+        Self::open(path)
     }
 
     pub fn in_memory() -> Result<Self> {
@@ -174,6 +325,17 @@ impl Database {
              PRAGMA user_version = {SCHEMA_VERSION};"
         ))?;
         Ok(())
+    }
+
+    /// Whether SQLCipher is the engine under this connection. A plaintext file
+    /// opened without a key reports no cipher version, which is how a build can
+    /// notice the workspace is not protected.
+    pub fn cipher_version(&self) -> Option<String> {
+        self.conn
+            .query_row("PRAGMA cipher_version", [], |row| row.get(0))
+            .optional()
+            .ok()
+            .flatten()
     }
 
     fn migrate(&self) -> Result<()> {

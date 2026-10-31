@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#211d17" />
+    <meta
+      name="description"
+      content="CivicFlow Volunteer — your shifts, hours and check-in, even offline."
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CivicFlow" />
+    <title>CivicFlow Volunteer</title>
+    <script>
+      // Match the desktop app's saved appearance before first paint. A volunteer
+      // phone with no saved preference follows the system.
+      (function () {
+        try {
+          var saved = JSON.parse(localStorage.getItem("civicflow.display") || "{}");
+          var preference =
+            saved.theme === "dark" || saved.theme === "light" ? saved.theme : "system";
+          var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var resolved = preference === "system" ? (dark ? "dark" : "light") : preference;
+          document.documentElement.dataset.theme = resolved;
+          document.documentElement.style.colorScheme = resolved;
+        } catch (error) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/pwa/main.tsx"></script>
+  </body>
+</html>

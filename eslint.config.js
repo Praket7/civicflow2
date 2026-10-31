@@ -6,7 +6,18 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist/**", "node_modules/**", "src-tauri/target/**", "src-tauri/core/target/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      "src-tauri/target/**",
+      "src-tauri/core/target/**",
+      // A service worker runs in its own global scope; the app's browser
+      // globals and React rules do not describe it.
+      "public/sw.js",
+      // Edge Functions run on Deno, which neither tsconfig nor these browser
+      // globals describe.
+      "supabase/functions/**",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

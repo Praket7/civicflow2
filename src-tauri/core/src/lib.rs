@@ -2,6 +2,7 @@
 //! models. The Tauri command layer is a thin wrapper over this crate so the same
 //! behaviour is testable without a webview.
 
+pub mod archive;
 pub mod auth;
 pub mod authorization;
 pub mod backups;

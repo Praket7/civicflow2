@@ -8,6 +8,9 @@ const appBinary = path.resolve("src-tauri/target/debug/civicflow");
 // user's own demo work.
 const dataDir = path.resolve(".wdio-data");
 process.env.CIVICFLOW_DATA_DIR = dataDir;
+// A throwaway workspace gets a throwaway key. Without this the suite would ask
+// the machine's credential store for the key that protects the real install.
+process.env.CIVICFLOW_WORKSPACE_KEY = "0".repeat(64);
 
 // The webview store is shared with the installed app, so the suite must not
 // delete it: doing so signs the real app out and can erase a sign-in hand-off

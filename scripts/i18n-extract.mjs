@@ -39,7 +39,16 @@ function collectFiles(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === "i18n" || entry.name === "node_modules") continue;
+      // `pwa` and `sync` are the volunteer client. It is a separate surface
+      // with its own entry and is not wired to the coordinator's translator,
+      // so its copy must not enter this catalog untranslated.
+      if (
+        entry.name === "i18n" ||
+        entry.name === "node_modules" ||
+        entry.name === "pwa" ||
+        entry.name === "sync"
+      )
+        continue;
       files.push(...collectFiles(path));
     } else if (/\.tsx?$/.test(entry.name) && !entry.name.includes(".test.")) {
       files.push(path);

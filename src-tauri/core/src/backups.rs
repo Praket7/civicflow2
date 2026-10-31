@@ -13,7 +13,7 @@ use std::time::Duration;
 
 use chrono::Utc;
 use rusqlite::backup::Backup;
-use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
+use rusqlite::{params, Connection, OptionalExtension};
 use sha2::{Digest, Sha256};
 
 use crate::db::APPLICATION_ID;
@@ -66,7 +66,9 @@ fn validation(message: impl Into<String>) -> CoreError {
 }
 
 fn open_read_only(path: &Path) -> Result<Connection> {
-    Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY)
+    // Through the workspace opener so an encrypted snapshot is keyed exactly
+    // like the database it came from.
+    crate::db::open_read_only(path)
         .map_err(|_| validation("That file is not a readable SQLite backup."))
 }
 
@@ -298,7 +300,7 @@ fn create_with_protection(
         uuid::Uuid::new_v4().simple()
     );
     let path = dir.join(&id);
-    let mut destination = Connection::open(&path)?;
+    let mut destination = crate::db::open_new(&path)?;
     {
         let backup = Backup::new(conn, &mut destination)?;
         backup.run_to_completion(100, Duration::from_millis(0), None)?;
@@ -320,7 +322,7 @@ fn create_with_protection(
         note.trim()
     };
     {
-        let conn = Connection::open(&path)?;
+        let conn = crate::db::open_existing(&path)?;
         conn.execute(
             "INSERT OR REPLACE INTO app_settings (key, value) VALUES ('backup_note', ?1)",
             params![note],

@@ -44,8 +44,10 @@ export function RequireAuth({ children, accountRole, roles }: RequireAuthProps) 
     );
   }
 
-  // The setup route itself must stay reachable, or the redirect loops.
-  if (isSetupPending(user)) {
+  // The setup route itself must stay reachable, or the redirect loops. The
+  // hosted workspace has its own sign-in and its own profile, so a local setup
+  // step that has not been finished does not stand in its way.
+  if (isSetupPending(user) && location.pathname !== "/shared") {
     const target = setupRoute(user, organizations.organizations.length > 0);
     if (location.pathname !== target) return <Navigate to={target} replace />;
   }

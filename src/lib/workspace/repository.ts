@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { save } from "@tauri-apps/plugin-dialog";
+import { open, save } from "@tauri-apps/plugin-dialog";
 import type {
   Account,
   AccountRole,
@@ -13,6 +13,7 @@ import type {
   CredentialReadiness,
   DisruptionReport,
   EngagementMetrics,
+  EncryptedBackupReceipt,
   ExportFormat,
   ExportReceipt,
   HoursDecision,
@@ -211,6 +212,10 @@ export interface WorkspaceRepository {
   listBackups(): Promise<BackupSnapshot[]>;
   createBackup(note?: string): Promise<BackupSnapshot[]>;
   restoreBackup(id: string): Promise<BackupRestoreResult>;
+  /** Seals a snapshot and writes it wherever the coordinator chooses. */
+  exportEncryptedBackup(passphrase: string): Promise<EncryptedBackupReceipt | null>;
+  /** Restores from a sealed file, after the same checks a local snapshot passes. */
+  importEncryptedBackup(passphrase: string): Promise<BackupRestoreResult | null>;
   getMissionControl(role?: AccountRole): Promise<MissionControlSummary>;
   getNotifications(role: AccountRole): Promise<NotificationItem[]>;
   markNotificationRead(id: string, role: AccountRole): Promise<void>;
@@ -223,6 +228,11 @@ export interface WorkspaceRepository {
   applyVolunteerImport(text: string): Promise<VolunteerImportSummary>;
   /** Writes the roster in the shape the import reads, for editing and return. */
   exportVolunteerRoster(): Promise<ExportReceipt | null>;
+}
+
+// The same shape the core suggests, so the dialog and the file agree.
+function encryptedBackupName(): string {
+  return `civicflow-backup-${new Date().toISOString().slice(0, 10)}.civicflow`;
 }
 
 // The only credential the IPC bridge accepts.
@@ -409,6 +419,31 @@ const desktopRepository: WorkspaceRepository = {
   listBackups: () => invoke<BackupSnapshot[]>("list_backups", withToken()),
   createBackup: (note) => invoke<BackupSnapshot[]>("create_backup", withToken({ note })),
   restoreBackup: (id) => invoke<BackupRestoreResult>("restore_backup", withToken({ id })),
+  exportEncryptedBackup: async (passphrase) => {
+    const path = await save({
+      title: "Save an encrypted backup",
+      defaultPath: encryptedBackupName(),
+      filters: [{ name: "CivicFlow archive", extensions: ["civicflow"] }],
+    });
+    if (!path) return null;
+    return invoke<EncryptedBackupReceipt>(
+      "export_encrypted_backup",
+      withToken({ path, passphrase }),
+    );
+  },
+  importEncryptedBackup: async (passphrase) => {
+    const chosen = await open({
+      title: "Open an encrypted backup",
+      multiple: false,
+      directory: false,
+      filters: [{ name: "CivicFlow archive", extensions: ["civicflow"] }],
+    });
+    if (!chosen || typeof chosen !== "string") return null;
+    return invoke<BackupRestoreResult>(
+      "import_encrypted_backup",
+      withToken({ path: chosen, passphrase }),
+    );
+  },
   getMissionControl: () => invoke<MissionControlSummary>("get_mission_control", withToken()),
   getNotifications: () => invoke<NotificationItem[]>("list_notifications", withToken()),
   markNotificationRead: async (id: string) => {

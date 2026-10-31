@@ -32,6 +32,7 @@ jobs:
       - run: pnpm check:hardcodes
       - run: pnpm docs:check
       - run: pnpm test
+      - run: pnpm test:sql
       - run: pnpm build:web
       - name: Print audit
         run: node scripts/audit-print.mjs

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, Database, HardDrive, History, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Database, HardDrive, History, LockKeyhole, ShieldCheck } from "lucide-react";
 import {
   Badge,
   Button,
@@ -8,6 +8,7 @@ import {
   PageHeader,
   SectionHeader,
   StatCard,
+  TextField,
 } from "../../components/ui";
 import { t } from "../../lib/i18n";
 import { isTauri } from "../../lib/platform";
@@ -33,6 +34,8 @@ export function BackupPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [passphrase, setPassphrase] = useState("");
+  const [archiveBusy, setArchiveBusy] = useState(false);
 
   // UI only; the backup commands check the same rule themselves.
   if (installationSteward !== true) {
@@ -87,6 +90,52 @@ export function BackupPage() {
       setError(`Restore failed: ${describeError(caught)}`);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function saveEncrypted() {
+    setError("");
+    setMessage("");
+    if (passphrase.trim().length < 12) {
+      setError(
+        "Use a passphrase of at least 12 characters. It is the only thing protecting the copy.",
+      );
+      return;
+    }
+    setArchiveBusy(true);
+    try {
+      const receipt = await actions.exportEncryptedBackup(passphrase);
+      if (receipt) {
+        setMessage(
+          `Encrypted copy written (${formatBytes(receipt.bytes)}). Without the passphrase the file cannot be opened, so keep it somewhere other than the copy.`,
+        );
+      }
+    } catch (caught) {
+      setError(`Encrypted copy failed: ${describeError(caught)}`);
+    } finally {
+      setArchiveBusy(false);
+    }
+  }
+
+  async function openEncrypted() {
+    setError("");
+    setMessage("");
+    if (passphrase.trim().length < 12) {
+      setError("Enter the passphrase the archive was written with.");
+      return;
+    }
+    setArchiveBusy(true);
+    try {
+      const result = await actions.importEncryptedBackup(passphrase);
+      if (result) {
+        setMessage(
+          "Restored from the encrypted archive. A safety snapshot of the previous state was kept.",
+        );
+      }
+    } catch (caught) {
+      setError(`Restore from archive failed: ${describeError(caught)}`);
+    } finally {
+      setArchiveBusy(false);
     }
   }
 
@@ -323,6 +372,41 @@ export function BackupPage() {
                 list to replace live records, or choose another snapshot to cancel.
               </p>
             ) : null}
+          </Card>
+
+          <Card padding="compact" style={{ marginTop: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13 }}>
+              <LockKeyhole size={14} aria-hidden="true" />
+              Encrypted copy
+            </div>
+            <p style={{ marginTop: 6, fontSize: 13, lineHeight: 1.55, color: "var(--text-muted)" }}>
+              A sealed archive is the only backup safe to carry off this device. It is encrypted
+              with a passphrase using Argon2id and XChaCha20-Poly1305, so it opens only on a machine
+              where someone types that phrase.
+            </p>
+            {native ? (
+              <div style={{ display: "grid", gap: 8, marginTop: 10 }}>
+                <TextField
+                  label="Passphrase"
+                  type="password"
+                  autoComplete="new-password"
+                  value={passphrase}
+                  onChange={(event) => setPassphrase(event.target.value)}
+                />
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <Button variant="secondary" disabled={archiveBusy} onClick={saveEncrypted}>
+                    Save encrypted copy
+                  </Button>
+                  <Button variant="ghost" disabled={archiveBusy} onClick={openEncrypted}>
+                    Restore from archive
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p style={{ marginTop: 8, fontSize: 12.5, color: "var(--text-muted)" }}>
+                The desktop app writes and opens these archives.
+              </p>
+            )}
           </Card>
 
           <Card padding="compact" surface="dark" style={{ marginTop: 12 }}>

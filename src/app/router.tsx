@@ -41,6 +41,7 @@ import { RetentionPage } from "../features/insights/RetentionPage";
 import { SavedPage } from "../features/volunteer/SavedPage";
 import { SchedulePage } from "../features/schedule/SchedulePage";
 import { SettingsPage } from "../features/settings/SettingsPage";
+import { SharedWorkspacePage } from "../pwa/SharedWorkspacePage";
 import { ShiftRosterPage } from "../features/coordinator/ShiftRosterPage";
 import { SignInPage } from "../features/public/SignInPage";
 import { SignUpPage } from "../features/public/SignUpPage";
@@ -156,6 +157,17 @@ const shellRoutes = routes
 
 const routeConfig = [
   ...standaloneRoutes,
+  {
+    // The hosted workspace shares the desktop window, but not its router: the
+    // cloud client keeps its own history so a scan deep link never rewrites the
+    // local workspace address.
+    path: "/shared",
+    element: (
+      <RequireAuth>
+        <SharedWorkspacePage />
+      </RequireAuth>
+    ),
+  },
   {
     path: "/",
     element: (

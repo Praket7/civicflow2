@@ -17,6 +17,7 @@ wdio-logs/
 !.env.example
 !.env.test
 *.local
+/.secrets/
 
 contrast-report.json
 zoom-report.json

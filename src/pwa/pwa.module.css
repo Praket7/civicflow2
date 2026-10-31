@@ -292,6 +292,22 @@
   margin: 0;
   color: var(--text-muted);
   font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+/* The account card sits an address that can be wider than the card on a phone,
+   then the organization name, then a control. Each needs its own breathing
+   room so the stack does not read as one paragraph. */
+.accountEmail {
+  margin: 0 0 4px;
+  color: var(--text-secondary);
+  font-size: 14.5px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.accountOrg {
+  margin: 0 0 16px;
 }
 
 .eyebrow {

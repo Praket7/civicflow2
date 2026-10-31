@@ -1130,8 +1130,8 @@ export function SettingsScreen() {
 
       <Card>
         <h2 className={styles.cardTitle}>Account</h2>
-        <p className={styles.body}>{view?.email}</p>
-        <p className={styles.muted}>{workspace?.organization.name}</p>
+        <p className={styles.accountEmail}>{view?.email}</p>
+        <p className={`${styles.muted} ${styles.accountOrg}`}>{workspace?.organization.name}</p>
         <div className={styles.rowActions}>
           <Button variant="secondary" onClick={() => void signOut()}>
             Sign out

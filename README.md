@@ -499,7 +499,8 @@ Pushing a `v*` tag runs `.github/workflows/release.yml`. It builds macOS (Apple 
 Intel), Windows x64, and Linux x64 installers, attaches them to the GitHub release, publishes
 SHA-256 checksums, and writes the signed updater feed at
 `releases/latest/download/latest.json`. The app checks that feed from Settings → Updates and
-installs only a package signed by the matching private key.
+installs only a package signed by the matching private key. The manual clean-install matrix and
+the rest of the pre-tag sequence are in [docs/RELEASE-CHECKLIST.md](docs/RELEASE-CHECKLIST.md).
 
 Unsigned macOS builds are ad-hoc signed so Gatekeeper offers **Open Anyway** instead of
 reporting a damaged app. Windows builds without a certificate are unsigned, so SmartScreen

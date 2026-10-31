@@ -3,9 +3,10 @@
  *
  * README.md is the only project-state document. LICENSE, the generated
  * third-party notice, and the media license are legal artifacts, not a second
- * description of the product. This checks that README links resolve, that the
- * generated facts block is current, and that no other project document has
- * crept back into the tree.
+ * description of the product. The release checklist is an operational
+ * procedure, not a second description of the product, so it is allowed by
+ * name. This checks that README links resolve, that the generated facts block
+ * is current, and that no other project document has crept back into the tree.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -77,8 +78,9 @@ function* markdown(dir) {
 }
 
 const LEGAL_DOCUMENTS = new Set(["THIRD_PARTY_NOTICES.md", "public/media/LICENSE.md"]);
+const OPERATIONAL_DOCUMENTS = new Set(["docs/RELEASE-CHECKLIST.md"]);
 const extra = [...markdown(".")].filter(
-  (path) => path !== "README.md" && !LEGAL_DOCUMENTS.has(path),
+  (path) => path !== "README.md" && !LEGAL_DOCUMENTS.has(path) && !OPERATIONAL_DOCUMENTS.has(path),
 );
 for (const path of extra) problems.push(`Second project document found: ${path}`);
 

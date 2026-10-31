@@ -42,7 +42,7 @@ const RULES = [
   { pattern: /spca\s+serving\s+erie\s+county/i, label: "real partner organization" },
   { pattern: /meals\s+on\s+wheels\s+wny/i, label: "real partner organization" },
   { pattern: /org\.feedmore/i, label: "bundle identifier borrowed from a real organization" },
-  { pattern: /Volunteer!2026/, label: "previously published demo password" },
+  { pattern: /Volunteer!\d{4}/, label: "previously published demo password pattern" },
 ];
 
 function* walk(dir) {

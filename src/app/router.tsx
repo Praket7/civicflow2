@@ -11,6 +11,7 @@ import { AuditPage } from "../features/records/AuditPage";
 import { AutoRosterPage } from "../features/coverage/AutoRosterPage";
 import { BackupPage } from "../features/records/BackupPage";
 import { CheckInPage } from "../features/volunteer/CheckInPage";
+import { DesktopReplicaPage } from "../pwa/DesktopReplicaPage";
 import { CoveragePage } from "../features/coverage/CoveragePage";
 import { CreateOpportunityPage } from "../features/schedule/CreateOpportunityPage";
 import { CredentialsPage } from "../features/credentials/CredentialsPage";
@@ -165,6 +166,16 @@ const routeConfig = [
     element: (
       <RequireAuth>
         <SharedWorkspacePage />
+      </RequireAuth>
+    ),
+  },
+  {
+    // The desktop's own replica is a read-only preview; the hosted workspace
+    // in `/shared` remains the coordinator surface.
+    path: "/shared/replica",
+    element: (
+      <RequireAuth>
+        <DesktopReplicaPage />
       </RequireAuth>
     ),
   },

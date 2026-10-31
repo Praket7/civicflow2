@@ -15,7 +15,7 @@ pub const DEMO_SEED: &str = include_str!("../../../shared/demo-workspace.json");
 /// Workflow defaults, beside the workspace seed so both stores start equal.
 pub const WORKFLOW_SEED: &str = include_str!("../../../shared/session-seed.json");
 /// Bumped with every migration so backups can check they match this build.
-pub const SCHEMA_VERSION: i64 = 14;
+pub const SCHEMA_VERSION: i64 = 15;
 /// "CIFV" — marks a database as a CivicFlow workspace so restore can refuse
 /// an arbitrary SQLite file.
 pub const APPLICATION_ID: i64 = 0x4349_4656;
@@ -36,6 +36,7 @@ const OWNERSHIP_SYNC_SCHEMA: &str =
     include_str!("../migrations/0012_ownership_sync_and_revisions.sql");
 const WORKSPACE_CLOCK_SCHEMA: &str = include_str!("../migrations/0013_workspace_clock.sql");
 const ORGANIZATION_SCOPE_SCHEMA: &str = include_str!("../migrations/0014_organization_scope.sql");
+const SHARED_REPLICA_SCHEMA: &str = include_str!("../migrations/0015_shared_replica.sql");
 const WORKFLOW_SEED_MARKER: &str = "workflow_seed_version";
 
 const CREDENTIAL_TYPES: [(&str, i64); 6] = [
@@ -100,7 +101,7 @@ fn role_requirement(role: &str) -> (Option<String>, Option<String>, Option<i64>)
 }
 
 /// A restore replaces the live database, so the copy must catch up to this build.
-const MIGRATIONS: [(i64, &str); 14] = [
+const MIGRATIONS: [(i64, &str); 15] = [
     (1, INITIAL_SCHEMA),
     (2, WORKFLOW_SCHEMA),
     (3, LIFECYCLE_SCHEMA),
@@ -115,6 +116,7 @@ const MIGRATIONS: [(i64, &str); 14] = [
     (12, OWNERSHIP_SYNC_SCHEMA),
     (13, WORKSPACE_CLOCK_SCHEMA),
     (14, ORGANIZATION_SCOPE_SCHEMA),
+    (15, SHARED_REPLICA_SCHEMA),
 ];
 
 pub fn apply_migrations(conn: &Connection) -> Result<()> {

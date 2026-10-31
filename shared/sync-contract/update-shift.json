@@ -1,0 +1,21 @@
+{
+  "scenario": "A coordinator edits a shift they last saw at row version 4. A newer version is refused as a conflict rather than overwritten.",
+  "envelope": {
+    "operationId": "10000000-0000-4000-8000-000000000002",
+    "replicaId": "00000000-0000-4000-8000-0000000000a1",
+    "userId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+    "organizationId": "11111111-1111-4111-8111-111111111111",
+    "command": "UPDATE_SHIFT",
+    "membershipEpoch": 3,
+    "baseWorkspaceRevision": 42,
+    "entityVersions": {
+      "shift:eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee2": 4
+    },
+    "payload": {
+      "shiftId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee2",
+      "capacity": 6,
+      "membershipEpoch": 3
+    },
+    "clientCreatedAt": "2026-11-01T09:05:00.000Z"
+  }
+}

@@ -314,10 +314,12 @@ export class SyncEngine {
       if (result.status !== "ok") {
         throw new Error("This device no longer has access to that organization.");
       }
-      if (result.changes.length > 0) {
-        // The cursor moves only if the same transaction wrote the rows.
+      if (result.cursor > cursor) {
+        // The cursor moves only if the same transaction wrote the rows. A
+        // batch can be empty when every row in it is invisible to this member;
+        // the cursor still has to move or the next poll reads it forever.
         await this.store.applyPull(organizationId, result.changes, result.cursor);
-        this.emit({ type: "data" });
+        if (result.changes.length > 0) this.emit({ type: "data" });
       }
       this.revision = result.revision;
       await this.store.writeRevision(organizationId, result.revision);

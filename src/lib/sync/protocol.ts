@@ -13,33 +13,54 @@ export type CommandStatus =
   | "stale_plan"
   | "retryable_error";
 
-export type CommandType =
-  | "CREATE_OPPORTUNITY"
-  | "UPDATE_OPPORTUNITY"
-  | "CREATE_SHIFT"
-  | "UPDATE_SHIFT"
-  | "REGISTER_FOR_SHIFT"
-  | "CANCEL_REGISTRATION"
-  | "JOIN_WAITLIST"
-  | "CHECK_IN"
-  | "CHECK_OUT"
-  | "MARK_NO_SHOW"
-  | "SAVE_VOLUNTEER_PROFILE"
-  | "UPDATE_CREDENTIAL"
-  | "REVIEW_HOURS"
-  | "UPDATE_ROSTER_POLICY"
-  | "APPLY_ROSTER_PLAN";
+export const COMMAND_TYPES = [
+  "CREATE_OPPORTUNITY",
+  "UPDATE_OPPORTUNITY",
+  "CREATE_SHIFT",
+  "UPDATE_SHIFT",
+  "REGISTER_FOR_SHIFT",
+  "CANCEL_REGISTRATION",
+  "JOIN_WAITLIST",
+  "CHECK_IN",
+  "CHECK_OUT",
+  "MARK_NO_SHOW",
+  "SAVE_VOLUNTEER_PROFILE",
+  "UPDATE_CREDENTIAL",
+  "REVIEW_HOURS",
+  "UPDATE_ROSTER_POLICY",
+  "APPLY_ROSTER_PLAN",
+] as const;
 
+export type CommandType = (typeof COMMAND_TYPES)[number];
+
+/**
+ * The bytes every client agrees on. `userId` and `membershipEpoch` travel in
+ * the envelope as well as the payload so a queued command is bound to the
+ * person and authority it was created under even before it reaches a server.
+ * The server still derives identity from the authenticated request; the copy
+ * here is evidence, not a claim it trusts.
+ */
 export interface CommandEnvelope {
   operationId: string;
   replicaId: string;
+  userId: string;
   organizationId: string;
   command: CommandType;
+  membershipEpoch: number;
   baseWorkspaceRevision: number;
   entityVersions: Record<string, number>;
   payload: Record<string, unknown>;
   clientCreatedAt: string;
 }
+
+/** A named scenario plus the exact envelope both implementations deserialize. */
+export interface CommandFixture {
+  scenario: string;
+  envelope: CommandEnvelope;
+}
+
+/** Bumped only when a fixture's meaning changes, not when a command is added. */
+export const SYNC_CONTRACT_VERSION = 1;
 
 /**
  * A membership epoch travels inside the payload because that is where the
@@ -52,6 +73,7 @@ export function withMembershipEpoch(
 ): CommandEnvelope {
   return {
     ...envelope,
+    membershipEpoch,
     payload: { ...envelope.payload, membershipEpoch },
   };
 }

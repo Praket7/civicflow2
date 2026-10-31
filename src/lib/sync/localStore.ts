@@ -134,8 +134,10 @@ export async function queueCommand(input: QueueInput): Promise<OutboxRow> {
     {
       operationId: crypto.randomUUID(),
       replicaId: await replicaId(),
+      userId: input.userId,
       organizationId: input.organizationId,
       command: input.command,
+      membershipEpoch: input.membershipEpoch,
       baseWorkspaceRevision: input.baseRevision ?? 0,
       entityVersions: input.entityVersions ?? {},
       payload: input.payload,

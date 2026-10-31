@@ -19,9 +19,9 @@ click away. Deployment and the remaining gaps are covered in **Cloud workspace**
 | --- | --- |
 | Package version | `0.1.1` |
 | Registered routes | 50 |
-| Migration files | 14 |
-| Database schema | v14 |
-| Application tables | 47 |
+| Migration files | 15 |
+| Database schema | v15 |
+| Application tables | 51 |
 <!-- CIVICFLOW_FACTS_END -->
 
 ## What it looks like
@@ -211,6 +211,29 @@ Two things stay local on purpose. AutoRoster and reporting are Rust code over th
 workspace, and the hosted coordinator view is health and delivery, not a full roster editor.
 Planning, rosters and reports therefore run on the local workspace and travel as exports, until
 the planner has a server-side home.
+
+### The native desktop replica
+
+`/shared/replica` is a second way to read a hosted organization, this time into the desktop's
+encrypted SQLite database instead of the framed client. It is the foundation for making the
+coordinator screens themselves server-authoritative, not a replacement for them yet.
+
+A fresh device calls `bootstrap_workspace`, which returns the current visible rows, the change
+cursor and the organization revision from one snapshot. Later changes arrive through the same
+`pull_changes` cursor the volunteer app uses. Applying a batch and moving the cursor happen in
+one SQLite transaction, so a crash cannot leave the cursor ahead of the rows. A delete is stored
+as a tombstone so a delayed insert cannot bring the row back.
+
+`src/lib/sync/desktopStore.ts` implements the existing `SyncStore` over Tauri commands, and
+`src/lib/sync/desktop.ts` runs the same `SyncEngine` as the phone with that store. The command
+envelope is defined once in TypeScript and once in Rust, and both are tested against the same
+fixtures in `shared/sync-contract`. The replica is bound to the signed-in account and the
+organization: switching accounts clears it, and a bootstrap or pull row from another
+organization is refused before it reaches the database.
+
+The screen is read-only on purpose. There is no coordinator mutation path through the native
+replica yet, so a local edit cannot silently disagree with the hosted organization. The framed
+workspace in `/shared` is still where coordinators write.
 
 **Records → Backups** writes a sealed archive anywhere the coordinator chooses. The snapshot is
 encrypted with a passphrase (Argon2id, then XChaCha20-Poly1305) and the plaintext copy is deleted
@@ -636,6 +659,9 @@ been exercised on a physical phone.
   which carries the same offline outbox and command authority as the phone. Its coordinator
   view stops at device and delivery health rather than roster editing, so planning, AutoRoster
   and reports still run on the local workspace and travel as exports.
+- The native desktop replica at `/shared/replica` is read-only. It bootstraps, pulls, survives a
+  restart and shows the server's rows, but no coordinator screen writes through it yet. Moving
+  opportunities, shifts and participation onto server commands is the next phase.
 - Organization switching is scoped by membership in the UI and core, but all organizations in
   one installation share the same SQLite file. A future workspace manager will split them into
   per-organization databases.

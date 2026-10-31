@@ -24,9 +24,12 @@ use civicflow_core::policy::{self, PriorityLevel, RosterPolicy};
 use civicflow_core::recovery::{self, DisruptionReport, RecoveryChangeRequest, RecoveryPlan};
 use civicflow_core::recurrence::{self, RecurrenceRule, SeriesResult, ShiftSeriesRecord};
 use civicflow_core::reports::{self, ExportFormat, ReportDocument, ReportRequest};
+use civicflow_core::sync::protocol::Change;
+use civicflow_core::sync::replica::{self as sync_replica, OutboxItem, SyncStatus};
 use civicflow_core::Database;
 use civicflow_core::{auth, backups, roster, services, workflows};
 use serde::Serialize;
+use serde_json::Value;
 use tauri::{Manager, State};
 #[cfg(desktop)]
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -1588,6 +1591,197 @@ fn import_encrypted_backup(
     .map_err(AppError::from)
 }
 
+// ---------------------------------------------------------------------------
+// Shared-workspace replica
+// ---------------------------------------------------------------------------
+
+#[tauri::command]
+fn sync_configure(
+    state: State<'_, AppState>,
+    organization_id: String,
+    user_id: String,
+    membership_epoch: i64,
+) -> Result<SyncStatus, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::configure(
+        database.connection(),
+        &organization_id,
+        &user_id,
+        membership_epoch,
+    )
+    .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_apply_bootstrap(
+    state: State<'_, AppState>,
+    organization_id: String,
+    user_id: String,
+    membership_epoch: i64,
+    payload: Value,
+) -> Result<SyncStatus, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::apply_bootstrap(
+        database.connection(),
+        &organization_id,
+        &user_id,
+        membership_epoch,
+        &payload,
+    )
+    .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_status(
+    state: State<'_, AppState>,
+    organization_id: String,
+) -> Result<SyncStatus, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::status(database.connection(), &organization_id).map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_list_workspaces(state: State<'_, AppState>) -> Result<Vec<String>, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::list_workspaces(database.connection()).map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_entities(
+    state: State<'_, AppState>,
+    organization_id: String,
+    entity: String,
+    limit: Option<i64>,
+) -> Result<Vec<Value>, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::read_entities(database.connection(), &organization_id, &entity, limit)
+        .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_apply_changes(
+    state: State<'_, AppState>,
+    organization_id: String,
+    changes: Vec<Change>,
+    cursor: i64,
+) -> Result<SyncStatus, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    let revision = sync_replica::read_revision(database.connection(), &organization_id)?;
+    sync_replica::apply_changes(
+        database.connection(),
+        &organization_id,
+        &changes,
+        cursor,
+        revision,
+    )
+    .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_read_cursor(state: State<'_, AppState>, organization_id: String) -> Result<i64, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::read_cursor(database.connection(), &organization_id).map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_read_revision(
+    state: State<'_, AppState>,
+    organization_id: String,
+) -> Result<i64, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::read_revision(database.connection(), &organization_id).map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_write_revision(
+    state: State<'_, AppState>,
+    organization_id: String,
+    revision: i64,
+) -> Result<SyncStatus, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::write_revision(database.connection(), &organization_id, revision)
+        .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_recover_stale_sending(
+    state: State<'_, AppState>,
+    cutoff: i64,
+    now: i64,
+) -> Result<usize, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::recover_stale_sending(database.connection(), cutoff, now).map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_next_ready(
+    state: State<'_, AppState>,
+    user_id: String,
+    organization_id: String,
+    now: i64,
+) -> Result<Option<OutboxItem>, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::next_ready(database.connection(), &user_id, &organization_id, now)
+        .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_mark_sending(state: State<'_, AppState>, id: i64, now: i64) -> Result<(), AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::mark_sending(database.connection(), id, now).map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_mark_sent(state: State<'_, AppState>, id: i64, result: Value) -> Result<(), AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::mark_sent(database.connection(), id, &result).map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_mark_retry(
+    state: State<'_, AppState>,
+    id: i64,
+    error: String,
+    next_attempt_at: i64,
+) -> Result<(), AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::mark_retry(database.connection(), id, &error, next_attempt_at)
+        .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_mark_refused(
+    state: State<'_, AppState>,
+    id: i64,
+    result: Value,
+    conflict: Value,
+) -> Result<(), AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::mark_refused(database.connection(), id, &result, &conflict)
+        .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_pending_count(
+    state: State<'_, AppState>,
+    user_id: String,
+    organization_id: String,
+) -> Result<i64, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::pending_count(database.connection(), &user_id, &organization_id)
+        .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn sync_open_conflict_count(
+    state: State<'_, AppState>,
+    organization_id: String,
+) -> Result<i64, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::open_conflict_count(database.connection(), &organization_id)
+        .map_err(AppError::from)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder = tauri::Builder::default()
@@ -1716,6 +1910,23 @@ pub fn run() {
             preview_volunteer_import,
             apply_volunteer_import,
             export_volunteer_roster,
+            sync_configure,
+            sync_apply_bootstrap,
+            sync_status,
+            sync_list_workspaces,
+            sync_entities,
+            sync_apply_changes,
+            sync_read_cursor,
+            sync_read_revision,
+            sync_write_revision,
+            sync_recover_stale_sending,
+            sync_next_ready,
+            sync_mark_sending,
+            sync_mark_sent,
+            sync_mark_retry,
+            sync_mark_refused,
+            sync_pending_count,
+            sync_open_conflict_count,
             installation_access,
             list_backups,
             create_backup,

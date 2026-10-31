@@ -19,8 +19,10 @@ class MemoryStore implements SyncStore {
     const envelope: CommandEnvelope = {
       operationId: crypto.randomUUID(),
       replicaId: "replica-test",
+      userId,
       organizationId,
       command,
+      membershipEpoch: 1,
       baseWorkspaceRevision: 0,
       entityVersions: {},
       payload,
@@ -320,6 +322,25 @@ describe("sync engine", () => {
     alice.stop();
     expect(calls).toBe(1);
     expect(store.rows[0]?.state).toBe("sent");
+  });
+
+  it("moves the cursor past a batch with no rows this member can see", async () => {
+    const store = new MemoryStore();
+    const sync: SyncTransport = {
+      async push() {
+        return { status: "applied" };
+      },
+      async pull() {
+        return { status: "ok", cursor: 7, hasMore: false, revision: 2, changes: [] };
+      },
+    };
+    const engine = engineFor(store, sync, () => 0);
+    await engine.start(USER, ORG);
+    engine.stop();
+
+    // Without this the next poll re-reads the same invisible changes forever.
+    expect(await store.readCursor(ORG)).toBe(7);
+    expect(await store.readRevision(ORG)).toBe(2);
   });
 
   it("recovers a sending row left behind by a crash", async () => {

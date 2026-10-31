@@ -1,0 +1,20 @@
+{
+  "scenario": "A volunteer checks in offline. The event keeps its operation id and client time so the server can validate the window and refuse a replay.",
+  "envelope": {
+    "operationId": "10000000-0000-4000-8000-000000000004",
+    "replicaId": "00000000-0000-4000-8000-0000000000a2",
+    "userId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa4",
+    "organizationId": "11111111-1111-4111-8111-111111111111",
+    "command": "CHECK_IN",
+    "membershipEpoch": 1,
+    "baseWorkspaceRevision": 42,
+    "entityVersions": {},
+    "payload": {
+      "shiftId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee2",
+      "volunteerId": "cccccccc-cccc-4ccc-8ccc-ccccccccccc2",
+      "code": "123456",
+      "membershipEpoch": 1
+    },
+    "clientCreatedAt": "2026-11-01T11:58:00.000Z"
+  }
+}

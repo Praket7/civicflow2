@@ -55,6 +55,56 @@ separate Rivergate Kitchen workspace described below.
 5. The volunteer side is `http://localhost:5173/pwa.html`. It needs `VITE_SUPABASE_ANON_KEY` to
    reach the hosted project; the volunteer screenshots above come from that workspace.
 
+## Demo and judging
+
+Setup for the presentation is local and needs no network: `pnpm install && pnpm dev`, then **Open
+demo workspace**. The seven-minute route through the product:
+
+| Time | Screen | What to show | What it proves |
+| --- | --- | --- | --- |
+| 0:00 | Home | The attention queue, next shift, weekly coverage | The app starts from what needs a decision, not a dashboard of totals |
+| 0:45 | AutoRoster | Build the week, open **Why this person?** and **Why not?** | A min-cost max-flow plan with an explanation for every assignment |
+| 2:15 | Schedule | Open a shift, show the roster, launch the kiosk | One place for the calendar, staffing, and check-in |
+| 3:15 | People → Hours | Approve or reject a pending hour entry | Rules live in the core, and the decision is recorded in the audit log |
+| 4:15 | Reports | Pick a range, **Preview**, then **Print / save PDF** | The report reads every row, and the PDF matches the page breaks on screen |
+| 5:30 | Shared workspace | `/shared/reports` or `/shared/schedule` | The same organization across devices, with an offline outbox and a conflict center |
+| 6:30 | Help | `Cmd/Ctrl+K`, then `?` | Navigation and instructions are built into the product |
+
+If the venue has no network, stop after Reports. Every coordinator screen except the shared
+workspace runs on the local SQLite copy.
+
+How the rating sheet maps to the build:
+
+| Rating-sheet item | Where it lives | What to point at |
+| --- | --- | --- |
+| Coding language selection | Why this stack, above; `src-tauri/core`; `src/types` | Rust domain core plus typed TypeScript at the boundary |
+| Comments, naming, formatting | ESLint, Prettier, `cargo fmt`, `cargo clippy`; module headers in `src/lib/sync/sharedReports.ts` and `src/features/shared/FunderPacketPreview.tsx` | Comments explain why a rule exists; CI fails on formatting and lint |
+| Modular, logical, readable | The repository boundary, `src/lib/workspace/selectors.ts`, pure report math, `src/lib/csv.ts` | Screens do not keep private copies of records; shared behavior has one home |
+| UX design, user journey, accessibility | Product and Accessibility, above; `src/app/AppShell.tsx`; `src/components/ui` | Six coordinator areas, five volunteer areas, keyboard palette, focus styles, `jest-axe` and browser audits |
+| Intuitive interface, clear instructions | First-run tour, inline form help, the help dialog | A new coordinator can publish a shift and check someone in without a manual |
+| Help menu and intelligent feature | `src/lib/help/topics.ts`, `src/lib/ask/answers.ts`, AutoRoster explanations | Searchable per-screen help, Ask CivicFlow answers from the workspace, and every match explained |
+| Input validation | Rust validation in `src-tauri/core`; field errors in `src/components/ui/Form.tsx` | A bad email, a shift that ends before it starts, and a stale row version each get a specific message |
+| Addresses the prompt | Programs, recruitment, scheduling, participation, hours, credentials, records, reports | The run of show touches each part of volunteer management |
+| Customizable, presentable reports | `/reports`, `/reports/custom`, `/shared/reports` | Date range, report library, CSV export, and a Letter-size funder packet with a checked page count |
+| Data storage and scope | SQLite migrations, Postgres migrations, `src/types/domain.ts` | Relational constraints in the database, arrays and maps on screen, no global mutable state |
+
+Questions judges ask:
+
+**Why not a web-only app?** A volunteer desk often has unreliable Wi-Fi. The local core keeps
+scheduling, check-in, hours, and reports working with the network down; the shared workspace is
+an explicit second mode, not a requirement.
+
+**Where is authorization enforced?** In Rust, behind the UI. Every command resolves the session
+token and checks membership and role before reading or writing. The browser preview is demo data
+and never ships in the desktop build.
+
+**What happens when two devices edit the same row?** Each write carries the row version it read.
+The server refuses a stale version and the conflict center shows both values instead of merging
+them silently.
+
+**What would you build next?** Native mobile check-in, richer funder templates, and an import for
+existing spreadsheets. The data model already carries the rows those features need.
+
 ## Product
 
 The coordinator workspace has six primary areas:

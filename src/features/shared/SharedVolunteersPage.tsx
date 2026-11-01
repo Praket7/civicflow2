@@ -9,6 +9,7 @@ import {
   SelectField,
   TextField,
 } from "../../components/ui";
+import { initialsOf } from "../../lib/initials";
 import { isTauri } from "../../lib/platform";
 import {
   number,
@@ -26,7 +27,9 @@ import {
   type AvailabilitySlot,
   type VolunteerPatch,
 } from "../../lib/sync/writes";
+import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
 import { SharedNav } from "./SharedNav";
+import { formatCalendarDate } from "./sharedFormat";
 import styles from "./shared.module.css";
 
 const DAYS = [
@@ -44,12 +47,6 @@ const PERIODS = [
   { id: "afternoon", label: "Afternoon" },
   { id: "evening", label: "Evening" },
 ] as const;
-
-const DATE_FORMAT = new Intl.DateTimeFormat(undefined, {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-});
 
 const STATUS_OPTIONS = [
   { value: "active", label: "Active" },
@@ -71,23 +68,6 @@ function isoDate(value: Date): string {
 
 function dateValue(value: unknown): string {
   return typeof value === "string" ? value.slice(0, 10) : "";
-}
-
-function prettyDate(value: unknown): string {
-  if (typeof value !== "string" || value === "") return "No date";
-  const date = new Date(value.length === 10 ? `${value}T12:00:00` : value);
-  return Number.isNaN(date.getTime()) ? value : DATE_FORMAT.format(date);
-}
-
-function initialsFor(name: string): string {
-  return (
-    name
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase() ?? "")
-      .join("") || "?"
-  );
 }
 
 function splitList(value: string): string[] {
@@ -404,13 +384,13 @@ function VolunteerDetail({ volunteer, data, online, reload }: VolunteerDetailPro
         <div className={styles.panelBody}>
           <div className={styles.detailIdentity}>
             <span className={styles.detailAvatar} aria-hidden>
-              {initialsFor(profile.name)}
+              {initialsOf(profile.name)}
             </span>
             <div>
               <p className={styles.detailName}>{profile.name || "Unnamed volunteer"}</p>
               <p className={styles.detailMeta}>
-                Joined {prettyDate(volunteer.joined_at)} · {number(volunteer, "events_completed")}{" "}
-                events ·{" "}
+                Joined {formatCalendarDate(volunteer.joined_at)} ·{" "}
+                {number(volunteer, "events_completed")} events ·{" "}
                 {number(volunteer, "hours_verified").toLocaleString(undefined, {
                   maximumFractionDigits: 1,
                 })}{" "}
@@ -676,9 +656,9 @@ function VolunteerDetail({ volunteer, data, online, reload }: VolunteerDetailPro
                       <p className={styles.credentialName}>{text(type, "name") || "Credential"}</p>
                       <p className={styles.credentialMeta}>
                         {text(row, "identifier") || "No identifier"} · valid through{" "}
-                        {prettyDate(row.valid_through)}
+                        {formatCalendarDate(row.valid_through)}
                         {text(row, "verified_at")
-                          ? ` · verified ${prettyDate(row.verified_at)}`
+                          ? ` · verified ${formatCalendarDate(row.verified_at)}`
                           : ""}
                       </p>
                     </div>
@@ -917,14 +897,9 @@ export function SharedVolunteersPage() {
         <SharedNav conflicts={sync.conflicts} />
 
         {!isTauri() ? (
-          <section className={styles.panel}>
-            <div className={styles.panelBody}>
-              <h2 className={styles.panelTitle}>This screen lives in the desktop app</h2>
-              <p className={styles.panelCopy}>
-                Volunteer records are written through the encrypted replica on this computer.
-              </p>
-            </div>
-          </section>
+          <DesktopOnlyNotice hosted={false}>
+            Volunteer records are written through the encrypted replica on this computer.
+          </DesktopOnlyNotice>
         ) : (
           <>
             {error ? (
@@ -1015,7 +990,7 @@ export function SharedVolunteersPage() {
                               onClick={() => setSelectedId(row.id)}
                             >
                               <span className={styles.personAvatar} aria-hidden>
-                                {initialsFor(text(row, "name"))}
+                                {initialsOf(text(row, "name"))}
                               </span>
                               <span className={styles.personCopy}>
                                 <span className={styles.personName}>

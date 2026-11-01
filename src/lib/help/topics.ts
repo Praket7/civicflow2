@@ -799,10 +799,6 @@ export const helpTopics: HelpTopic[] = [
 
 const byId = new Map(helpTopics.map((topic) => [topic.id, topic]));
 
-export function topicForId(id: string): HelpTopic | undefined {
-  return byId.get(id);
-}
-
 const PARAMETERISED: { prefix: string; id: string }[] = [
   { prefix: "/volunteer/opportunities/", id: "opportunity-detail" },
   { prefix: "/volunteer/shifts/", id: "volunteer-shift" },

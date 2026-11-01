@@ -1,3 +1,4 @@
+import { csvRow } from "../csv";
 import type { SharedRow } from "./sharedReplica";
 
 /**
@@ -480,18 +481,6 @@ export function buildSharedReport(
       totals.registrations > 0 ||
       totals.shiftsCompleted > 0,
   };
-}
-
-function csvCell(value: string | number): string {
-  // A spreadsheet treats a leading =, +, - or @ as a formula. A volunteer name
-  // is data, not a program, so neutralize it before the cell is quoted.
-  const raw = String(value);
-  const text = /^[=+\-@]/.test(raw) ? `'${raw}` : raw;
-  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
-}
-
-function csvRow(values: (string | number)[]): string {
-  return values.map(csvCell).join(",");
 }
 
 function hours(minutes: number): string {

@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { BarChart3, Download, Eye, Printer, RefreshCw } from "lucide-react";
 import {
   Button,
-  ButtonLink,
   EmptyState,
   Page,
   PageHeader,
@@ -10,6 +9,7 @@ import {
   SelectField,
   TextField,
 } from "../../components/ui";
+import { downloadFile } from "../../lib/download";
 import { t } from "../../lib/i18n";
 import { isTauri } from "../../lib/platform";
 import { useSharedReportData } from "../../lib/sync/sharedReportSource";
@@ -20,7 +20,8 @@ import {
   type ReportPreset,
   type ReportRange,
 } from "../../lib/sync/sharedReports";
-import { FunderPacket, funderPacketSections } from "./FunderPacket";
+import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
+import { funderPacketSections } from "./FunderPacket";
 import { FunderPacketPreview } from "./FunderPacketPreview";
 import {
   formatHours as hours,
@@ -91,16 +92,11 @@ export function SharedReportsPage() {
   }
 
   function exportCsv() {
-    const csv = reportToCsv(report);
-    const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `civicflow-impact-${report.from}-to-${report.to}.csv`;
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    URL.revokeObjectURL(url);
+    downloadFile(
+      `civicflow-impact-${report.from}-to-${report.to}.csv`,
+      `\uFEFF${reportToCsv(report)}`,
+      "text/csv;charset=utf-8",
+    );
   }
 
   /**
@@ -174,20 +170,10 @@ export function SharedReportsPage() {
         <SharedNav conflicts={sync.conflicts} />
 
         {!isTauri() ? (
-          <section className={styles.panel}>
-            <div className={styles.panelBody}>
-              <h2 className={styles.panelTitle}>This screen lives in the desktop app</h2>
-              <p className={styles.panelCopy}>
-                The browser build uses the hosted workspace. Open CivicFlow on this computer to read
-                the report from the encrypted replica.
-              </p>
-              <div style={{ marginTop: 12 }}>
-                <ButtonLink to="/shared" variant="secondary">
-                  Open hosted workspace
-                </ButtonLink>
-              </div>
-            </div>
-          </section>
+          <DesktopOnlyNotice>
+            The browser build uses the hosted workspace. Open CivicFlow on this computer to read the
+            report from the encrypted replica.
+          </DesktopOnlyNotice>
         ) : (
           <>
             <section className={styles.panel} aria-labelledby="report-range">
@@ -488,10 +474,6 @@ export function SharedReportsPage() {
             </p>
           </>
         )}
-
-        {isTauri() && report.hasData ? (
-          <FunderPacket sections={packetSections} testId="funder-packet" />
-        ) : null}
 
         {isTauri() && report.hasData && previewOpen ? (
           <FunderPacketPreview

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle, Check, DatabaseBackup, RefreshCw, Trash2 } from "lucide-react";
-import { Button, ButtonLink, Page, PageHeader } from "../../components/ui";
+import { Button, Page, PageHeader } from "../../components/ui";
 import { isTauri } from "../../lib/platform";
 import { startDesktopSync } from "../../lib/sync/desktop";
 import { useSharedReplica } from "../../lib/sync/sharedReplica";
@@ -9,6 +9,7 @@ import {
   resolveSharedConflict,
   type SharedConflict,
 } from "../../lib/sync/writes";
+import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
 
@@ -126,20 +127,10 @@ export function SharedConflictsPage() {
         <SharedNav conflicts={sync.conflicts} />
 
         {!isTauri() ? (
-          <section className={styles.panel}>
-            <div className={styles.panelBody}>
-              <h2 className={styles.panelTitle}>This screen lives in the desktop app</h2>
-              <p className={styles.panelCopy}>
-                Conflicts belong to this computer&apos;s outbox. The hosted workspace shows its own
-                failures.
-              </p>
-              <div style={{ marginTop: 12 }}>
-                <ButtonLink to="/shared" variant="secondary">
-                  Open hosted workspace
-                </ButtonLink>
-              </div>
-            </div>
-          </section>
+          <DesktopOnlyNotice>
+            Conflicts belong to this computer&apos;s outbox. The hosted workspace shows its own
+            failures.
+          </DesktopOnlyNotice>
         ) : (
           <>
             {error ? (

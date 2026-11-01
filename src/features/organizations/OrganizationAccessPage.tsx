@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Copy, Mail, ShieldCheck, UserMinus, UserPlus } from "lucide-react";
 import { Badge, Button, Card, Page, PageHeader, SearchField } from "../../components/ui";
 import { useAuth } from "../../lib/auth/session";
+import { initialsOf } from "../../lib/initials";
 import { hydrateOrganizations } from "../../lib/organizations/store";
 import { useOrganizationWorkspace } from "../../lib/organizations/useOrganizationWorkspace";
 import { getWorkspaceRepository } from "../../lib/workspace/repository";
@@ -14,15 +15,6 @@ import { isCoordinatorRole, membershipRoleLabel } from "../../lib/organizations/
 import styles from "./OrganizationAccessPage.module.css";
 
 const repository = getWorkspaceRepository();
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .map((word) => word.charAt(0))
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
 
 /** Preview memberships only store an address; show a readable name for them. */
 function displayName(member: OrganizationMember): string {
@@ -243,7 +235,7 @@ export function OrganizationAccessPage() {
               return (
                 <li key={member.userId} className={styles.member} data-disabled={disabled}>
                   <span className={styles.avatar} aria-hidden="true">
-                    {initials(name)}
+                    {initialsOf(name)}
                   </span>
                   <span className={styles.memberText}>
                     <span className={styles.memberName}>

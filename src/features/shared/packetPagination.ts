@@ -5,7 +5,6 @@
  * from its table reads worse than one extra page.
  */
 
-export const LETTER_WIDTH_PX = 8.5 * 96;
 export const LETTER_HEIGHT_PX = 11 * 96;
 
 const MM_TO_PX = 96 / 25.4;

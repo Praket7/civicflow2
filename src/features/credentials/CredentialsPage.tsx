@@ -27,6 +27,7 @@ import {
   statusLabel,
   statusTone,
 } from "../../components/ui";
+import { downloadCsv } from "../../lib/csv";
 import type { CredentialStatus } from "../../types/domain";
 import { t } from "../../lib/i18n";
 import { useWorkspace } from "../../lib/workspace/session";
@@ -113,29 +114,15 @@ export function CredentialsPage() {
 
   function exportCsv() {
     const header = ["Volunteer", "Email", "Credential", "Issued", "Expires", "Status"];
-    const lines = filtered.map((credential) =>
-      [
-        credential.volunteer.name,
-        credential.volunteer.email,
-        credential.name,
-        credential.issuedAt,
-        credential.expiresAt ?? "",
-        credential.status,
-      ]
-        .map((value) => `"${String(value).replace(/"/g, '""')}"`)
-        .join(","),
-    );
-    const blob = new Blob([[header.join(","), ...lines].join("\n")], {
-      type: "text/csv;charset=utf-8",
-    });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "civicflow-credentials.csv";
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    const rows = filtered.map((credential) => [
+      credential.volunteer.name,
+      credential.volunteer.email,
+      credential.name,
+      credential.issuedAt,
+      credential.expiresAt ?? "",
+      credential.status,
+    ]);
+    downloadCsv("civicflow-credentials.csv", [header, ...rows]);
     setExported(t("Exported {count} credential records.", { count: filtered.length }));
   }
 

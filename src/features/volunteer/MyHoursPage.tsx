@@ -30,6 +30,7 @@ import {
   statusTone,
 } from "../../components/ui";
 import type { Column, TabItem } from "../../components/ui";
+import { downloadCsv } from "../../lib/csv";
 import type { HourRow } from "../../lib/workspace/selectors";
 import {
   currentVolunteer,
@@ -46,11 +47,6 @@ import { hoursTabs } from "../../app/workAreas";
 import styles from "./MyHoursPage.module.css";
 
 type TabKey = "history" | "pending" | "certificates";
-
-function csvCell(value: string | number): string {
-  const text = String(value);
-  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
-}
 
 function statusBadge(status: HourRow["status"]) {
   return (
@@ -243,16 +239,7 @@ export function MyHoursPage() {
         row.verificationId ?? "",
       ]),
     ];
-    const csv = lines.map((line) => line.map(csvCell).join(",")).join("\r\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `civicflow-hours-${volunteer.firstName.toLowerCase()}-${tab}.csv`;
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    downloadCsv(`civicflow-hours-${volunteer.firstName.toLowerCase()}-${tab}.csv`, lines);
     setExportMessage(
       `CSV exported with ${exportRows.length} ${exportRows.length === 1 ? "record" : "records"}.`,
     );

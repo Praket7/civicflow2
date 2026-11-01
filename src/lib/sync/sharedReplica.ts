@@ -183,10 +183,6 @@ export function useSharedReplica(): SharedReplica {
   return { sync, data, loading, error, reload, rebuild };
 }
 
-export function rowsById(rows: SharedRow[]): Map<string, SharedRow> {
-  return new Map(rows.map((row) => [row.id, row]));
-}
-
 export function text(row: SharedRow | undefined, key: string): string {
   const value = row?.[key];
   return typeof value === "string" ? value : "";

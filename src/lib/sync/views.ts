@@ -367,10 +367,6 @@ export function registrationOpen(now: string, endsAt: string): boolean {
   return Number.isFinite(end) && Date.parse(now) <= end;
 }
 
-export function isPast(now: string, endsAt: string): boolean {
-  return Date.parse(endsAt) < Date.parse(now);
-}
-
 export function formatShiftRange(
   startsAt: string,
   endsAt: string,

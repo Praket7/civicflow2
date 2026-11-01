@@ -205,6 +205,7 @@ describe("shared impact report", () => {
   it("builds a funder packet from aggregates without naming people", async () => {
     mount();
 
+    await userEvent.click(await screen.findByRole("button", { name: "Preview" }));
     const packet = await screen.findByTestId("funder-packet");
     expect(packet).toHaveTextContent("Rivergate Kitchen");
     expect(packet).toHaveTextContent("Funder packet");
@@ -300,10 +301,8 @@ describe("shared impact report", () => {
   it("prints only the measured sheets when the preview is open", () => {
     const css = readFileSync("src/features/shared/shared.module.css", "utf8");
     const printBlock = css.slice(css.lastIndexOf("@media print"));
-    expect(printBlock).toContain(".shell > :not(.packet)");
-    expect(printBlock).toContain("display: none !important");
-    expect(printBlock).toContain(".previewDialog");
     expect(printBlock).toContain('body[data-packet-print="true"]');
+    expect(printBlock).toContain("display: none !important");
     expect(printBlock).toContain(".packetPrint");
     expect(printBlock).toContain("break-after: page");
     expect(css).toContain("padding: 14mm 14mm 16mm");

@@ -108,6 +108,10 @@
   padding: 0 18px 18px;
 }
 
+.panelAction {
+  margin-top: 12px;
+}
+
 .formGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1301,27 +1305,6 @@
 
   :global(body) {
     color: #151d28 !important;
-  }
-
-  .shell {
-    display: block;
-    gap: 0;
-  }
-
-  /* Every working screen sits directly under the shell; the packet is the
-     only child that belongs on paper. */
-  .shell > :not(.packet) {
-    display: none !important;
-  }
-
-  .packet {
-    display: block;
-  }
-
-  .packetPage,
-  .packetMeasure,
-  .previewDialog {
-    display: none !important;
   }
 
   /* Printing is reached through the preview. The portal holds exactly the

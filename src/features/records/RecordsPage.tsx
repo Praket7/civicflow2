@@ -15,6 +15,7 @@ import {
   statusTone,
 } from "../../components/ui";
 import type { Column } from "../../components/ui";
+import { downloadCsv } from "../../lib/csv";
 import { useWorkspace } from "../../lib/workspace/session";
 import { WorkAreaTabs } from "../../components/navigation/WorkAreaTabs";
 import { peopleTabs } from "../../app/workAreas";
@@ -134,26 +135,18 @@ export function RecordsPage() {
   };
 
   function exportCsv() {
-    const header = "Type,Name,Detail,Date,Status,Value";
-    const lines = filtered.map((row) =>
-      [
-        KIND_LABEL[row.kind],
-        `"${row.title}"`,
-        `"${row.subject}"`,
-        row.dateLabel,
-        row.status,
-        row.value,
-      ].join(","),
-    );
-    const blob = new Blob([[header, ...lines].join("\r\n")], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "civicflow-records.csv";
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    const rows = filtered.map((row) => [
+      KIND_LABEL[row.kind],
+      row.title,
+      row.subject,
+      row.dateLabel,
+      row.status,
+      row.value,
+    ]);
+    downloadCsv("civicflow-records.csv", [
+      ["Type", "Name", "Detail", "Date", "Status", "Value"],
+      ...rows,
+    ]);
   }
 
   const columns: Column<RecordRow>[] = [

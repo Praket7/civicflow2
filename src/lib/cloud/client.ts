@@ -1,4 +1,5 @@
 import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
+import { describeAuthError } from "../auth/errors";
 import { cloudConfigured, supabaseAnonKey, supabaseUrl } from "../sync/config";
 import { CloudSessionStorage, CLOUD_SESSION_KEY } from "./storage";
 
@@ -121,12 +122,4 @@ export async function registerThisDesktop(
 
 export function cloudEmail(session: Session | null): string {
   return session?.user.email ?? "";
-}
-
-function describeAuthError(message: string): string {
-  if (/invalid login credentials/i.test(message)) return "That email and password do not match.";
-  if (/email not confirmed/i.test(message)) return "Confirm your email address first.";
-  if (/rate limit|too many/i.test(message))
-    return "Too many attempts. Wait a minute and try again.";
-  return message;
 }

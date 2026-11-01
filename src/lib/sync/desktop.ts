@@ -375,12 +375,3 @@ export async function syncDesktopNow(): Promise<DesktopSyncState> {
   }
   return state;
 }
-
-export function stopDesktopSync(): void {
-  engine?.stop();
-  engine = null;
-  active = null;
-  unsubscribeEngine?.();
-  unsubscribeEngine = null;
-  publish(INITIAL);
-}

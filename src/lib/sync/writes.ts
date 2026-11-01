@@ -1,11 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import type { CommandType } from "./protocol";
-import {
-  desktopSyncSnapshot,
-  startDesktopSync,
-  syncDesktopNow,
-  type DesktopSyncState,
-} from "./desktop";
+import { desktopSyncSnapshot, startDesktopSync, syncDesktopNow } from "./desktop";
 
 /**
  * Coordinator writes through the shared organization.
@@ -37,10 +32,6 @@ export interface SharedConflict {
   status: "open" | "resolved" | "dismissed";
   createdAt: string;
   resolvedAt: string | null;
-}
-
-export function sharedContext(): DesktopSyncState {
-  return desktopSyncSnapshot();
 }
 
 export function rowVersion(row: SharedEntity | null | undefined): number | null {
@@ -118,18 +109,6 @@ export async function createSharedOpportunity(
     flush,
   );
   return id;
-}
-
-export async function updateSharedOpportunity(
-  opportunity: SharedEntity,
-  patch: Partial<OpportunityInput>,
-): Promise<void> {
-  const version = rowVersion(opportunity);
-  await enqueue(
-    "UPDATE_OPPORTUNITY",
-    { id: opportunity.id, ...patch },
-    versionPayload(opportunity, version),
-  );
 }
 
 function versionPayload(
@@ -428,14 +407,6 @@ export async function cancelSharedRegistration(
   reason = "Canceled by a coordinator",
 ): Promise<void> {
   await enqueue("CANCEL_REGISTRATION", { shiftId, volunteerId, reason });
-}
-
-export async function joinSharedWaitlist(
-  shiftId: string,
-  volunteerId: string,
-  role: string,
-): Promise<void> {
-  await enqueue("JOIN_WAITLIST", { shiftId, volunteerId, role });
 }
 
 export async function listSharedConflicts(): Promise<SharedConflict[]> {

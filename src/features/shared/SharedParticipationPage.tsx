@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Check, ClipboardCheck, LogIn, LogOut, RefreshCw, UserX, Wand2, X } from "lucide-react";
-import { Button, ButtonLink, Page, PageHeader, SelectField, TextField } from "../../components/ui";
+import { Button, Page, PageHeader, SelectField, TextField } from "../../components/ui";
 import { isTauri } from "../../lib/platform";
 import { number, text, useSharedReplica, type SharedRow } from "../../lib/sync/sharedReplica";
 import { planShift, planUpcoming } from "../../lib/sync/sharedPlan";
@@ -13,22 +13,10 @@ import {
   reviewSharedHours,
   type SharedAssignment,
 } from "../../lib/sync/writes";
+import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
+import { formatWhen } from "./sharedFormat";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
-
-const when = new Intl.DateTimeFormat(undefined, {
-  weekday: "short",
-  month: "short",
-  day: "numeric",
-  hour: "numeric",
-  minute: "2-digit",
-});
-
-function formatWhen(value: unknown): string {
-  if (typeof value !== "string" || !value) return "Not scheduled";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : when.format(date);
-}
 
 export function SharedParticipationPage() {
   const { sync, data, loading, reload } = useSharedReplica();
@@ -177,19 +165,9 @@ export function SharedParticipationPage() {
         <SharedNav conflicts={sync.conflicts} />
 
         {!isTauri() ? (
-          <section className={styles.panel}>
-            <div className={styles.panelBody}>
-              <h2 className={styles.panelTitle}>This screen lives in the desktop app</h2>
-              <p className={styles.panelCopy}>
-                Participation is written through the encrypted replica on this computer.
-              </p>
-              <div style={{ marginTop: 12 }}>
-                <ButtonLink to="/shared" variant="secondary">
-                  Open hosted workspace
-                </ButtonLink>
-              </div>
-            </div>
-          </section>
+          <DesktopOnlyNotice>
+            Participation is written through the encrypted replica on this computer.
+          </DesktopOnlyNotice>
         ) : (
           <>
             {notice ? (

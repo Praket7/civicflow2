@@ -36,6 +36,7 @@ import {
   shiftMinutes,
   timeRange,
 } from "../../lib/workspace/selectors";
+import { downloadFile } from "../../lib/download";
 import { t } from "../../lib/i18n";
 import { useAuth } from "../../lib/auth/session";
 import { currentOrganizationFor } from "../../lib/organizations/store";
@@ -204,15 +205,11 @@ export function VolunteerShiftPage() {
       activeOpportunity.address,
       workspace.organization.timezone,
     );
-    const blob = new Blob([calendar], { type: "text/calendar;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `civicflow-${activeOpportunity.slug}-${activeShift.startsAt.slice(0, 10)}.ics`;
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    downloadFile(
+      `civicflow-${activeOpportunity.slug}-${activeShift.startsAt.slice(0, 10)}.ics`,
+      calendar,
+      "text/calendar;charset=utf-8",
+    );
     setCalendarMessage("Calendar file downloaded. Open it to add this shift to your calendar.");
   }
 

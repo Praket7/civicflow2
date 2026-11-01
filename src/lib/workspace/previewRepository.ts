@@ -5,6 +5,7 @@
  */
 
 import rawSessionSeed from "../../../shared/session-seed.json";
+import { csvText, downloadCsv } from "../csv";
 import rawWorkspace from "../../../shared/demo-workspace.json";
 import type {
   Account,
@@ -998,10 +999,6 @@ const IMPORT_EXAMPLE = [
   "food; education",
 ];
 
-function csvCell(value: string): string {
-  return `"${value.replace(/"/g, '""')}"`;
-}
-
 /** Splits a cell that holds several values, matching what the importer accepts. */
 function splitCell(value: string, comma: boolean): string[] {
   return value
@@ -1047,7 +1044,7 @@ function parseCsv(text: string): string[][] {
 }
 
 function importTemplate(): string {
-  return `${IMPORT_COLUMNS.map(([, label]) => csvCell(label)).join(",")}\r\n${IMPORT_EXAMPLE.map(csvCell).join(",")}\r\n`;
+  return `${csvText([IMPORT_COLUMNS.map(([, label]) => label), IMPORT_EXAMPLE])}\r\n`;
 }
 
 function importEmailProblem(raw: string): { email: string; problem: string } {
@@ -2314,33 +2311,18 @@ export const previewRepository: WorkspaceRepository = {
     return { created: created.length, createdIds: created.map((row) => row.id), preview };
   },
   async exportVolunteerRoster() {
-    const rows = workspaceRoster();
-    const csv = [
-      IMPORT_COLUMNS.map(([, label]) => csvCell(label)).join(","),
-      ...rows.map((record) =>
-        [
-          record.name,
-          record.email,
-          record.phone,
-          record.status,
-          record.skills.join("; "),
-          record.availability.join("; "),
-          "",
-          record.causes.join("; "),
-        ]
-          .map(csvCell)
-          .join(","),
-      ),
-    ].join("\r\n");
-    const blob = new Blob([`\ufeff${csv}\r\n`], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "civicflow-volunteer-roster.csv";
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    const header = IMPORT_COLUMNS.map(([, label]) => label);
+    const rows = workspaceRoster().map((record) => [
+      record.name,
+      record.email,
+      record.phone,
+      record.status,
+      record.skills.join("; "),
+      record.availability.join("; "),
+      "",
+      record.causes.join("; "),
+    ]);
+    const blob = downloadCsv("civicflow-volunteer-roster.csv", [header, ...rows]);
     return {
       path: "browser-download",
       bytes: blob.size,
@@ -2451,19 +2433,10 @@ export const previewRepository: WorkspaceRepository = {
   async exportReport(request, format) {
     const report = buildPreviewReport(request);
     if (format === "csv") {
-      const csv = [
-        report.headers.map((value) => `"${value.replace(/"/g, '""')}"`).join(","),
-        ...report.rows.map((row) => row.map((value) => `"${value.replace(/"/g, '""')}"`).join(",")),
-      ].join("\r\n");
-      const blob = new Blob([`\ufeff${csv}\r\n`], { type: "text/csv;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = `civicflow-${report.template}-${report.period.slice(0, 10)}.csv`;
-      document.body.append(anchor);
-      anchor.click();
-      anchor.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      const blob = downloadCsv(`civicflow-${report.template}-${report.period.slice(0, 10)}.csv`, [
+        report.headers,
+        ...report.rows,
+      ]);
       return {
         path: "browser-download",
         bytes: blob.size,

@@ -11,6 +11,7 @@ import {
   SelectField,
   StatCard,
 } from "../../components/ui";
+import { downloadCsv } from "../../lib/csv";
 import { useWorkspace } from "../../lib/workspace/session";
 import { formatDateTime, getAuditEvents } from "../../lib/workspace/selectors";
 import type { AuditEvent } from "../../types/domain";
@@ -50,26 +51,18 @@ export function AuditPage() {
   }, [actor, entity, events, query]);
 
   function exportCsv() {
-    const header = "Timestamp,Actor,Action,Entity,Summary,Detail";
-    const lines = filtered.map((event) =>
-      [
-        event.at,
-        `"${event.actor}"`,
-        event.action,
-        `${event.entityType}:${event.entityId}`,
-        `"${event.summary}"`,
-        `"${(event.detail ?? "").replace(/"/g, "'")}"`,
-      ].join(","),
-    );
-    const blob = new Blob([[header, ...lines].join("\r\n")], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "civicflow-audit-log.csv";
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    const rows = filtered.map((event) => [
+      event.at,
+      event.actor,
+      event.action,
+      `${event.entityType}:${event.entityId}`,
+      event.summary,
+      event.detail ?? "",
+    ]);
+    downloadCsv("civicflow-audit-log.csv", [
+      ["Timestamp", "Actor", "Action", "Entity", "Summary", "Detail"],
+      ...rows,
+    ]);
   }
 
   return (

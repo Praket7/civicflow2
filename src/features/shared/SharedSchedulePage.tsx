@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { CalendarDays, Pencil, Plus, RefreshCw, RotateCcw, X } from "lucide-react";
 import {
   Button,
-  ButtonLink,
   Page,
   PageHeader,
   SearchField,
@@ -19,23 +18,11 @@ import {
   createSharedShift,
   updateSharedShift,
 } from "../../lib/sync/writes";
+import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
 import { filterOpportunities, filterShifts, OPPORTUNITY_PAGE, SHIFT_PAGE } from "./scheduleFilter";
+import { formatWhen } from "./sharedFormat";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
-
-const when = new Intl.DateTimeFormat(undefined, {
-  weekday: "short",
-  month: "short",
-  day: "numeric",
-  hour: "numeric",
-  minute: "2-digit",
-});
-
-function formatWhen(value: unknown): string {
-  if (typeof value !== "string" || !value) return "Not scheduled";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : when.format(date);
-}
 
 function localInput(value: unknown): string {
   if (typeof value !== "string" || !value) return "";
@@ -327,20 +314,10 @@ export function SharedSchedulePage() {
         <SharedNav conflicts={sync.conflicts} />
 
         {!isTauri() ? (
-          <section className={styles.panel}>
-            <div className={styles.panelBody}>
-              <h2 className={styles.panelTitle}>This screen lives in the desktop app</h2>
-              <p className={styles.panelCopy}>
-                The browser build uses the hosted workspace. Open CivicFlow on this computer to
-                write through the encrypted replica.
-              </p>
-              <div style={{ marginTop: 12 }}>
-                <ButtonLink to="/shared" variant="secondary">
-                  Open hosted workspace
-                </ButtonLink>
-              </div>
-            </div>
-          </section>
+          <DesktopOnlyNotice>
+            The browser build uses the hosted workspace. Open CivicFlow on this computer to write
+            through the encrypted replica.
+          </DesktopOnlyNotice>
         ) : (
           <>
             <section className={styles.stats} aria-label="Schedule summary">

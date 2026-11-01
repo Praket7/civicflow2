@@ -110,10 +110,6 @@ export function FunderPacketPreview({
   // has a preview: one continuous sheet rather than an empty dialog.
   const pages = measuredPages.length > 0 ? measuredPages : [sections];
 
-  function close() {
-    onClose();
-  }
-
   return (
     <>
       <dialog
@@ -123,7 +119,7 @@ export function FunderPacketPreview({
         aria-labelledby={titleId}
         onCancel={(event) => {
           event.preventDefault();
-          close();
+          onClose();
         }}
       >
         <div className={styles.previewPanel}>
@@ -153,7 +149,7 @@ export function FunderPacketPreview({
                 ref={closeRef}
                 type="button"
                 className={styles.previewClose}
-                onClick={close}
+                onClick={onClose}
                 aria-label="Close"
               >
                 <X size={17} aria-hidden="true" />
@@ -162,7 +158,7 @@ export function FunderPacketPreview({
           </header>
 
           <div className={styles.previewDesk}>
-            <div className={styles.previewStack}>
+            <div className={styles.previewStack} data-testid="funder-packet">
               {pages.map((page, index) => (
                 <div className={styles.previewSheet} key={page[0]?.key ?? index}>
                   <p className={styles.previewPageLabel}>

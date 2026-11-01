@@ -26,6 +26,7 @@ import {
   StatCard,
 } from "../../components/ui";
 import type { Column } from "../../components/ui";
+import { downloadCsv } from "../../lib/csv";
 import { useWorkspace } from "../../lib/workspace/session";
 import { WorkAreaTabs } from "../../components/navigation/WorkAreaTabs";
 import { peopleTabs } from "../../app/workAreas";
@@ -46,11 +47,6 @@ const PAGE_SIZE = 12;
 
 function needsAttention(volunteer: Volunteer): boolean {
   return volunteer.attendanceRate < 85 || volunteer.eventsCompleted < 5;
-}
-
-function csvCell(value: string | number): string {
-  const text = String(value);
-  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
 export function VolunteersPage() {
@@ -156,7 +152,7 @@ export function VolunteersPage() {
     return rows;
   }, [selected, session, workspace, nextShift]);
 
-  function downloadCsv() {
+  function exportCsv() {
     const header = [
       "Name",
       "Email",
@@ -181,16 +177,7 @@ export function VolunteersPage() {
       volunteer.attendanceRate,
       volunteer.eventsCompleted,
     ]);
-    const csv = [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\r\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "civicflow-volunteers.csv";
-    document.body.append(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    downloadCsv("civicflow-volunteers.csv", [header, ...rows]);
   }
 
   const columns: Column<Volunteer>[] = [
@@ -295,7 +282,7 @@ export function VolunteersPage() {
             <Button
               variant="secondary"
               icon={<Download size={14} aria-hidden="true" />}
-              onClick={downloadCsv}
+              onClick={exportCsv}
             >
               Export CSV
             </Button>

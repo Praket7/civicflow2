@@ -1,4 +1,5 @@
 import { createClient, type Session, type SupabaseClient, type User } from "@supabase/supabase-js";
+import { describeAuthError } from "../auth/errors";
 import type { BridgedSession } from "../cloud/bridge";
 import { cloudClient } from "../cloud/client";
 import { isTauri } from "../platform";
@@ -141,12 +142,4 @@ export function displayNameOf(user: User): string {
   const name = typeof metadata?.name === "string" ? metadata.name.trim() : "";
   if (name) return name;
   return user.email?.split("@")[0] ?? "Volunteer";
-}
-
-function describeAuthError(message: string): string {
-  if (/invalid login credentials/i.test(message)) return "That email and password do not match.";
-  if (/email not confirmed/i.test(message)) return "Confirm your email address first.";
-  if (/rate limit|too many/i.test(message))
-    return "Too many attempts. Wait a minute and try again.";
-  return message;
 }

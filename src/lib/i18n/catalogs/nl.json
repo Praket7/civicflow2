@@ -3001,5 +3001,9 @@
   "Funder packet": "Rapport voor financiers",
   "This packet leaves out volunteer names and individual credentials.": "Er zijn geen namen van vrijwilligers of individuele inloggegevens opgenomen.",
   "Funder packet preview": "Voorbeeld van Funder-pakket",
-  "Page {page} of {count}": "Pagina {page} van {count}"
+  "Page {page} of {count}": "Pagina {page} van {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Een sectie is langer dan één Letterpagina. Het afdrukken gaat verder op een ander vel, dus de afdruk kan meer pagina's bevatten dan dit voorbeeld.",
+  "Find a program or shift": "Zoek een programma of dienst",
+  "Find a program, cause, address, or shift status": "Zoek een programma, oorzaak, adres of dienststatus",
+  "Find in this schedule": "Vind in dit schema"
 }

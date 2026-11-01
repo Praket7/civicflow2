@@ -3001,5 +3001,9 @@
   "Funder packet": "Laporan penyandang dana",
   "This packet leaves out volunteer names and individual credentials.": "Tidak ada nama sukarelawan atau kredensial individu yang disertakan.",
   "Funder packet preview": "Pratinjau paket pemberi dana",
-  "Page {page} of {count}": "Halaman {page} dari {count}"
+  "Page {page} of {count}": "Halaman {page} dari {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Satu bagian lebih panjang dari satu halaman Surat. Pencetakan akan dilanjutkan pada lembar lain, sehingga hasil cetakan mungkin memiliki lebih banyak halaman daripada pratinjau ini.",
+  "Find a program or shift": "Temukan program atau shift",
+  "Find a program, cause, address, or shift status": "Temukan program, penyebab, alamat, atau status shift",
+  "Find in this schedule": "Temukan dalam jadwal ini"
 }

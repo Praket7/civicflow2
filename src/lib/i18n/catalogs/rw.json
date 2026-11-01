@@ -2998,5 +2998,9 @@
   "Funder packet": "Raporo y'abaterankunga",
   "This packet leaves out volunteer names and individual credentials.": "Nta mazina y'abakorerabushake cyangwa imyirondoro y'umuntu ku giti cye yashyizwe mo.",
   "Funder packet preview": "Igaragaza rya raporo y'abaterankunga",
-  "Page {page} of {count}": "Paji {page} kuri {count}"
+  "Page {page} of {count}": "Paji {page} kuri {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Igice ni kirekire kurenza urupapuro rumwe. Gucapa bizakomeza kurundi rupapuro, kugirango icapiro rishobora kugira impapuro zirenze iyi reba.",
+  "Find a program or shift": "Shakisha gahunda cyangwa shift",
+  "Find a program, cause, address, or shift status": "Shakisha gahunda, impamvu, aderesi, cyangwa ihinduka ryimiterere",
+  "Find in this schedule": "Shakisha muri iyi gahunda"
 }

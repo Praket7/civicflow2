@@ -3001,5 +3001,9 @@
   "Funder packet": "گزارش تأمین‌کننده مالی",
   "This packet leaves out volunteer names and individual credentials.": "هیچ نام داوطلب یا اعتبارنامه فردی درج نشده است.",
   "Funder packet preview": "پیش نمایش بسته سرمایه گذار",
-  "Page {page} of {count}": "صفحه {page} از {count}"
+  "Page {page} of {count}": "صفحه {page} از {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "یک بخش بیشتر از یک صفحه نامه است. چاپ آن را در برگه دیگری ادامه می‌دهد، بنابراین ممکن است پرینت صفحات بیشتری از این پیش‌نمایش داشته باشد.",
+  "Find a program or shift": "یک برنامه یا شیفت پیدا کنید",
+  "Find a program, cause, address, or shift status": "یک برنامه، علت، آدرس یا وضعیت تغییر را پیدا کنید",
+  "Find in this schedule": "در این جدول زمانی پیدا کنید"
 }

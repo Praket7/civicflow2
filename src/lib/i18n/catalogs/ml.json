@@ -2999,5 +2999,9 @@
   "Funder packet": "ധനസഹായ റിപ്പോർട്ട്",
   "This packet leaves out volunteer names and individual credentials.": "സന്നദ്ധപ്രവർത്തകരുടെ പേരോ വ്യക്തിഗത ക്രെഡൻഷ്യലുകളോ ഉൾപ്പെടുത്തിയിട്ടില്ല.",
   "Funder packet preview": "ധനസഹായ റിപ്പോർട്ട് പ്രിവ്യൂ",
-  "Page {page} of {count}": "പേജ് {page} / {count}"
+  "Page {page} of {count}": "പേജ് {page} / {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ഒരു വിഭാഗം ഒരു കത്ത് പേജിനേക്കാൾ നീളമുള്ളതാണ്. പ്രിൻ്റ് മറ്റൊരു ഷീറ്റിൽ അത് തുടരും, അതിനാൽ പ്രിൻ്റൗട്ടിൽ ഈ പ്രിവ്യൂവിനേക്കാൾ കൂടുതൽ പേജുകൾ ഉണ്ടായിരിക്കാം.",
+  "Find a program or shift": "ഒരു പ്രോഗ്രാം അല്ലെങ്കിൽ ഷിഫ്റ്റ് കണ്ടെത്തുക",
+  "Find a program, cause, address, or shift status": "ഒരു പ്രോഗ്രാം, കാരണം, വിലാസം അല്ലെങ്കിൽ ഷിഫ്റ്റ് നില കണ്ടെത്തുക",
+  "Find in this schedule": "ഈ ഷെഡ്യൂളിൽ കണ്ടെത്തുക"
 }

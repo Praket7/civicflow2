@@ -3001,5 +3001,9 @@
   "Funder packet": "รายงานผู้ให้ทุน",
   "This packet leaves out volunteer names and individual credentials.": "ไม่มีการรวมชื่ออาสาสมัครหรือข้อมูลประจำตัวของแต่ละบุคคล",
   "Funder packet preview": "ดูตัวอย่างแพ็คเก็ต Funder",
-  "Page {page} of {count}": "หน้า {page} ของ {count}"
+  "Page {page} of {count}": "หน้า {page} ของ {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ส่วนยาวมากกว่าหนึ่งหน้าจดหมาย การพิมพ์จะดำเนินต่อไปในแผ่นงานอื่น ดังนั้นงานพิมพ์อาจมีหน้ามากกว่าตัวอย่างนี้",
+  "Find a program or shift": "ค้นหาโปรแกรมหรือกะ",
+  "Find a program, cause, address, or shift status": "ค้นหาโปรแกรม สาเหตุ ที่อยู่ หรือสถานะกะ",
+  "Find in this schedule": "ค้นหาได้ในตารางนี้"
 }

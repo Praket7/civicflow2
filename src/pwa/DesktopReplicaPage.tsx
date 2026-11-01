@@ -3,6 +3,7 @@ import { Cloud, CloudOff, Database, RefreshCw, RotateCcw } from "lucide-react";
 import { Button, ButtonLink, Page, PageHeader } from "../components/ui";
 import { SharedNav } from "../features/shared/SharedNav";
 import styles from "../features/shared/shared.module.css";
+import { t } from "../lib/i18n";
 import { isTauri } from "../lib/platform";
 import { readReplicaEntities } from "../lib/sync/desktopStore";
 import {
@@ -73,6 +74,7 @@ export function DesktopReplicaPage() {
   const [volunteers, setVolunteers] = useState<Row[]>([]);
   const [busy, setBusy] = useState(false);
   const [version, setVersion] = useState(0);
+  const [showAllShifts, setShowAllShifts] = useState(false);
 
   useEffect(() => subscribeDesktopSync(setSync), []);
 
@@ -134,6 +136,10 @@ export function DesktopReplicaPage() {
   }
 
   const opportunitiesById = new Map(opportunities.map((row) => [text(row, "id"), row]));
+  // A year of a busy organization is hundreds of shifts. This view proves what
+  // the replica holds, not how patiently someone can scroll, so the table
+  // starts with the nearest hundred and offers the rest on request.
+  const visibleShifts = showAllShifts ? shifts : shifts.slice(0, 100);
 
   return (
     <Page>
@@ -316,7 +322,7 @@ export function DesktopReplicaPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {shifts.map((shift) => {
+                    {visibleShifts.map((shift) => {
                       const id = text(shift, "id");
                       const opportunity = opportunitiesById.get(text(shift, "opportunity_id"));
                       return (
@@ -340,6 +346,25 @@ export function DesktopReplicaPage() {
                 </table>
               </div>
             )}
+            {shifts.length > visibleShifts.length ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  flexWrap: "wrap",
+                  padding: "0 16px 14px",
+                }}
+              >
+                <p style={{ margin: 0, fontSize: 12.5, color: "var(--text-muted)" }}>
+                  Showing {visibleShifts.length} of {shifts.length} shifts.
+                </p>
+                <Button variant="secondary" size="small" onClick={() => setShowAllShifts(true)}>
+                  {t("Show all {count}", { count: shifts.length })}
+                </Button>
+              </div>
+            ) : null}
           </section>
 
           <p style={{ margin: 0, fontSize: 12.5, color: "var(--text-muted)" }}>

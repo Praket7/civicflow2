@@ -3001,5 +3001,9 @@
   "Funder packet": "فنڈر رپورٹ",
   "This packet leaves out volunteer names and individual credentials.": "کوئی رضاکارانہ نام یا انفرادی اسناد شامل نہیں ہیں ۔",
   "Funder packet preview": "فنڈر پیکٹ کا پیش نظارہ",
-  "Page {page} of {count}": "صفحہ {page} از {count}"
+  "Page {page} of {count}": "صفحہ {page} از {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ایک سیکشن ایک خط کے صفحے سے لمبا ہوتا ہے۔ پرنٹ اسے کسی اور شیٹ پر جاری رکھے گا، لہذا پرنٹ آؤٹ میں اس پیش نظارہ سے زیادہ صفحات ہوسکتے ہیں۔",
+  "Find a program or shift": "ایک پروگرام یا شفٹ تلاش کریں۔",
+  "Find a program, cause, address, or shift status": "ایک پروگرام، وجہ، پتہ، یا شفٹ کی حیثیت تلاش کریں۔",
+  "Find in this schedule": "اس شیڈول میں تلاش کریں۔"
 }

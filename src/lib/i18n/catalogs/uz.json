@@ -3001,5 +3001,9 @@
   "Funder packet": "Moliyalashtiruvchi hisoboti",
   "This packet leaves out volunteer names and individual credentials.": "Ko'ngillilarning ismlari yoki shaxsiy ma'lumotlari kiritilmagan.",
   "Funder packet preview": "Moliyaviy paketni oldindan ko'rish",
-  "Page {page} of {count}": "Sahifa {page} dan {count}"
+  "Page {page} of {count}": "Sahifa {page} dan {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Bo'lim bitta Letter sahifasidan uzunroq. Chop etish uni boshqa varaqda davom ettiradi, shuning uchun chop etishda bu oldindan ko'rishdan ko'ra ko'proq sahifa bo'lishi mumkin.",
+  "Find a program or shift": "Dastur yoki shiftni toping",
+  "Find a program, cause, address, or shift status": "Dastur, sabab, manzil yoki o'zgarish holatini toping",
+  "Find in this schedule": "Ushbu jadvalda toping"
 }

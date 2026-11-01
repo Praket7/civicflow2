@@ -3001,5 +3001,9 @@
   "Funder packet": "資助方報告",
   "This packet leaves out volunteer names and individual credentials.": "不包括志願者姓名或個人憑證。",
   "Funder packet preview": "資助者資料包預覽",
-  "Page {page} of {count}": "頁 {page}（共 {count}）"
+  "Page {page} of {count}": "頁 {page}（共 {count}）",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "一節比一封信的一頁長。列印將在另一張紙上繼續列印，因此列印輸出的頁數可能比此預覽的頁數更多。",
+  "Find a program or shift": "尋找計劃或班次",
+  "Find a program, cause, address, or shift status": "尋找計劃、原因、地址或班次狀態",
+  "Find in this schedule": "在此時間表中查找"
 }

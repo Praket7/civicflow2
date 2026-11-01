@@ -3001,5 +3001,9 @@
   "Funder packet": "Finansieringsverslag",
   "This packet leaves out volunteer names and individual credentials.": "Geen vrywilligersname of individuele geloofsbriewe word ingesluit nie.",
   "Funder packet preview": "Funder pakkie voorskou",
-  "Page {page} of {count}": "Bladsy {page} van {count}"
+  "Page {page} of {count}": "Bladsy {page} van {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "'n Afdeling is langer as een Briefbladsy. Druk sal dit op 'n ander vel voortsit, so die drukstuk kan meer bladsye as hierdie voorskou hê.",
+  "Find a program or shift": "Soek 'n program of skof",
+  "Find a program, cause, address, or shift status": "Vind 'n program, oorsaak, adres of verskuiwingstatus",
+  "Find in this schedule": "Vind in hierdie skedule"
 }

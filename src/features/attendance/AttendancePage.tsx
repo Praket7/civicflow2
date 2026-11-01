@@ -208,7 +208,12 @@ export function AttendancePage() {
             <ButtonLink to={`/coordinator/shifts/${event.shift.id}`} variant="lime" size="small">
               Live roster
             </ButtonLink>
-            <ButtonLink to="/volunteer/check-in" variant="secondary" size="small">
+            <ButtonLink
+              to="/volunteer/check-in"
+              variant="secondary"
+              size="small"
+              className={styles.checkInLink}
+            >
               Volunteer check-in view
             </ButtonLink>
           </div>

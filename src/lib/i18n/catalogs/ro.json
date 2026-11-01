@@ -3001,5 +3001,9 @@
   "Funder packet": "Raport finanțator",
   "This packet leaves out volunteer names and individual credentials.": "Nu sunt incluse nume de voluntari sau acreditări individuale.",
   "Funder packet preview": "Previzualizarea pachetului de finanțator",
-  "Page {page} of {count}": "Pagina {page} din {count}"
+  "Page {page} of {count}": "Pagina {page} din {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "O secțiune este mai lungă decât o pagină Scrisoare. Imprimarea va continua pe o altă coală, astfel încât imprimarea poate avea mai multe pagini decât această previzualizare.",
+  "Find a program or shift": "Găsiți un program sau o tură",
+  "Find a program, cause, address, or shift status": "Găsiți un program, o cauză, o adresă sau o stare de schimb",
+  "Find in this schedule": "Găsiți în acest program"
 }

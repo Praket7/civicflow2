@@ -3001,5 +3001,9 @@
   "Funder packet": "자금 제공자 보고서",
   "This packet leaves out volunteer names and individual credentials.": "자원봉사자 이름이나 개인 자격 증명은 포함되지 않습니다.",
   "Funder packet preview": "자금 조달 패킷 미리보기",
-  "Page {page} of {count}": "{count}의 페이지 {page}"
+  "Page {page} of {count}": "{count}의 페이지 {page}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "섹션은 Letter 페이지 1페이지보다 깁니다. 인쇄는 다른 시트에 계속 진행되므로 인쇄물에 이 미리 보기보다 더 많은 페이지가 있을 수 있습니다.",
+  "Find a program or shift": "프로그램 또는 교대조 찾기",
+  "Find a program, cause, address, or shift status": "프로그램, 원인, 주소 또는 근무조 상태 찾기",
+  "Find in this schedule": "이 일정에서 찾기"
 }

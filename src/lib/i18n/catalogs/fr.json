@@ -3001,5 +3001,9 @@
   "Funder packet": "Rapport du bailleur de fonds",
   "This packet leaves out volunteer names and individual credentials.": "Aucun nom de bénévole ou identifiant individuel n'est inclus.",
   "Funder packet preview": "Aperçu du dossier du bailleur de fonds",
-  "Page {page} of {count}": "Page {page} de {count}"
+  "Page {page} of {count}": "Page {page} de {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Une section est plus longue qu’une page de lettre. L'impression se poursuivra sur une autre feuille, l'impression pourra donc contenir plus de pages que cet aperçu.",
+  "Find a program or shift": "Trouver un programme ou un quart de travail",
+  "Find a program, cause, address, or shift status": "Rechercher un programme, une cause, une adresse ou un statut de quart de travail",
+  "Find in this schedule": "Retrouvez dans ce planning"
 }

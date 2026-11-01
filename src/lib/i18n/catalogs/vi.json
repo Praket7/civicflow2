@@ -3001,5 +3001,9 @@
   "Funder packet": "Báo cáo nhà tài trợ",
   "This packet leaves out volunteer names and individual credentials.": "Không bao gồm tên tình nguyện viên hoặc thông tin cá nhân.",
   "Funder packet preview": "Xem trước gói tài trợ",
-  "Page {page} of {count}": "Trang {page} của {count}"
+  "Page {page} of {count}": "Trang {page} của {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Một phần dài hơn một trang Thư. Việc in sẽ tiếp tục trên một trang tính khác nên bản in có thể có nhiều trang hơn bản xem trước này.",
+  "Find a program or shift": "Tìm một chương trình hoặc ca làm việc",
+  "Find a program, cause, address, or shift status": "Tìm một chương trình, nguyên nhân, địa chỉ hoặc trạng thái ca làm việc",
+  "Find in this schedule": "Tìm trong lịch trình này"
 }

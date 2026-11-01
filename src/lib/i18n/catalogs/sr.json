@@ -3001,5 +3001,9 @@
   "Funder packet": "Izveštaj o finansiranju",
   "This packet leaves out volunteer names and individual credentials.": "Nisu uključena imena volontera ili pojedinačni akreditivi.",
   "Funder packet preview": "Преглед пакета донатора",
-  "Page {page} of {count}": "Страница {page} од {count}"
+  "Page {page} of {count}": "Страница {page} од {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Одељак је дужи од једне странице са писмом. Штампање ће се наставити на другом листу, тако да испис може имати више страница од овог прегледа.",
+  "Find a program or shift": "Пронађите програм или смену",
+  "Find a program, cause, address, or shift status": "Пронађите програм, узрок, адресу или статус смене",
+  "Find in this schedule": "Пронађите у овом распореду"
 }

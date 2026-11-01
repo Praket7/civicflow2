@@ -3001,5 +3001,9 @@
   "Funder packet": "Rapò finansman",
   "This packet leaves out volunteer names and individual credentials.": "Pa gen non volontè oswa kalifikasyon endividyèl yo enkli.",
   "Funder packet preview": "Aperçu pake finansman",
-  "Page {page} of {count}": "Paj {page} nan {count}"
+  "Page {page} of {count}": "Paj {page} nan {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Yon seksyon pi long pase yon paj Lèt. Enprime pral kontinye sou yon lòt fèy, kidonk enprime a ka gen plis paj pase aperçu sa a.",
+  "Find a program or shift": "Jwenn yon pwogram oswa yon chanjman",
+  "Find a program, cause, address, or shift status": "Jwenn yon pwogram, kòz, adrès, oswa sitiyasyon chanjman",
+  "Find in this schedule": "Jwenn nan orè sa a"
 }

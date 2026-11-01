@@ -3001,5 +3001,9 @@
   "Funder packet": "Umbiko womxhasi",
   "This packet leaves out volunteer names and individual credentials.": "Awekho amagama amavolontiya noma iziqinisekiso zomuntu ngamunye ezifakiwe.",
   "Funder packet preview": "Ukubuka kuqala kwephakethe lomxhasi",
-  "Page {page} of {count}": "Ikhasi {page} le-{count}"
+  "Page {page} of {count}": "Ikhasi {page} le-{count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Isigaba side kunekhasi elilodwa Lencwadi. Ukuphrinta kuzokuqhuba kwelinye ishidi, ukuze okuphrintiwe kube namakhasi amaningi kunalokhu kubuka kuqala.",
+  "Find a program or shift": "Thola uhlelo noma shift",
+  "Find a program, cause, address, or shift status": "Thola uhlelo, imbangela, ikheli, noma isimo sokushintsha",
+  "Find in this schedule": "Thola kulolu hlelo"
 }

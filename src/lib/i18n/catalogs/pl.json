@@ -3001,5 +3001,9 @@
   "Funder packet": "Raport grantodawcy",
   "This packet leaves out volunteer names and individual credentials.": "Nie uwzględniono nazwisk wolontariuszy ani indywidualnych danych uwierzytelniających.",
   "Funder packet preview": "Podgląd pakietu Fundera",
-  "Page {page} of {count}": "Strona {page} z {count}"
+  "Page {page} of {count}": "Strona {page} z {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Sekcja jest dłuższa niż jedna strona listu. Druk będzie kontynuowany na innym arkuszu, więc wydruk może mieć więcej stron niż ten podgląd.",
+  "Find a program or shift": "Znajdź program lub zmianę",
+  "Find a program, cause, address, or shift status": "Znajdź program, przyczynę, adres lub status zmiany",
+  "Find in this schedule": "Znajdź w tym harmonogramie"
 }

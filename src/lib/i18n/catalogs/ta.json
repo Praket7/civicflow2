@@ -2999,5 +2999,9 @@
   "Funder packet": "நிதியுதவி அறிக்கை",
   "This packet leaves out volunteer names and individual credentials.": "தன்னார்வப் பெயர்கள் அல்லது தனிப்பட்ட நற்சான்றிதழ்கள் எதுவும் சேர்க்கப்படவில்லை.",
   "Funder packet preview": "ஃபண்டர் பாக்கெட் மாதிரிக்காட்சி",
-  "Page {page} of {count}": "பக்கம் {page} இன் {count}"
+  "Page {page} of {count}": "பக்கம் {page} இன் {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ஒரு பகுதி ஒரு கடிதப் பக்கத்தை விட நீளமானது. அச்சிடுதல் மற்றொரு தாளில் தொடரும், எனவே அச்சுப்பொறியில் இந்த மாதிரிக்காட்சியை விட அதிகமான பக்கங்கள் இருக்கலாம்.",
+  "Find a program or shift": "ஒரு நிரல் அல்லது மாற்றத்தைக் கண்டறியவும்",
+  "Find a program, cause, address, or shift status": "நிரல், காரணம், முகவரி அல்லது ஷிப்ட் நிலையைக் கண்டறியவும்",
+  "Find in this schedule": "இந்த அட்டவணையில் கண்டுபிடிக்கவும்"
 }

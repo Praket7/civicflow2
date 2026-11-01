@@ -3001,5 +3001,9 @@
   "Funder packet": "Finansieringsrapport",
   "This packet leaves out volunteer names and individual credentials.": "Inga volontärnamn eller individuella referenser ingår.",
   "Funder packet preview": "Förhandsvisning av Funder-paket",
-  "Page {page} of {count}": "Sida {page} av {count}"
+  "Page {page} of {count}": "Sida {page} av {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Ett avsnitt är längre än en bokstavssida. Print kommer att fortsätta på ett annat ark, så utskriften kan ha fler sidor än denna förhandsvisning.",
+  "Find a program or shift": "Hitta ett program eller skift",
+  "Find a program, cause, address, or shift status": "Hitta ett program, orsak, adress eller skiftstatus",
+  "Find in this schedule": "Hitta i detta schema"
 }

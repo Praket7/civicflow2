@@ -3001,5 +3001,9 @@
   "Funder packet": "অর্থদাতা প্রতিবেদন",
   "This packet leaves out volunteer names and individual credentials.": "কোনও স্বেচ্ছাসেবকের নাম বা স্বতন্ত্র শংসাপত্র অন্তর্ভুক্ত নেই ।",
   "Funder packet preview": "ফান্ডার প্যাকেট প্রিভিউ",
-  "Page {page} of {count}": "পৃষ্ঠা {page} এর {count}"
+  "Page {page} of {count}": "পৃষ্ঠা {page} এর {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "একটি বিভাগ একটি চিঠির পৃষ্ঠার চেয়ে দীর্ঘ। মুদ্রণ এটি অন্য শীটে চালিয়ে যাবে, তাই প্রিন্টআউটে এই পূর্বরূপের চেয়ে বেশি পৃষ্ঠা থাকতে পারে।",
+  "Find a program or shift": "একটি প্রোগ্রাম বা স্থানান্তর খুঁজুন",
+  "Find a program, cause, address, or shift status": "একটি প্রোগ্রাম, কারণ, ঠিকানা, বা স্থানান্তর অবস্থা খুঁজুন",
+  "Find in this schedule": "এই সময়সূচী মধ্যে খুঁজুন"
 }

@@ -3001,5 +3001,9 @@
   "Funder packet": "របាយការណ៍អ្នកផ្តល់មូលនិធិ",
   "This packet leaves out volunteer names and individual credentials.": "មិនមានឈ្មោះអ្នកស្ម័គ្រចិត្ត ឬព័ត៌មានបញ្ជាក់អត្តសញ្ញាណបុគ្គលត្រូវបានរួមបញ្ចូលទេ ។",
   "Funder packet preview": "ការមើលកញ្ចប់អ្នកផ្តល់មូលនិធិជាមុន",
-  "Page {page} of {count}": "ទំព័រ {page} នៃ {count}"
+  "Page {page} of {count}": "ទំព័រ {page} នៃ {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ផ្នែកមួយវែងជាងទំព័រលិខិតមួយ។ ការបោះពុម្ពនឹងបន្តវានៅលើសន្លឹកមួយផ្សេងទៀត ដូច្នេះការបោះពុម្ពអាចមានទំព័រច្រើនជាងការមើលជាមុននេះ។",
+  "Find a program or shift": "ស្វែងរកកម្មវិធីឬការផ្លាស់ប្តូរ",
+  "Find a program, cause, address, or shift status": "ស្វែងរកកម្មវិធី មូលហេតុ អាសយដ្ឋាន ឬការផ្លាស់ប្តូរស្ថានភាព",
+  "Find in this schedule": "ស្វែងរកក្នុងកាលវិភាគនេះ។"
 }

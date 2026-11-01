@@ -3001,5 +3001,9 @@
   "Funder packet": "वित्तपोषक रिपोर्ट",
   "This packet leaves out volunteer names and individual credentials.": "कोई स्वयंसेवक नाम या व्यक्तिगत क्रेडेंशियल शामिल नहीं हैं।",
   "Funder packet preview": "फंडर पैकेट पूर्वावलोकन",
-  "Page {page} of {count}": "पेज {page} में से {count}"
+  "Page {page} of {count}": "पेज {page} में से {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "एक अनुभाग एक पत्र पृष्ठ से अधिक लंबा है। प्रिंट इसे दूसरी शीट पर जारी रखेगा, इसलिए प्रिंटआउट में इस पूर्वावलोकन से अधिक पृष्ठ हो सकते हैं।",
+  "Find a program or shift": "कोई प्रोग्राम या शिफ्ट ढूंढें",
+  "Find a program, cause, address, or shift status": "कोई कार्यक्रम, कारण, पता, या बदलाव की स्थिति ढूंढें",
+  "Find in this schedule": "इस शेड्यूल में खोजें"
 }

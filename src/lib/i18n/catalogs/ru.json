@@ -3001,5 +3001,9 @@
   "Funder packet": "Отчет для грантодателей",
   "This packet leaves out volunteer names and individual credentials.": "Имена волонтеров или индивидуальные учетные данные не включены.",
   "Funder packet preview": "Предварительный просмотр пакета спонсора",
-  "Page {page} of {count}": "Страница {page} из {count}"
+  "Page {page} of {count}": "Страница {page} из {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Раздел длиннее одной страницы Letter. Печать продолжится на другом листе, поэтому в распечатке может быть больше страниц, чем в предварительном просмотре.",
+  "Find a program or shift": "Найти программу или смену",
+  "Find a program, cause, address, or shift status": "Найдите программу, причину, адрес или статус смены",
+  "Find in this schedule": "Найдите в этом расписании"
 }

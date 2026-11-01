@@ -3001,5 +3001,9 @@
   "Funder packet": "Звіт для грантодавців",
   "This packet leaves out volunteer names and individual credentials.": "Імена волонтерів або індивідуальні облікові дані не включаються.",
   "Funder packet preview": "Попередній перегляд пакету Funder",
-  "Page {page} of {count}": "Сторінка {page} з {count}"
+  "Page {page} of {count}": "Сторінка {page} з {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Розділ довший за одну сторінку листа. Друк продовжить його на іншому аркуші, тому роздруківка може мати більше сторінок, ніж цей попередній перегляд.",
+  "Find a program or shift": "Знайдіть програму або зміну",
+  "Find a program, cause, address, or shift status": "Знайдіть програму, причину, адресу або статус зміни",
+  "Find in this schedule": "Знайдіть у цьому розкладі"
 }

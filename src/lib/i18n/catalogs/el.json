@@ -3001,5 +3001,9 @@
   "Funder packet": "Αναφορά χρηματοδότη",
   "This packet leaves out volunteer names and individual credentials.": "Δεν περιλαμβάνονται ονόματα εθελοντών ή ατομικά διαπιστευτήρια.",
   "Funder packet preview": "Προεπισκόπηση πακέτου χρηματοδότη",
-  "Page {page} of {count}": "Σελίδα {page} από {count}"
+  "Page {page} of {count}": "Σελίδα {page} από {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Μια ενότητα είναι μεγαλύτερη από μία σελίδα με γράμματα. Η εκτύπωση θα συνεχιστεί σε άλλο φύλλο, επομένως η εκτύπωση μπορεί να έχει περισσότερες σελίδες από αυτήν την προεπισκόπηση.",
+  "Find a program or shift": "Βρείτε ένα πρόγραμμα ή μια αλλαγή",
+  "Find a program, cause, address, or shift status": "Βρείτε πρόγραμμα, αιτία, διεύθυνση ή κατάσταση αλλαγής",
+  "Find in this schedule": "Βρείτε σε αυτό το πρόγραμμα"
 }

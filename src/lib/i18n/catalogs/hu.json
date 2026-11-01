@@ -3001,5 +3001,9 @@
   "Funder packet": "Támogatói jelentés",
   "This packet leaves out volunteer names and individual credentials.": "Nem tartalmazza az önkéntesek nevét vagy az egyéni hitelesítő adatokat.",
   "Funder packet preview": "Finanszírozói csomag előnézete",
-  "Page {page} of {count}": "{page} oldal / {count}"
+  "Page {page} of {count}": "{page} oldal / {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Egy szakasz hosszabb, mint egy levéloldal. A nyomtatás egy másik lapon folytatódik, így a nyomat több oldalt tartalmazhat, mint ez az előnézet.",
+  "Find a program or shift": "Keressen programot vagy műszakot",
+  "Find a program, cause, address, or shift status": "Keressen programot, okot, címet vagy műszak állapotát",
+  "Find in this schedule": "Keresse meg ebben a menetrendben"
 }

@@ -3001,5 +3001,9 @@
   "Funder packet": "Zpráva pro poskytovatele grantů",
   "This packet leaves out volunteer names and individual credentials.": "Nejsou zahrnuta žádná jména dobrovolníků ani individuální přihlašovací údaje.",
   "Funder packet preview": "Náhled balíčku Funder",
-  "Page {page} of {count}": "Stránka {page} z {count}"
+  "Page {page} of {count}": "Stránka {page} z {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Sekce je delší než jedna stránka Letter. Tisk bude pokračovat na dalším listu, takže výtisk může mít více stránek než tento náhled.",
+  "Find a program or shift": "Najděte si program nebo směnu",
+  "Find a program, cause, address, or shift status": "Najděte program, příčinu, adresu nebo stav směny",
+  "Find in this schedule": "Najděte v tomto rozvrhu"
 }

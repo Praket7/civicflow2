@@ -3001,5 +3001,9 @@
   "Funder packet": "تقرير الممول",
   "This packet leaves out volunteer names and individual credentials.": "لا يتم تضمين أسماء المتطوعين أو أوراق الاعتماد الفردية.",
   "Funder packet preview": "معاينة حزمة الممول",
-  "Page {page} of {count}": "الصفحة {page} من {count}"
+  "Page {page} of {count}": "الصفحة {page} من {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "القسم أطول من صفحة رسالة واحدة. ستستمر الطباعة على ورقة أخرى، لذا قد تحتوي النسخة المطبوعة على صفحات أكثر من هذه المعاينة.",
+  "Find a program or shift": "ابحث عن برنامج أو تحول",
+  "Find a program, cause, address, or shift status": "ابحث عن برنامج أو سبب أو عنوان أو حالة التحول",
+  "Find in this schedule": "تجد في هذا الجدول الزمني"
 }

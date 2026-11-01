@@ -697,6 +697,7 @@ export const helpTopics: HelpTopic[] = [
       "Creates opportunities and shifts in the hosted organization while keeping a durable local queue for offline work.",
     steps: [
       "Create an opportunity, or choose an existing one and add a shift.",
+      "Use the search above the lists to narrow by program, cause, address, or shift status. Long lists show one page at a time.",
       "Enter times in this computer's timezone; the command stores an absolute instant.",
       "Choose Sync now if the connection was down, then check the synced copy for the server's rows.",
     ],
@@ -752,10 +753,11 @@ export const helpTopics: HelpTopic[] = [
       "Choose a range or set the first and last day, then narrow to one program if the update is program-specific.",
       "Read verified hours, volunteers, completed shifts, and attendance for that window.",
       "Check expiring credentials before publishing an assignment plan.",
-      "Export CSV for a grant report, or preview the funder packet page by page before printing it.",
+      "Export CSV for a grant report, or preview the funder packet page by page before printing it. The preview is the print source, so its sheet count is the file's page count.",
     ],
     rules: [
       "The printed packet leaves out volunteer names and individual credentials.",
+      "A packet names the eighteen programs with the most verified hours; the screen and the CSV keep every program.",
       "Hours count on the day they were served, not the day they were approved.",
       "A shift counts on the day it starts in this computer's timezone.",
       "Only verified hours enter the headline total; pending hours are shown separately.",

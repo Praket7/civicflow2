@@ -125,6 +125,34 @@
   align-items: center;
 }
 
+.scheduleFilter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.scheduleFilter > :first-child {
+  flex: 1 1 260px;
+  max-width: 460px;
+}
+
+.filterNote {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.listMore {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
 .opportunityList {
   display: grid;
   gap: 10px;
@@ -763,6 +791,12 @@
   pointer-events: none;
 }
 
+/* The paper copy lives outside the app root so print media can drop the whole
+   working interface and render only the measured sheets. */
+.packetPrint {
+  display: none;
+}
+
 .packetHeader {
   display: flex;
   align-items: baseline;
@@ -1136,6 +1170,14 @@
   border-bottom: 1px solid rgb(255 255 255 / 0.12);
 }
 
+.previewWarning {
+  margin: 6px 0 0;
+  max-width: 52ch;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #f0c98a;
+}
+
 .previewEyebrow {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -1280,5 +1322,29 @@
   .packetMeasure,
   .previewDialog {
     display: none !important;
+  }
+
+  /* Printing is reached through the preview. The portal holds exactly the
+     sheets the coordinator saw, so the PDF cannot choose different breaks. */
+  :global(body[data-packet-print="true"]) :global(#root) {
+    display: none !important;
+  }
+
+  :global(body[data-packet-print="true"]) .packetPrint {
+    display: block !important;
+  }
+
+  .packetPrintSheet {
+    break-after: page;
+  }
+
+  .packetPrintSheet:last-child {
+    break-after: auto;
+  }
+
+  .packetPrintSheet .packetPage {
+    display: block !important;
+    border-radius: 0;
+    box-shadow: none;
   }
 }

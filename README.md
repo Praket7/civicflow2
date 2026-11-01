@@ -226,9 +226,12 @@ attendance, completed shifts, the program breakdown, the monthly rhythm and cred
 readiness are computed from every live report row in the replica, not from a screen's newest
 page, so a year-to-date total cannot quietly stop at the 500th hour. The screen works with the
 network down and exports a spreadsheet-ready CSV. **Preview** lays the funder packet out on Letter
-pages so every page break can be checked before anything is saved. **Print / save PDF** then turns
-the same numbers into that packet; it leaves out volunteer names and individual credentials, and
-the browser's print dialog names the file after the organization and period.
+pages so every page break can be checked before anything is saved, and it is the print path:
+**Print / save PDF** inside the preview sends those measured sheets, so the page count on screen is
+the page count in the file. A packet names the eighteen programs with the most verified hours; the
+on-screen table and the CSV keep every program. The packet leaves out volunteer names and
+individual credentials, and the browser's print dialog names the file after the organization and
+period.
 
 AutoRoster's local planner still runs as Rust code over the local SQLite workspace. On the
 shared screens, Quick plan and Rescue upcoming gaps build a deterministic plan over the replica,

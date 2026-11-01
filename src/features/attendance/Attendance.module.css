@@ -91,6 +91,20 @@
   margin-top: 15px;
 }
 
+/* A secondary button is ink on paper; on the event photo that is ink on a
+   dark scrim. This link only has to follow the hero's light text; the lime
+   button next to it keeps its own high-contrast label. */
+a.checkInLink {
+  border-color: rgb(255 255 255 / 0.42);
+  color: #fff;
+}
+
+a.checkInLink:hover {
+  background: rgb(255 255 255 / 0.12);
+  border-color: rgb(255 255 255 / 0.7);
+  color: #fff;
+}
+
 .eventRing {
   justify-self: end;
   display: grid;

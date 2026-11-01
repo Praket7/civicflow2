@@ -3001,5 +3001,9 @@
   "Funder packet": "Справаздача для фундатараў",
   "This packet leaves out volunteer names and individual credentials.": "Няма імёнаў валанцёраў або асобных уліковых дадзеных.",
   "Funder packet preview": "Папярэдні прагляд пакета Funder",
-  "Page {page} of {count}": "Старонка {page} з {count}"
+  "Page {page} of {count}": "Старонка {page} з {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Раздзел даўжэйшы за адну старонку Letter. Друк працягне яго на іншым аркушы, таму раздрукоўка можа мець больш старонак, чым гэты папярэдні прагляд.",
+  "Find a program or shift": "Знайдзіце праграму або змену",
+  "Find a program, cause, address, or shift status": "Знайдзіце праграму, прычыну, адрас або статус змены",
+  "Find in this schedule": "Знайсці ў гэтым раскладзе"
 }

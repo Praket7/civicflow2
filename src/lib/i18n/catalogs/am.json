@@ -3001,5 +3001,9 @@
   "Funder packet": "የገንዘብ ድጋፍ ሪፖርት",
   "This packet leaves out volunteer names and individual credentials.": "ምንም የበጎ ፈቃደኞች ስሞች ወይም የግለሰብ የምስክር ወረቀቶች አልተካተቱም ።",
   "Funder packet preview": "የፈንድ ፓኬት ቅድመ እይታ",
-  "Page {page} of {count}": "ገጽ {page} ከ{count}"
+  "Page {page} of {count}": "ገጽ {page} ከ{count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "አንድ ክፍል ከአንድ ፊደል ገጽ በላይ ይረዝማል። ማተም በሌላ ሉህ ላይ ይቀጥላል፣ ስለዚህ ህትመቱ ከዚህ ቅድመ እይታ የበለጠ ገፆች ሊኖሩት ይችላል።",
+  "Find a program or shift": "ፕሮግራም ወይም ፈረቃ ያግኙ",
+  "Find a program, cause, address, or shift status": "ፕሮግራም፣ መንስኤ፣ አድራሻ ወይም የፈረቃ ሁኔታን ያግኙ",
+  "Find in this schedule": "በዚህ መርሐግብር ውስጥ ያግኙ"
 }

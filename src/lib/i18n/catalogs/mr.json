@@ -3001,5 +3001,9 @@
   "Funder packet": "वित्तपोषक अहवाल",
   "This packet leaves out volunteer names and individual credentials.": "कोणतेही स्वयंसेवक नाव किंवा वैयक्तिक क्रेडेन्शियल समाविष्ट केलेले नाही.",
   "Funder packet preview": "फंडर पॅकेट पूर्वावलोकन",
-  "Page {page} of {count}": "पृष्ठ {page} पैकी {count}"
+  "Page {page} of {count}": "पृष्ठ {page} पैकी {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "विभाग एका अक्षराच्या पृष्ठापेक्षा मोठा असतो. प्रिंट ते दुसऱ्या शीटवर सुरू ठेवेल, त्यामुळे प्रिंटआउटमध्ये या पूर्वावलोकनापेक्षा अधिक पृष्ठे असू शकतात.",
+  "Find a program or shift": "एक कार्यक्रम किंवा शिफ्ट शोधा",
+  "Find a program, cause, address, or shift status": "प्रोग्राम, कारण, पत्ता किंवा शिफ्ट स्थिती शोधा",
+  "Find in this schedule": "या वेळापत्रकात शोधा"
 }

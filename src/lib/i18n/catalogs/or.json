@@ -2998,5 +2998,9 @@
   "Funder packet": "ପାଣ୍ଠିଦାତା ରିପୋର୍ଟ",
   "This packet leaves out volunteer names and individual credentials.": "କୌଣସି ସ୍ୱେଚ୍ଛାସେବୀ ନାମ କିମ୍ବା ବ୍ୟକ୍ତିଗତ ପରିଚୟପତ୍ର ଅନ୍ତର୍ଭୁକ୍ତ କରାଯାଇନାହିଁ ।",
   "Funder packet preview": "ପାଣ୍ଠିଦାତା ରିପୋର୍ଟ ପୂର୍ବାବଲୋକନ",
-  "Page {page} of {count}": "ପୃଷ୍ଠା {page} / {count}"
+  "Page {page} of {count}": "ପୃଷ୍ଠା {page} / {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ଗୋଟିଏ ବିଭାଗ ଗୋଟିଏ ଅକ୍ଷର ପୃଷ୍ଠାରୁ ଲମ୍ବା ଅଟେ | ପ୍ରିଣ୍ଟ୍ ଏହାକୁ ଅନ୍ୟ ଏକ ସିଟ୍ ରେ ଜାରି ରଖିବ, ତେଣୁ ଏହି ପ୍ରିଭ୍ୟୁ ଅପେକ୍ଷା ପ୍ରିଣ୍ଟଆଉଟ୍ ଅଧିକ ପୃଷ୍ଠା ଥାଇପାରେ |",
+  "Find a program or shift": "ଏକ ପ୍ରୋଗ୍ରାମ୍ କିମ୍ବା ସିଫ୍ଟ ଖୋଜ |",
+  "Find a program, cause, address, or shift status": "ଏକ ପ୍ରୋଗ୍ରାମ୍, କାରଣ, ଠିକଣା, କିମ୍ବା ଶିଫ୍ଟ ସ୍ଥିତି ଖୋଜ |",
+  "Find in this schedule": "ଏହି କାର୍ଯ୍ୟସୂଚୀରେ ଖୋଜ |"
 }

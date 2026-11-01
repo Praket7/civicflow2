@@ -104,10 +104,13 @@ export function SharedReportsPage() {
   }
 
   /**
-   * The browser's print dialog is the PDF writer this app already trusts. The
-   * document title becomes the default file name, so a saved packet arrives as
-   * "Rivergate Kitchen impact report 2026-01-01 to 2026-10-31" instead of the
-   * app's window title. The title is only borrowed until the dialog closes.
+   * The preview owns the print path: its measured sheets are the paper copy,
+   * so the PDF cannot paginate differently from the pages the coordinator just
+   * checked. The browser's print dialog is the PDF writer this app already
+   * trusts. The document title becomes the default file name, so a saved packet
+   * arrives as "Rivergate Kitchen impact report 2026-01-01 to 2026-10-31"
+   * instead of the app's window title. The title is only borrowed until the
+   * dialog closes.
    */
   function printPacket() {
     if (!report.hasData) return;
@@ -160,7 +163,7 @@ export function SharedReportsPage() {
                 variant="primary"
                 icon={<Printer aria-hidden size={14} />}
                 disabled={!report.hasData || !isTauri()}
-                onClick={printPacket}
+                onClick={() => setPreviewOpen(true)}
               >
                 Print / save PDF
               </Button>

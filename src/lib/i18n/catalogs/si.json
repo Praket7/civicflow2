@@ -3001,5 +3001,9 @@
   "Funder packet": "අරමුදල් වාර්තාව",
   "This packet leaves out volunteer names and individual credentials.": "ස්වේච්ඡා සේවකයින්ගේ නම් හෝ තනි අක්තපත් ‍ ර ඇතුළත් නොවේ.",
   "Funder packet preview": "අරමුදල් පැකට් පෙරදසුන",
-  "Page {page} of {count}": "පිටුව {page} හි {count}"
+  "Page {page} of {count}": "පිටුව {page} හි {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "කොටස අකුරු පිටුවකට වඩා දිගු වේ. මුද්‍රණය එය වෙනත් පත්‍රයක දිගටම කරගෙන යනු ඇත, එම නිසා මුද්‍රණයේ මෙම පෙරදසුනට වඩා පිටු වැඩි විය හැක.",
+  "Find a program or shift": "වැඩසටහනක් හෝ මාරුවක් සොයන්න",
+  "Find a program, cause, address, or shift status": "වැඩසටහනක්, හේතුව, ලිපිනය, හෝ මාරු තත්ත්වය සොයා ගන්න",
+  "Find in this schedule": "මෙම කාලසටහනේ සොයා ගන්න"
 }

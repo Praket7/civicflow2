@@ -3001,5 +3001,9 @@
   "Funder packet": "ભંડોળ આપનારનો અહેવાલ",
   "This packet leaves out volunteer names and individual credentials.": "કોઈ સ્વયંસેવક નામ અથવા વ્યક્તિગત ઓળખપત્રો શામેલ નથી.",
   "Funder packet preview": "ફંડર પેકેટ પૂર્વાવલોકન",
-  "Page {page} of {count}": "પૃષ્ઠ {page} માંથી {count}"
+  "Page {page} of {count}": "પૃષ્ઠ {page} માંથી {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "એક વિભાગ એક અક્ષર પૃષ્ઠ કરતાં લાંબો છે. પ્રિન્ટ તેને બીજી શીટ પર ચાલુ રાખશે, તેથી પ્રિન્ટઆઉટમાં આ પૂર્વાવલોકન કરતાં વધુ પૃષ્ઠો હોઈ શકે છે.",
+  "Find a program or shift": "પ્રોગ્રામ અથવા શિફ્ટ શોધો",
+  "Find a program, cause, address, or shift status": "પ્રોગ્રામ, કારણ, સરનામું અથવા શિફ્ટ સ્થિતિ શોધો",
+  "Find in this schedule": "આ શેડ્યૂલમાં શોધો"
 }

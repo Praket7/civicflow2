@@ -219,7 +219,7 @@ describe("shared impact report", () => {
     expect(packet).not.toHaveTextContent("Food handler");
   });
 
-  it("opens the print dialog with a report-named PDF", async () => {
+  it("routes printing through the preview instead of printing straight away", async () => {
     const print = vi.spyOn(window, "print").mockImplementation(() => {});
     mount();
 
@@ -227,11 +227,8 @@ describe("shared impact report", () => {
     expect(button).toBeEnabled();
     await userEvent.click(button);
 
-    expect(print).toHaveBeenCalledTimes(1);
-    expect(document.title).toContain("Rivergate Kitchen impact report");
-
-    window.dispatchEvent(new Event("afterprint"));
-    expect(document.title).toBe("CivicFlow");
+    expect(print).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog", { name: "Funder packet preview" })).toBeInTheDocument();
     print.mockRestore();
   });
 
@@ -246,14 +243,21 @@ describe("shared impact report", () => {
     expect(within(dialog).getAllByText("Rivergate Kitchen").length).toBeGreaterThan(0);
     expect(within(dialog).queryByText("Alice Able")).not.toBeInTheDocument();
     expect(document.body.style.overflow).toBe("hidden");
+    expect(document.body.dataset.packetPrint).toBe("true");
+    expect(screen.getByTestId("packet-print-page")).toBeInTheDocument();
 
     await userEvent.click(within(dialog).getByRole("button", { name: "Print / save PDF" }));
     expect(print).toHaveBeenCalledTimes(1);
+    expect(document.title).toContain("Rivergate Kitchen impact report");
+    window.dispatchEvent(new Event("afterprint"));
+    expect(document.title).toBe("CivicFlow");
     print.mockRestore();
 
     await userEvent.click(within(dialog).getByRole("button", { name: "Close" }));
     expect(screen.queryByRole("dialog", { name: "Funder packet preview" })).not.toBeInTheDocument();
     expect(document.body.style.overflow).toBe("");
+    expect(document.body.dataset.packetPrint).toBeUndefined();
+    expect(screen.queryByTestId("packet-print-page")).not.toBeInTheDocument();
   });
 
   it("splits a measured packet into one sheet per Letter page", async () => {
@@ -290,16 +294,18 @@ describe("shared impact report", () => {
 
     expect(await within(dialog).findByText("Page 1 of 2")).toBeInTheDocument();
     expect(within(dialog).getByText("Page 2 of 2")).toBeInTheDocument();
+    expect(screen.getAllByTestId("packet-print-page")).toHaveLength(2);
   });
 
-  it("keeps the working screen and the preview off paper", () => {
+  it("prints only the measured sheets when the preview is open", () => {
     const css = readFileSync("src/features/shared/shared.module.css", "utf8");
     const printBlock = css.slice(css.lastIndexOf("@media print"));
     expect(printBlock).toContain(".shell > :not(.packet)");
     expect(printBlock).toContain("display: none !important");
-    expect(printBlock).toContain(".packet");
-    expect(printBlock).toContain("display: block");
     expect(printBlock).toContain(".previewDialog");
+    expect(printBlock).toContain('body[data-packet-print="true"]');
+    expect(printBlock).toContain(".packetPrint");
+    expect(printBlock).toContain("break-after: page");
     expect(css).toContain("padding: 14mm 14mm 16mm");
     expect(css).toContain("width: 8.5in");
     expect(css).not.toContain("@page");

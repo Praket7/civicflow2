@@ -3001,5 +3001,9 @@
   "Funder packet": "Förderbericht",
   "This packet leaves out volunteer names and individual credentials.": "Es sind keine Freiwilligennamen oder individuellen Anmeldedaten enthalten.",
   "Funder packet preview": "Vorschau des Förderpakets",
-  "Page {page} of {count}": "Seite {page} von {count}"
+  "Page {page} of {count}": "Seite {page} von {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Ein Abschnitt ist länger als eine Briefseite. Beim Drucken wird es auf einem anderen Blatt fortgesetzt, sodass der Ausdruck möglicherweise mehr Seiten als diese Vorschau umfasst.",
+  "Find a program or shift": "Finden Sie ein Programm oder eine Schicht",
+  "Find a program, cause, address, or shift status": "Finden Sie ein Programm, eine Ursache, eine Adresse oder einen Schichtstatus",
+  "Find in this schedule": "Finden Sie in diesem Zeitplan"
 }

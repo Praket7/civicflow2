@@ -1,9 +1,10 @@
 import { useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Printer, X } from "lucide-react";
 import { Button } from "../../components/ui";
 import { t } from "../../lib/i18n";
 import { FunderPacket, type PacketSection } from "./FunderPacket";
-import { paginatePacketSections } from "./packetPagination";
+import { PACKET_PAGE_CONTENT_HEIGHT, paginatePacketSections } from "./packetPagination";
 import styles from "./shared.module.css";
 
 interface FunderPacketPreviewProps {
@@ -32,6 +33,7 @@ export function FunderPacketPreview({
   const measureRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
   const [pageKeys, setPageKeys] = useState<string[][] | null>(null);
+  const [oversized, setOversized] = useState(false);
   const titleId = useId();
 
   // This must open the dialog before the measuring effect below runs: a closed
@@ -40,12 +42,18 @@ export function FunderPacketPreview({
     restoreRef.current = document.activeElement as HTMLElement | null;
     const dialog = dialogRef.current;
     const previousOverflow = document.body.style.overflow;
+    const previousPrint = document.body.dataset.packetPrint;
     document.body.style.overflow = "hidden";
+    // The print stylesheet needs a selector that hides the app shell while the
+    // paper copy renders. The preview is the only place that copy exists.
+    document.body.dataset.packetPrint = "true";
     dialog?.showModal();
     const frame = requestAnimationFrame(() => closeRef.current?.focus());
     return () => {
       cancelAnimationFrame(frame);
       document.body.style.overflow = previousOverflow;
+      if (previousPrint === undefined) delete document.body.dataset.packetPrint;
+      else document.body.dataset.packetPrint = previousPrint;
       if (dialog?.open) dialog.close();
       restoreRef.current?.focus();
     };
@@ -69,6 +77,10 @@ export function FunderPacketPreview({
         },
       );
       setPageKeys(paginatePacketSections(heights));
+      // One section taller than the paper spills onto extra physical pages,
+      // so the sheet count below would understate the printout. Say so rather
+      // than promising a page count the printer cannot keep.
+      setOversized(heights.some((section) => section.height > PACKET_PAGE_CONTENT_HEIGHT));
     }
 
     measure();
@@ -103,69 +115,95 @@ export function FunderPacketPreview({
   }
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={styles.previewDialog}
-      data-theme="dark"
-      aria-labelledby={titleId}
-      onCancel={(event) => {
-        event.preventDefault();
-        close();
-      }}
-    >
-      <div className={styles.previewPanel}>
-        <header className={styles.previewToolbar}>
-          <div>
-            <p className={styles.previewEyebrow}>Preview</p>
-            <h2 id={titleId} className={styles.previewTitle}>
-              Funder packet preview
-            </h2>
-            <p className={styles.previewMeta}>
-              {organizationName}
-              <span aria-hidden="true"> · </span>
-              {rangeLabel}
-            </p>
-          </div>
-          <div className={styles.previewActions}>
-            <Button variant="primary" icon={<Printer aria-hidden size={14} />} onClick={onPrint}>
-              Print / save PDF
-            </Button>
-            <button
-              ref={closeRef}
-              type="button"
-              className={styles.previewClose}
-              onClick={close}
-              aria-label="Close"
-            >
-              <X size={17} aria-hidden="true" />
-            </button>
-          </div>
-        </header>
-
-        <div className={styles.previewDesk}>
-          <div className={styles.previewStack}>
-            {pages.map((page, index) => (
-              <div className={styles.previewSheet} key={page[0]?.key ?? index}>
-                <p className={styles.previewPageLabel}>
-                  {t("Page {page} of {count}", {
-                    page: index + 1,
-                    count: pages.length,
-                  })}
+    <>
+      <dialog
+        ref={dialogRef}
+        className={styles.previewDialog}
+        data-theme="dark"
+        aria-labelledby={titleId}
+        onCancel={(event) => {
+          event.preventDefault();
+          close();
+        }}
+      >
+        <div className={styles.previewPanel}>
+          <header className={styles.previewToolbar}>
+            <div>
+              <p className={styles.previewEyebrow}>Preview</p>
+              <h2 id={titleId} className={styles.previewTitle}>
+                Funder packet preview
+              </h2>
+              <p className={styles.previewMeta}>
+                {organizationName}
+                <span aria-hidden="true"> · </span>
+                {rangeLabel}
+              </p>
+              {oversized ? (
+                <p className={styles.previewWarning} role="status">
+                  A section is longer than one Letter page. Print will continue it on another sheet,
+                  so the printout may have more pages than this preview.
                 </p>
-                <FunderPacket
-                  sections={page}
-                  className={styles.packetPage}
-                  label={`${t("Funder packet")} ${index + 1}`}
-                />
-              </div>
-            ))}
+              ) : null}
+            </div>
+            <div className={styles.previewActions}>
+              <Button variant="primary" icon={<Printer aria-hidden size={14} />} onClick={onPrint}>
+                Print / save PDF
+              </Button>
+              <button
+                ref={closeRef}
+                type="button"
+                className={styles.previewClose}
+                onClick={close}
+                aria-label="Close"
+              >
+                <X size={17} aria-hidden="true" />
+              </button>
+            </div>
+          </header>
+
+          <div className={styles.previewDesk}>
+            <div className={styles.previewStack}>
+              {pages.map((page, index) => (
+                <div className={styles.previewSheet} key={page[0]?.key ?? index}>
+                  <p className={styles.previewPageLabel}>
+                    {t("Page {page} of {count}", {
+                      page: index + 1,
+                      count: pages.length,
+                    })}
+                  </p>
+                  <FunderPacket
+                    sections={page}
+                    className={styles.packetPage}
+                    label={`${t("Funder packet")} ${index + 1}`}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div ref={measureRef} aria-hidden="true">
-        <FunderPacket sections={sections} className={styles.packetMeasure} />
-      </div>
-    </dialog>
+        <div ref={measureRef} aria-hidden="true">
+          <FunderPacket sections={sections} className={styles.packetMeasure} />
+        </div>
+      </dialog>
+
+      {pageKeys
+        ? createPortal(
+            <div className={styles.packetPrint} aria-hidden="true">
+              {pages.map((page, index) => (
+                <div className={styles.packetPrintSheet} key={page[0]?.key ?? index}>
+                  <FunderPacket
+                    sections={page}
+                    className={styles.packetPage}
+                    label={`${t("Funder packet")} ${index + 1}`}
+                    testId="packet-print-page"
+                  />
+                </div>
+              ))}
+            </div>,
+            document.body,
+          )
+        : null}
+    </>
   );
 }

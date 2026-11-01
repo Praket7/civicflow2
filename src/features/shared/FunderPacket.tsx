@@ -24,6 +24,15 @@ export interface PacketSection {
   node: ReactNode;
 }
 
+/**
+ * A section has to fit one Letter page, or the preview's "Page 2 of 3" is a
+ * promise print cannot keep: the sheet spills onto extra physical pages. The
+ * program table is the one section whose length follows the organization, so
+ * the packet names the programs with the most verified hours and says where
+ * the rest are. The in-app table and the CSV export still carry every program.
+ */
+export const PACKET_PROGRAM_LIMIT = 18;
+
 export function funderPacketSections({
   report,
   organizationName,
@@ -40,6 +49,8 @@ export function funderPacketSections({
   const packetMonths = report.months.filter(
     (month) => month.verifiedMinutes > 0 || month.pendingMinutes > 0,
   );
+  const packetPrograms = report.programs.slice(0, PACKET_PROGRAM_LIMIT);
+  const hiddenPrograms = report.programs.length - packetPrograms.length;
 
   return [
     {
@@ -129,7 +140,7 @@ export function funderPacketSections({
                 </tr>
               </thead>
               <tbody>
-                {report.programs.map((program) => (
+                {packetPrograms.map((program) => (
                   <tr key={program.id || "unassigned"}>
                     <th scope="row">{program.title}</th>
                     <td className={styles.packetLeft}>{program.cause || "—"}</td>
@@ -144,6 +155,9 @@ export function funderPacketSections({
           )}
           <p className={styles.packetTableNote}>
             Verified service only; pending hours are named on each row.
+            {hiddenPrograms > 0
+              ? ` Showing the ${PACKET_PROGRAM_LIMIT} programs with the most verified hours; ${hiddenPrograms} more are in the app and the CSV export.`
+              : null}
           </p>
         </section>
       ),

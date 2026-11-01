@@ -3001,5 +3001,9 @@
   "Funder packet": "ရန်ပုံငွေအစီရင်ခံစာ",
   "This packet leaves out volunteer names and individual credentials.": "စေတနာ့ဝန်ထမ်းအမည်များ သို့မဟုတ် တစ်ဦးချင်း အထောက်အထားများ မပါဝင်ပါ ။",
   "Funder packet preview": "Funder packet အစမ်းကြည့်ရှုခြင်း။",
-  "Page {page} of {count}": "စာမျက်နှာ {page} ၏ {count}"
+  "Page {page} of {count}": "စာမျက်နှာ {page} ၏ {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "အပိုင်းတစ်ခုသည် ပေးစာစာမျက်နှာတစ်ခုထက် ပိုရှည်သည်။ ပရင့်ထုတ်ခြင်းတွင် ၎င်းကို အခြားစာရွက်ပေါ်တွင် ဆက်လက်ထားရှိမည်ဖြစ်သောကြောင့် ပရင့်ထုတ်ခြင်းတွင် ဤအစမ်းကြည့်ရှုခြင်းထက် စာမျက်နှာများ ပိုမိုများပြားနိုင်ပါသည်။",
+  "Find a program or shift": "ပရိုဂရမ်တစ်ခုရှာပါ သို့မဟုတ် ရွှေ့ပါ။",
+  "Find a program, cause, address, or shift status": "ပရိုဂရမ်တစ်ခု၊ အကြောင်းအရင်း၊ လိပ်စာ၊ သို့မဟုတ် အပြောင်းအလဲအခြေအနေတို့ကို ရှာပါ။",
+  "Find in this schedule": "ဤအချိန်ဇယားတွင်ရှာပါ။"
 }

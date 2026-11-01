@@ -3001,5 +3001,9 @@
   "Funder packet": "Akụkọ onye nkwado",
   "This packet leaves out volunteer names and individual credentials.": "Enweghị aha ndị ọrụ afọ ofufo ma ọ bụ nzere onye ọ bụla etinyere.",
   "Funder packet preview": "Ihe nlebanya ngwungwu ego",
-  "Page {page} of {count}": "Peeji {page} nke {count}"
+  "Page {page} of {count}": "Peeji {page} nke {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Akụkụ dị ogologo karịa otu ibe akwụkwọ ozi. Bipụta ga-aga n'ihu na mpempe akwụkwọ ọzọ, yabụ mbipụta ahụ nwere ike ịnwe ọtụtụ ibe karịa nlele a.",
+  "Find a program or shift": "Chọta mmemme ma ọ bụ mgbanwe",
+  "Find a program, cause, address, or shift status": "Chọta mmemme, ihe kpatara, adreesị, ma ọ bụ ọkwa mgbanwe",
+  "Find in this schedule": "Chọta na nhazi oge a"
 }

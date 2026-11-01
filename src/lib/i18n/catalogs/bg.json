@@ -3001,5 +3001,9 @@
   "Funder packet": "Отчет за донори",
   "This packet leaves out volunteer names and individual credentials.": "Не са включени имена на доброволци или индивидуални идентификационни данни.",
   "Funder packet preview": "Визуализация на пакета Funder",
-  "Page {page} of {count}": "Страница {page} от {count}"
+  "Page {page} of {count}": "Страница {page} от {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Един раздел е по-дълъг от една страница с писмо. Отпечатването ще го продължи на друг лист, така че разпечатката може да има повече страници от този преглед.",
+  "Find a program or shift": "Намерете програма или смяна",
+  "Find a program, cause, address, or shift status": "Намерете програма, причина, адрес или статус на смяна",
+  "Find in this schedule": "Намерете в този график"
 }

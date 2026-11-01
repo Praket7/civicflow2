@@ -3001,5 +3001,9 @@
   "Funder packet": "Warbixinta maalgeliyaha",
   "This packet leaves out volunteer names and individual credentials.": "Ma jiro magacyo iskaa wax u qabso ah ama aqoonsi shaqsiyeed oo lagu daro.",
   "Funder packet preview": "Fiiri xirmo funder",
-  "Page {page} of {count}": "Bogga {page} ee {count}"
+  "Page {page} of {count}": "Bogga {page} ee {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Qaybtu way ka dheer tahay hal bog oo warqad ah. Daabacadu waxay ku sii socon doontaa xaashi kale, markaa daabacadu waxay yeelan kartaa bogag ka badan aragtidan horudhac ah.",
+  "Find a program or shift": "Hel barnaamij ama wareeg",
+  "Find a program, cause, address, or shift status": "Soo hel barnaamij, sabab, ciwaanka, ama heerka wareejinta",
+  "Find in this schedule": "Ka hel jadwalkan"
 }

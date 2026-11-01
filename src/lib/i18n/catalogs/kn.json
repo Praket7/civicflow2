@@ -2999,5 +2999,9 @@
   "Funder packet": "ಧನಸಹಾಯದ ವರದಿ",
   "This packet leaves out volunteer names and individual credentials.": "ಯಾವುದೇ ಸ್ವಯಂಸೇವಕರ ಹೆಸರುಗಳು ಅಥವಾ ವೈಯಕ್ತಿಕ ರುಜುವಾತುಗಳನ್ನು ಸೇರಿಸಲಾಗಿಲ್ಲ.",
   "Funder packet preview": "ಧನಸಹಾಯದ ವರದಿ ಪೂರ್ವವೀಕ್ಷಣೆ",
-  "Page {page} of {count}": "ಪುಟ {page} / {count}"
+  "Page {page} of {count}": "ಪುಟ {page} / {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ಒಂದು ವಿಭಾಗವು ಒಂದು ಅಕ್ಷರ ಪುಟಕ್ಕಿಂತ ಉದ್ದವಾಗಿದೆ. ಮುದ್ರಣವು ಇನ್ನೊಂದು ಹಾಳೆಯಲ್ಲಿ ಮುಂದುವರಿಯುತ್ತದೆ, ಆದ್ದರಿಂದ ಪ್ರಿಂಟ್‌ಔಟ್ ಈ ಪೂರ್ವವೀಕ್ಷಣೆಗಿಂತ ಹೆಚ್ಚಿನ ಪುಟಗಳನ್ನು ಹೊಂದಿರಬಹುದು.",
+  "Find a program or shift": "ಪ್ರೋಗ್ರಾಂ ಅಥವಾ ಶಿಫ್ಟ್ ಅನ್ನು ಹುಡುಕಿ",
+  "Find a program, cause, address, or shift status": "ಪ್ರೋಗ್ರಾಂ, ಕಾರಣ, ವಿಳಾಸ ಅಥವಾ ಶಿಫ್ಟ್ ಸ್ಥಿತಿಯನ್ನು ಹುಡುಕಿ",
+  "Find in this schedule": "ಈ ವೇಳಾಪಟ್ಟಿಯಲ್ಲಿ ಹುಡುಕಿ"
 }

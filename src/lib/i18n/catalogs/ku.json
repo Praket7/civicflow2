@@ -3001,5 +3001,9 @@
   "Funder packet": "Rapora fînansor",
   "This packet leaves out volunteer names and individual credentials.": "Navên xwebexşan an bawernameyên kesane nehatine bicihkirin.",
   "Funder packet preview": "Pêşdîtina pakêta Funder",
-  "Page {page} of {count}": "Rûpel {page} ji {count}"
+  "Page {page} of {count}": "Rûpel {page} ji {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Beşek ji rûpelek Herfê dirêjtir e. Çap dê li ser pelek din berdewam bike, ji ber vê yekê dibe ku çap ji vê pêşdîtinê bêtir rûpelan hebe.",
+  "Find a program or shift": "Bernameyek an veguherînek bibînin",
+  "Find a program, cause, address, or shift status": "Bernameyek, sedem, navnîşan, an statûya veguherînê bibînin",
+  "Find in this schedule": "Di vê bernameyê de bibînin"
 }

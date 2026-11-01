@@ -3001,5 +3001,9 @@
   "Funder packet": "अनुदानकर्ता प्रतिवेदन",
   "This packet leaves out volunteer names and individual credentials.": "कुनै स्वयंसेवक नाम वा व्यक्तिगत परिचयपत्र समावेश गरिएको छैन ।",
   "Funder packet preview": "फन्डर प्याकेट पूर्वावलोकन",
-  "Page {page} of {count}": "पृष्ठ {page} को {count}"
+  "Page {page} of {count}": "पृष्ठ {page} को {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "एउटा खण्ड एक पत्र पृष्ठ भन्दा लामो छ। प्रिन्टले यसलाई अर्को पानामा जारी राख्नेछ, त्यसैले प्रिन्टआउटमा यो पूर्वावलोकन भन्दा धेरै पृष्ठहरू हुन सक्छन्।",
+  "Find a program or shift": "एउटा कार्यक्रम वा शिफ्ट खोज्नुहोस्",
+  "Find a program, cause, address, or shift status": "कार्यक्रम, कारण, ठेगाना, वा परिवर्तन स्थिति फेला पार्नुहोस्",
+  "Find in this schedule": "यस तालिकामा फेला पार्नुहोस्"
 }

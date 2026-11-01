@@ -93,5 +93,7 @@ Record results here:
 - The desktop and the volunteer PWA share the hosted workspace. Scheduling, participation,
   volunteer records, reports, conflicts, and roster plans have native shared screens. The
   shared report reads the replica, previews the funder packet page by page, exports CSV, and
-  prints that packet. AutoRoster still runs over the local SQLite workspace, and local reports
-  travel as exports.
+  prints those measured sheets: the preview is the print path, so its sheet count is the PDF's
+  page count. The packet lists the eighteen programs with the most verified hours; the screen and
+  the CSV keep every program. AutoRoster still runs over the local SQLite workspace, and local
+  reports travel as exports.

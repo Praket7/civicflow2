@@ -3001,5 +3001,9 @@
   "Funder packet": "Ciimtol balloowo",
   "This packet leaves out volunteer names and individual credentials.": "Alaa inɗe wallidiiɓe walla seedanteeje neɗɗo gooto ina heen.",
   "Funder packet preview": "Yiyngo ciimtol balloowo",
-  "Page {page} of {count}": "Hello {page} e nder {count}"
+  "Page {page} of {count}": "Hello {page} e nder {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Taƴre ɓuri juutde e hello Letter gooto. Tappirde maa jokku ɗum e ɓataake goɗɗo, ngam tappirde ndee ina waawi jogaade kelle ɓurɗe ndeeɗoo yiyngo.",
+  "Find a program or shift": "Yiytu porogaraam walla shift",
+  "Find a program, cause, address, or shift status": "Yiytu porogaraam, sabaabu, adrees, walla ngonka mbayliigu",
+  "Find in this schedule": "Yiytu e nder ndeeɗoo doggol"
 }

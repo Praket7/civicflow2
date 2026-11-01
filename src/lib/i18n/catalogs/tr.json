@@ -3001,5 +3001,9 @@
   "Funder packet": "Fon sağlayıcı raporu",
   "This packet leaves out volunteer names and individual credentials.": "Gönüllü isimleri veya bireysel kimlik bilgileri dahil değildir.",
   "Funder packet preview": "Finansör paketi önizlemesi",
-  "Page {page} of {count}": "Sayfa {page} / {count}"
+  "Page {page} of {count}": "Sayfa {page} / {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Bir bölüm bir Mektup sayfasından daha uzundur. Yazdırma işlemine başka bir sayfada devam edeceğinden çıktıda bu önizlemeden daha fazla sayfa bulunabilir.",
+  "Find a program or shift": "Bir program veya vardiya bulun",
+  "Find a program, cause, address, or shift status": "Bir program, neden, adres veya vardiya durumu bulun",
+  "Find in this schedule": "Bu programda bul"
 }

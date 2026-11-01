@@ -2999,5 +2999,9 @@
   "Funder packet": "Mushumo wemubatsiri",
   "This packet leaves out volunteer names and individual credentials.": "Hapana mazita ekuzvipira kana zvitupa zveumwe neumwe zvinosanganisirwa.",
   "Funder packet preview": "Funder packet preview",
-  "Page {page} of {count}": "Peji {page} ye{count}"
+  "Page {page} of {count}": "Peji {page} ye{count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Chikamu chakareba kudarika Tsamba imwe peji. Kudhinda kunoenderera mberi kune rimwe shizha, saka zvakadhindwa zvingava nemapeji akawanda kupfuura ekuona iyi.",
+  "Find a program or shift": "Tsvaga purogiramu kana kuchinja",
+  "Find a program, cause, address, or shift status": "Tsvaga chirongwa, chikonzero, kero, kana shanduko",
+  "Find in this schedule": "Tsvaga muchirongwa ichi"
 }

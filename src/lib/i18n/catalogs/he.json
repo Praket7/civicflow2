@@ -3001,5 +3001,9 @@
   "Funder packet": "דוח למממנים",
   "This packet leaves out volunteer names and individual credentials.": "לא נכללים שמות מתנדבים או אישורים אישיים.",
   "Funder packet preview": "תצוגה מקדימה של חבילת Funder",
-  "Page {page} of {count}": "עמוד {page} מתוך {count}"
+  "Page {page} of {count}": "עמוד {page} מתוך {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "קטע ארוך מעמוד מכתב אחד. ההדפסה תמשיך בגיליון אחר, כך שהתדפיס עשוי לכלול יותר עמודים מהתצוגה המקדימה הזו.",
+  "Find a program or shift": "מצא תוכנית או משמרת",
+  "Find a program, cause, address, or shift status": "מצא תוכנית, סיבה, כתובת או סטטוס משמרת",
+  "Find in this schedule": "מצא בלוח הזמנים הזה"
 }

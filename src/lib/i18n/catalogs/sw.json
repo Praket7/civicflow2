@@ -3001,5 +3001,9 @@
   "Funder packet": "Ripoti ya mfadhili",
   "This packet leaves out volunteer names and individual credentials.": "Hakuna majina ya wajitoleaji au vitambulisho vya mtu binafsi vilivyojumuishwa.",
   "Funder packet preview": "Onyesho la kukagua pakiti ya wafadhili",
-  "Page {page} of {count}": "Ukurasa {page} ya {count}"
+  "Page {page} of {count}": "Ukurasa {page} ya {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Sehemu ni ndefu zaidi ya ukurasa wa Barua moja. Chapisha itaendelea kwenye laha nyingine, kwa hivyo uchapishaji unaweza kuwa na kurasa nyingi kuliko onyesho hili la kuchungulia.",
+  "Find a program or shift": "Tafuta programu au mabadiliko",
+  "Find a program, cause, address, or shift status": "Tafuta mpango, sababu, anwani, au hali ya kuhama",
+  "Find in this schedule": "Pata katika ratiba hii"
 }

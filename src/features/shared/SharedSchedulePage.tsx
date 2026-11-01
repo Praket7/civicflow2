@@ -5,10 +5,12 @@ import {
   ButtonLink,
   Page,
   PageHeader,
+  SearchField,
   SelectField,
   TextField,
   TextareaField,
 } from "../../components/ui";
+import { t } from "../../lib/i18n";
 import { isTauri } from "../../lib/platform";
 import { number, text, useSharedReplica, type SharedRow } from "../../lib/sync/sharedReplica";
 import {
@@ -17,6 +19,7 @@ import {
   createSharedShift,
   updateSharedShift,
 } from "../../lib/sync/writes";
+import { filterOpportunities, filterShifts, OPPORTUNITY_PAGE, SHIFT_PAGE } from "./scheduleFilter";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
 
@@ -77,6 +80,9 @@ export function SharedSchedulePage() {
   const [editing, setEditing] = useState<SharedRow | null>(null);
   const [canceling, setCanceling] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [query, setQuery] = useState("");
+  const [showAllOpportunities, setShowAllOpportunities] = useState(false);
+  const [showAllShifts, setShowAllShifts] = useState(false);
 
   const [title, setTitle] = useState("");
   const [cause, setCause] = useState("");
@@ -126,6 +132,18 @@ export function SharedSchedulePage() {
     () => new Map(data.opportunities.map((row) => [row.id, row])),
     [data.opportunities],
   );
+  const matchedOpportunities = useMemo(
+    () => filterOpportunities(opportunities, query),
+    [opportunities, query],
+  );
+  const matchedShifts = useMemo(
+    () => filterShifts(shifts, query, (id) => text(opportunityMap.get(id), "title"), formatWhen),
+    [opportunityMap, query, shifts],
+  );
+  const visibleOpportunities = showAllOpportunities
+    ? matchedOpportunities
+    : matchedOpportunities.slice(0, OPPORTUNITY_PAGE);
+  const visibleShifts = showAllShifts ? matchedShifts : matchedShifts.slice(0, SHIFT_PAGE);
 
   const openSeats = shifts.reduce(
     (total, shift) => total + Math.max(0, number(shift, "capacity") - number(shift, "confirmed")),
@@ -357,6 +375,20 @@ export function SharedSchedulePage() {
               <p className={styles.notice}>Reading the shared schedule from this computer…</p>
             ) : null}
 
+            <section className={styles.scheduleFilter} aria-label="Find in this schedule">
+              <SearchField
+                value={query}
+                onChange={setQuery}
+                label="Find a program or shift"
+                placeholder="Find a program, cause, address, or shift status"
+              />
+              <p className={styles.filterNote} role="status" aria-live="polite">
+                {query.trim()
+                  ? `${matchedOpportunities.length} of ${opportunities.length} programs · ${matchedShifts.length} of ${shifts.length} shifts`
+                  : `${opportunities.length} programs · ${shifts.length} shifts`}
+              </p>
+            </section>
+
             <section className={styles.panel} aria-labelledby="shared-opportunities">
               <div className={styles.panelHead}>
                 <div>
@@ -450,38 +482,58 @@ export function SharedSchedulePage() {
                     This organization has no opportunities yet. Create one, then add its first
                     shift.
                   </p>
+                ) : matchedOpportunities.length === 0 ? (
+                  <p className={styles.panelCopy}>{t("No programs match those filters")}</p>
                 ) : (
-                  <div className={styles.opportunityList}>
-                    {opportunities.map((opportunity) => (
-                      <article key={opportunity.id} className={styles.opportunity}>
-                        <div>
-                          <h3 className={styles.opportunityTitle}>{text(opportunity, "title")}</h3>
-                          <p className={styles.opportunityMeta}>
-                            {text(opportunity, "cause") || "General volunteering"}
-                            {text(opportunity, "address")
-                              ? ` · ${text(opportunity, "address")}`
-                              : ""}
-                          </p>
-                          {text(opportunity, "description") ? (
+                  <>
+                    <div className={styles.opportunityList}>
+                      {visibleOpportunities.map((opportunity) => (
+                        <article key={opportunity.id} className={styles.opportunity}>
+                          <div>
+                            <h3 className={styles.opportunityTitle}>
+                              {text(opportunity, "title")}
+                            </h3>
                             <p className={styles.opportunityMeta}>
-                              {text(opportunity, "description")}
+                              {text(opportunity, "cause") || "General volunteering"}
+                              {text(opportunity, "address")
+                                ? ` · ${text(opportunity, "address")}`
+                                : ""}
                             </p>
-                          ) : null}
-                        </div>
-                        <div className={styles.actions}>
-                          <Button
-                            variant="secondary"
-                            size="small"
-                            icon={<Plus aria-hidden size={13} />}
-                            disabled={busy}
-                            onClick={() => startShift(opportunity.id)}
-                          >
-                            Add shift
-                          </Button>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
+                            {text(opportunity, "description") ? (
+                              <p className={styles.opportunityMeta}>
+                                {text(opportunity, "description")}
+                              </p>
+                            ) : null}
+                          </div>
+                          <div className={styles.actions}>
+                            <Button
+                              variant="secondary"
+                              size="small"
+                              icon={<Plus aria-hidden size={13} />}
+                              disabled={busy}
+                              onClick={() => startShift(opportunity.id)}
+                            >
+                              Add shift
+                            </Button>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                    {visibleOpportunities.length < matchedOpportunities.length ? (
+                      <div className={styles.listMore}>
+                        <p className={styles.filterNote}>
+                          {`Showing ${visibleOpportunities.length} of ${matchedOpportunities.length} programs.`}
+                        </p>
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          onClick={() => setShowAllOpportunities(true)}
+                        >
+                          {t("Show all {count}", { count: matchedOpportunities.length })}
+                        </Button>
+                      </div>
+                    ) : null}
+                  </>
                 )}
               </div>
             </section>
@@ -749,107 +801,127 @@ export function SharedSchedulePage() {
                     No shifts have reached this computer yet. If the organization has some, use
                     Rebuild to take a fresh copy.
                   </p>
+                ) : matchedShifts.length === 0 ? (
+                  <p className={styles.panelCopy}>{t("No shift in this filter")}</p>
                 ) : (
-                  <div className={styles.tableWrap}>
-                    <table className={styles.table}>
-                      <caption className="visually-hidden">
-                        Shifts in the shared organization
-                      </caption>
-                      <thead>
-                        <tr>
-                          <th scope="col">Starts</th>
-                          <th scope="col">Opportunity</th>
-                          <th scope="col">Roles</th>
-                          <th scope="col">Seats</th>
-                          <th scope="col">Status</th>
-                          <th scope="col">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {shifts.map((shift) => {
-                          const roles = roleMap.get(shift.id) ?? [];
-                          const status = text(shift, "status") || "scheduled";
-                          return (
-                            <tr key={shift.id}>
-                              <td className={styles.strong}>{formatWhen(shift.starts_at)}</td>
-                              <td>
-                                {text(opportunityMap.get(text(shift, "opportunity_id")), "title") ||
-                                  "Opportunity"}
-                              </td>
-                              <td className={styles.muted}>
-                                {roles.length === 0
-                                  ? "No roles"
-                                  : roles
-                                      .map(
-                                        (role) =>
-                                          `${text(role, "name")} ${number(role, "filled")}/${number(
-                                            role,
-                                            "required",
-                                          )}`,
-                                      )
-                                      .join(", ")}
-                              </td>
-                              <td>
-                                {number(shift, "confirmed")} / {number(shift, "capacity")}
-                              </td>
-                              <td>
-                                <span
-                                  className={[
-                                    styles.pill,
-                                    status === "canceled" ? styles.pillBad : styles.pillGood,
-                                  ].join(" ")}
-                                >
-                                  {status}
-                                </span>
-                              </td>
-                              <td>
-                                <div className={styles.actions}>
-                                  <Button
-                                    variant="ghost"
-                                    size="small"
-                                    icon={<Pencil aria-hidden size={13} />}
-                                    disabled={busy}
-                                    onClick={() => startEdit(shift)}
+                  <>
+                    <div className={styles.tableWrap}>
+                      <table className={styles.table}>
+                        <caption className="visually-hidden">
+                          Shifts in the shared organization
+                        </caption>
+                        <thead>
+                          <tr>
+                            <th scope="col">Starts</th>
+                            <th scope="col">Opportunity</th>
+                            <th scope="col">Roles</th>
+                            <th scope="col">Seats</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {visibleShifts.map((shift) => {
+                            const roles = roleMap.get(shift.id) ?? [];
+                            const status = text(shift, "status") || "scheduled";
+                            return (
+                              <tr key={shift.id}>
+                                <td className={styles.strong}>{formatWhen(shift.starts_at)}</td>
+                                <td>
+                                  {text(
+                                    opportunityMap.get(text(shift, "opportunity_id")),
+                                    "title",
+                                  ) || "Opportunity"}
+                                </td>
+                                <td className={styles.muted}>
+                                  {roles.length === 0
+                                    ? "No roles"
+                                    : roles
+                                        .map(
+                                          (role) =>
+                                            `${text(role, "name")} ${number(role, "filled")}/${number(
+                                              role,
+                                              "required",
+                                            )}`,
+                                        )
+                                        .join(", ")}
+                                </td>
+                                <td>
+                                  {number(shift, "confirmed")} / {number(shift, "capacity")}
+                                </td>
+                                <td>
+                                  <span
+                                    className={[
+                                      styles.pill,
+                                      status === "canceled" ? styles.pillBad : styles.pillGood,
+                                    ].join(" ")}
                                   >
-                                    Edit
-                                  </Button>
-                                  {status === "canceled" ? null : canceling === shift.id ? (
-                                    <>
-                                      <Button
-                                        variant="danger"
-                                        size="small"
-                                        disabled={busy}
-                                        onClick={() => void cancelShift(shift)}
-                                      >
-                                        Confirm cancel
-                                      </Button>
+                                    {status}
+                                  </span>
+                                </td>
+                                <td>
+                                  <div className={styles.actions}>
+                                    <Button
+                                      variant="ghost"
+                                      size="small"
+                                      icon={<Pencil aria-hidden size={13} />}
+                                      disabled={busy}
+                                      onClick={() => startEdit(shift)}
+                                    >
+                                      Edit
+                                    </Button>
+                                    {status === "canceled" ? null : canceling === shift.id ? (
+                                      <>
+                                        <Button
+                                          variant="danger"
+                                          size="small"
+                                          disabled={busy}
+                                          onClick={() => void cancelShift(shift)}
+                                        >
+                                          Confirm cancel
+                                        </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="small"
+                                          disabled={busy}
+                                          onClick={() => setCanceling(null)}
+                                        >
+                                          Keep
+                                        </Button>
+                                      </>
+                                    ) : (
                                       <Button
                                         variant="ghost"
                                         size="small"
                                         disabled={busy}
-                                        onClick={() => setCanceling(null)}
+                                        onClick={() => setCanceling(shift.id)}
                                       >
-                                        Keep
+                                        Cancel shift
                                       </Button>
-                                    </>
-                                  ) : (
-                                    <Button
-                                      variant="ghost"
-                                      size="small"
-                                      disabled={busy}
-                                      onClick={() => setCanceling(shift.id)}
-                                    >
-                                      Cancel shift
-                                    </Button>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                    {visibleShifts.length < matchedShifts.length ? (
+                      <div className={styles.listMore}>
+                        <p className={styles.filterNote}>
+                          {`Showing ${visibleShifts.length} of ${matchedShifts.length} shifts.`}
+                        </p>{" "}
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          onClick={() => setShowAllShifts(true)}
+                        >
+                          {t("Show all {count}", { count: matchedShifts.length })}
+                        </Button>
+                      </div>
+                    ) : null}
+                  </>
                 )}
               </div>
             </section>

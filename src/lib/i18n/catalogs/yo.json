@@ -3001,5 +3001,9 @@
   "Funder packet": "Ìròyìn fún àwọn olùfúnni",
   "This packet leaves out volunteer names and individual credentials.": "Kò sí orúkọ àwọn olùyọ̀ǹda ara ẹni tàbí ìwé-ẹ̀rí ẹnìkọ̀ọ̀kan tí ó wà nínú rẹ̀.",
   "Funder packet preview": "Funder soso awotẹlẹ",
-  "Page {page} of {count}": "Oju-iwe {page} ti {count}"
+  "Page {page} of {count}": "Oju-iwe {page} ti {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Apa kan gun ju oju-iwe Lẹta kan lọ. Titẹjade yoo tẹsiwaju lori iwe miiran, nitorinaa titẹjade le ni awọn oju-iwe diẹ sii ju awotẹlẹ yii lọ.",
+  "Find a program or shift": "Wa eto tabi ayipada",
+  "Find a program, cause, address, or shift status": "Wa eto kan, idi, adirẹsi, tabi ipo iyipada",
+  "Find in this schedule": "Wa ninu iṣeto yii"
 }

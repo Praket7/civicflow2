@@ -3001,5 +3001,9 @@
   "Funder packet": "ファンダーレポート",
   "This packet leaves out volunteer names and individual credentials.": "ボランティアの名前や個人の資格情報は含まれていません。",
   "Funder packet preview": "ファンダーパケットのプレビュー",
-  "Page {page} of {count}": "ページ {page} / {count}"
+  "Page {page} of {count}": "ページ {page} / {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "セクションはレター 1 ページよりも長くなります。印刷は別のシートに継続して行われるため、印刷結果にはこのプレビューよりも多くのページが含まれる可能性があります。",
+  "Find a program or shift": "プログラムまたはシフトを探す",
+  "Find a program, cause, address, or shift status": "プログラム、原因、アドレス、またはシフト ステータスを検索する",
+  "Find in this schedule": "このスケジュールから探す"
 }

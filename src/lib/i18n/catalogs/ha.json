@@ -3001,5 +3001,9 @@
   "Funder packet": "Rahoton mai ba da kuɗi",
   "This packet leaves out volunteer names and individual credentials.": "Babu sunayen sa kai ko takaddun shaida na mutum da aka haɗa.",
   "Funder packet preview": "samfotin fakitin kudi",
-  "Page {page} of {count}": "Page {page} na {count}"
+  "Page {page} of {count}": "Page {page} na {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Sashe ya fi tsayi fiye da shafi ɗaya. Buga zai ci gaba da shi a kan wata takardar, don haka bugun yana iya samun ƙarin shafuka fiye da wannan samfoti.",
+  "Find a program or shift": "Nemo shirin ko motsi",
+  "Find a program, cause, address, or shift status": "Nemo wani shiri, sanadi, adireshi, ko matsayin canji",
+  "Find in this schedule": "Nemo a cikin wannan jadawalin"
 }

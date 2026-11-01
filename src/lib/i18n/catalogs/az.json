@@ -3001,5 +3001,9 @@
   "Funder packet": "Maliyyələşdirmə hesabatı",
   "This packet leaves out volunteer names and individual credentials.": "Heç bir könüllü ad və ya fərdi sənəd daxil edilməyib.",
   "Funder packet preview": "Fond paketinə baxış",
-  "Page {page} of {count}": "Səhifə {page} of {count}"
+  "Page {page} of {count}": "Səhifə {page} of {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "Bölmə bir məktub səhifəsindən daha uzundur. Çap onu başqa vərəqdə davam etdirəcək, ona görə də çapda bu önizləmədən daha çox səhifə ola bilər.",
+  "Find a program or shift": "Proqram və ya shift tapın",
+  "Find a program, cause, address, or shift status": "Proqram, səbəb, ünvan və ya keçid statusunu tapın",
+  "Find in this schedule": "Bu cədvəldə tapın"
 }

@@ -3001,5 +3001,9 @@
   "Funder packet": "నిధుల నివేదిక",
   "This packet leaves out volunteer names and individual credentials.": "వాలంటీర్ పేర్లు లేదా వ్యక్తిగత ఆధారాలు ఏవీ చేర్చబడలేదు.",
   "Funder packet preview": "ఫండర్ ప్యాకెట్ ప్రివ్యూ",
-  "Page {page} of {count}": "{count}లో పేజీ {page}"
+  "Page {page} of {count}": "{count}లో పేజీ {page}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ఒక విభాగం ఒక లేఖ పేజీ కంటే పొడవుగా ఉంటుంది. ప్రింట్ దీన్ని మరొక షీట్‌లో కొనసాగిస్తుంది, కాబట్టి ప్రింట్‌అవుట్‌లో ఈ ప్రివ్యూ కంటే ఎక్కువ పేజీలు ఉండవచ్చు.",
+  "Find a program or shift": "ప్రోగ్రామ్ లేదా షిఫ్ట్‌ని కనుగొనండి",
+  "Find a program, cause, address, or shift status": "ప్రోగ్రామ్, కారణం, చిరునామా లేదా షిఫ్ట్ స్థితిని కనుగొనండి",
+  "Find in this schedule": "ఈ షెడ్యూల్‌లో కనుగొనండి"
 }

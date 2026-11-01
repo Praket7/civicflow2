@@ -3001,5 +3001,9 @@
   "Funder packet": "ਫੰਡਿੰਗ ਰਿਪੋਰਟ",
   "This packet leaves out volunteer names and individual credentials.": "ਕੋਈ ਵਲੰਟੀਅਰ ਨਾਮ ਜਾਂ ਵਿਅਕਤੀਗਤ ਪ੍ਰਮਾਣ ਪੱਤਰ ਸ਼ਾਮਲ ਨਹੀਂ ਹਨ.",
   "Funder packet preview": "ਫੰਡਰ ਪੈਕੇਟ ਪ੍ਰੀਵਿਊ",
-  "Page {page} of {count}": "ਪੰਨਾ {page} ਦਾ {count}"
+  "Page {page} of {count}": "ਪੰਨਾ {page} ਦਾ {count}",
+  "A section is longer than one Letter page. Print will continue it on another sheet, so the printout may have more pages than this preview.": "ਇੱਕ ਭਾਗ ਇੱਕ ਅੱਖਰ ਪੰਨੇ ਤੋਂ ਲੰਬਾ ਹੁੰਦਾ ਹੈ। ਪ੍ਰਿੰਟ ਇਸਨੂੰ ਕਿਸੇ ਹੋਰ ਸ਼ੀਟ 'ਤੇ ਜਾਰੀ ਰੱਖੇਗਾ, ਇਸਲਈ ਪ੍ਰਿੰਟਆਊਟ ਵਿੱਚ ਇਸ ਪੂਰਵਦਰਸ਼ਨ ਤੋਂ ਵੱਧ ਪੰਨੇ ਹੋ ਸਕਦੇ ਹਨ।",
+  "Find a program or shift": "ਇੱਕ ਪ੍ਰੋਗਰਾਮ ਜਾਂ ਸ਼ਿਫਟ ਲੱਭੋ",
+  "Find a program, cause, address, or shift status": "ਇੱਕ ਪ੍ਰੋਗਰਾਮ, ਕਾਰਨ, ਪਤਾ, ਜਾਂ ਸ਼ਿਫਟ ਸਥਿਤੀ ਲੱਭੋ",
+  "Find in this schedule": "ਇਸ ਅਨੁਸੂਚੀ ਵਿੱਚ ਲੱਭੋ"
 }

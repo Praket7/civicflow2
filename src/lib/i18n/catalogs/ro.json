@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Construit din copia sincronizată la revizuirea {revision}.",
   "Waiting to upload: {pending}.": "Se așteaptă încărcarea: {pending}.",
   "Funder packet": "Raport finanțator",
-  "This packet leaves out volunteer names and individual credentials.": "Nu sunt incluse nume de voluntari sau acreditări individuale."
+  "This packet leaves out volunteer names and individual credentials.": "Nu sunt incluse nume de voluntari sau acreditări individuale.",
+  "Funder packet preview": "Previzualizarea pachetului de finanțator",
+  "Page {page} of {count}": "Pagina {page} din {count}"
 }

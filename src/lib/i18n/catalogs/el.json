@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Δημιουργήθηκε από το συγχρονισμένο αντίγραφο στην αναθεώρηση {revision}.",
   "Waiting to upload: {pending}.": "Αναμονή για μεταφόρτωση: {pending}.",
   "Funder packet": "Αναφορά χρηματοδότη",
-  "This packet leaves out volunteer names and individual credentials.": "Δεν περιλαμβάνονται ονόματα εθελοντών ή ατομικά διαπιστευτήρια."
+  "This packet leaves out volunteer names and individual credentials.": "Δεν περιλαμβάνονται ονόματα εθελοντών ή ατομικά διαπιστευτήρια.",
+  "Funder packet preview": "Προεπισκόπηση πακέτου χρηματοδότη",
+  "Page {page} of {count}": "Σελίδα {page} από {count}"
 }

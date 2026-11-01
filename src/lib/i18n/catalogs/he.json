@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "נבנה מהעותק המסונכרן בגרסה {revision}.",
   "Waiting to upload: {pending}.": "ממתין להעלאה: {pending}.",
   "Funder packet": "דוח למממנים",
-  "This packet leaves out volunteer names and individual credentials.": "לא נכללים שמות מתנדבים או אישורים אישיים."
+  "This packet leaves out volunteer names and individual credentials.": "לא נכללים שמות מתנדבים או אישורים אישיים.",
+  "Funder packet preview": "תצוגה מקדימה של חבילת Funder",
+  "Page {page} of {count}": "עמוד {page} מתוך {count}"
 }

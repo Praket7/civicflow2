@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "ከተመሳሰለው ቅጂ በክለሳ {revision} የተሰራ።",
   "Waiting to upload: {pending}.": "ለመስቀል በመጠበቅ ላይ፡ {pending}",
   "Funder packet": "የገንዘብ ድጋፍ ሪፖርት",
-  "This packet leaves out volunteer names and individual credentials.": "ምንም የበጎ ፈቃደኞች ስሞች ወይም የግለሰብ የምስክር ወረቀቶች አልተካተቱም ።"
+  "This packet leaves out volunteer names and individual credentials.": "ምንም የበጎ ፈቃደኞች ስሞች ወይም የግለሰብ የምስክር ወረቀቶች አልተካተቱም ።",
+  "Funder packet preview": "የፈንድ ፓኬት ቅድመ እይታ",
+  "Page {page} of {count}": "ገጽ {page} ከ{count}"
 }

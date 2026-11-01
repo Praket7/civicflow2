@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Створено з синхронізованої копії версії {revision}.",
   "Waiting to upload: {pending}.": "Очікування завантаження: {pending}.",
   "Funder packet": "Звіт для грантодавців",
-  "This packet leaves out volunteer names and individual credentials.": "Імена волонтерів або індивідуальні облікові дані не включаються."
+  "This packet leaves out volunteer names and individual credentials.": "Імена волонтерів або індивідуальні облікові дані не включаються.",
+  "Funder packet preview": "Попередній перегляд пакету Funder",
+  "Page {page} of {count}": "Сторінка {page} з {count}"
 }

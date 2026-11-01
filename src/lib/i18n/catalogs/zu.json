@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Yakhiwe ngekhophi evumelanisiwe ekubuyekezweni {revision}.",
   "Waiting to upload: {pending}.": "Ilinde ukulayisha: {pending}.",
   "Funder packet": "Umbiko womxhasi",
-  "This packet leaves out volunteer names and individual credentials.": "Awekho amagama amavolontiya noma iziqinisekiso zomuntu ngamunye ezifakiwe."
+  "This packet leaves out volunteer names and individual credentials.": "Awekho amagama amavolontiya noma iziqinisekiso zomuntu ngamunye ezifakiwe.",
+  "Funder packet preview": "Ukubuka kuqala kwephakethe lomxhasi",
+  "Page {page} of {count}": "Ikhasi {page} le-{count}"
 }

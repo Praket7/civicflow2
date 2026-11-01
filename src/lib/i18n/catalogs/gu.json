@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "પુનરાવર્તન {revision} પર સમન્વયિત નકલમાંથી બનાવેલ.",
   "Waiting to upload: {pending}.": "અપલોડ થવાની રાહ જોઈ રહ્યાં છીએ: {pending}.",
   "Funder packet": "ભંડોળ આપનારનો અહેવાલ",
-  "This packet leaves out volunteer names and individual credentials.": "કોઈ સ્વયંસેવક નામ અથવા વ્યક્તિગત ઓળખપત્રો શામેલ નથી."
+  "This packet leaves out volunteer names and individual credentials.": "કોઈ સ્વયંસેવક નામ અથવા વ્યક્તિગત ઓળખપત્રો શામેલ નથી.",
+  "Funder packet preview": "ફંડર પેકેટ પૂર્વાવલોકન",
+  "Page {page} of {count}": "પૃષ્ઠ {page} માંથી {count}"
 }

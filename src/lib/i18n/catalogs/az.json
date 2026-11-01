@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "{revision} versiyada sinxronlaşdırılmış nüsxədən qurulmuşdur.",
   "Waiting to upload: {pending}.": "Yükləmə gözlənilir: {pending}.",
   "Funder packet": "Maliyyələşdirmə hesabatı",
-  "This packet leaves out volunteer names and individual credentials.": "Heç bir könüllü ad və ya fərdi sənəd daxil edilməyib."
+  "This packet leaves out volunteer names and individual credentials.": "Heç bir könüllü ad və ya fərdi sənəd daxil edilməyib.",
+  "Funder packet preview": "Fond paketinə baxış",
+  "Page {page} of {count}": "Səhifə {page} of {count}"
 }

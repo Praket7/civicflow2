@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Gina daga kwafin da aka daidaita a bita {revision}.",
   "Waiting to upload: {pending}.": "Ana jiran lodawa: {pending}.",
   "Funder packet": "Rahoton mai ba da kuɗi",
-  "This packet leaves out volunteer names and individual credentials.": "Babu sunayen sa kai ko takaddun shaida na mutum da aka haɗa."
+  "This packet leaves out volunteer names and individual credentials.": "Babu sunayen sa kai ko takaddun shaida na mutum da aka haɗa.",
+  "Funder packet preview": "samfotin fakitin kudi",
+  "Page {page} of {count}": "Page {page} na {count}"
 }

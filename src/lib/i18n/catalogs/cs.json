@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Sestaveno ze synchronizované kopie v revizi {revision}.",
   "Waiting to upload: {pending}.": "Čekání na nahrání: {pending}.",
   "Funder packet": "Zpráva pro poskytovatele grantů",
-  "This packet leaves out volunteer names and individual credentials.": "Nejsou zahrnuta žádná jména dobrovolníků ani individuální přihlašovací údaje."
+  "This packet leaves out volunteer names and individual credentials.": "Nejsou zahrnuta žádná jména dobrovolníků ani individuální přihlašovací údaje.",
+  "Funder packet preview": "Náhled balíčku Funder",
+  "Page {page} of {count}": "Stránka {page} z {count}"
 }

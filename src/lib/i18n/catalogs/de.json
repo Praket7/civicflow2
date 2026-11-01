@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Erstellt aus der synchronisierten Kopie bei Revision {revision}.",
   "Waiting to upload: {pending}.": "Warten auf Hochladen: {pending}.",
   "Funder packet": "Förderbericht",
-  "This packet leaves out volunteer names and individual credentials.": "Es sind keine Freiwilligennamen oder individuellen Anmeldedaten enthalten."
+  "This packet leaves out volunteer names and individual credentials.": "Es sind keine Freiwilligennamen oder individuellen Anmeldedaten enthalten.",
+  "Funder packet preview": "Vorschau des Förderpakets",
+  "Page {page} of {count}": "Seite {page} von {count}"
 }

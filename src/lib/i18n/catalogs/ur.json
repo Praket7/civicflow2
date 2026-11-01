@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "ترمیم شدہ {revision} پر مطابقت پذیر کاپی سے بنایا گیا۔",
   "Waiting to upload: {pending}.": "اپ لوڈ ہونے کا انتظار ہے: {pending}۔",
   "Funder packet": "فنڈر رپورٹ",
-  "This packet leaves out volunteer names and individual credentials.": "کوئی رضاکارانہ نام یا انفرادی اسناد شامل نہیں ہیں ۔"
+  "This packet leaves out volunteer names and individual credentials.": "کوئی رضاکارانہ نام یا انفرادی اسناد شامل نہیں ہیں ۔",
+  "Funder packet preview": "فنڈر پیکٹ کا پیش نظارہ",
+  "Page {page} of {count}": "صفحہ {page} از {count}"
 }

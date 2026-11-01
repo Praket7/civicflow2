@@ -752,7 +752,7 @@ export const helpTopics: HelpTopic[] = [
       "Choose a range or set the first and last day, then narrow to one program if the update is program-specific.",
       "Read verified hours, volunteers, completed shifts, and attendance for that window.",
       "Check expiring credentials before publishing an assignment plan.",
-      "Export CSV for a grant report, or print the funder packet as a PDF.",
+      "Export CSV for a grant report, or preview the funder packet page by page before printing it.",
     ],
     rules: [
       "The printed packet leaves out volunteer names and individual credentials.",

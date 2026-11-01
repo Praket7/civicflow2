@@ -2997,5 +2997,7 @@
   "volunteers.": "vazvipiri.",
   "Waiting to upload: {pending}.": "Yakamirira kurodha: {pending}.",
   "Funder packet": "Mushumo wemubatsiri",
-  "This packet leaves out volunteer names and individual credentials.": "Hapana mazita ekuzvipira kana zvitupa zveumwe neumwe zvinosanganisirwa."
+  "This packet leaves out volunteer names and individual credentials.": "Hapana mazita ekuzvipira kana zvitupa zveumwe neumwe zvinosanganisirwa.",
+  "Funder packet preview": "Funder packet preview",
+  "Page {page} of {count}": "Peji {page} ye{count}"
 }

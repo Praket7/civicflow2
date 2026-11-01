@@ -536,6 +536,7 @@ export const routes: RouteMeta[] = [
       "csv",
       "print",
       "pdf",
+      "preview",
       "funder",
     ],
   },

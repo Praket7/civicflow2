@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Imeundwa kutoka kwa nakala iliyosawazishwa kwa kusahihishwa {revision}.",
   "Waiting to upload: {pending}.": "Inasubiri kupakiwa: {pending}.",
   "Funder packet": "Ripoti ya mfadhili",
-  "This packet leaves out volunteer names and individual credentials.": "Hakuna majina ya wajitoleaji au vitambulisho vya mtu binafsi vilivyojumuishwa."
+  "This packet leaves out volunteer names and individual credentials.": "Hakuna majina ya wajitoleaji au vitambulisho vya mtu binafsi vilivyojumuishwa.",
+  "Funder packet preview": "Onyesho la kukagua pakiti ya wafadhili",
+  "Page {page} of {count}": "Ukurasa {page} ya {count}"
 }

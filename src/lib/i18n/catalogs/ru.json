@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Создано из синхронизированной копии ревизии {revision}.",
   "Waiting to upload: {pending}.": "Ожидание загрузки: {pending}.",
   "Funder packet": "Отчет для грантодателей",
-  "This packet leaves out volunteer names and individual credentials.": "Имена волонтеров или индивидуальные учетные данные не включены."
+  "This packet leaves out volunteer names and individual credentials.": "Имена волонтеров или индивидуальные учетные данные не включены.",
+  "Funder packet preview": "Предварительный просмотр пакета спонсора",
+  "Page {page} of {count}": "Страница {page} из {count}"
 }

@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Utworzono na podstawie zsynchronizowanej kopii w wersji {revision}.",
   "Waiting to upload: {pending}.": "Oczekiwanie na przesłanie: {pending}.",
   "Funder packet": "Raport grantodawcy",
-  "This packet leaves out volunteer names and individual credentials.": "Nie uwzględniono nazwisk wolontariuszy ani indywidualnych danych uwierzytelniających."
+  "This packet leaves out volunteer names and individual credentials.": "Nie uwzględniono nazwisk wolontariuszy ani indywidualnych danych uwierzytelniających.",
+  "Funder packet preview": "Podgląd pakietu Fundera",
+  "Page {page} of {count}": "Strona {page} z {count}"
 }

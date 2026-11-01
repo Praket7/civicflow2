@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "បង្កើតឡើងពីច្បាប់ចម្លងដែលបានធ្វើសមកាលកម្មនៅការកែសម្រួល {revision} ។",
   "Waiting to upload: {pending}.": "កំពុងរង់ចាំការបង្ហោះ៖ {pending}.",
   "Funder packet": "របាយការណ៍អ្នកផ្តល់មូលនិធិ",
-  "This packet leaves out volunteer names and individual credentials.": "មិនមានឈ្មោះអ្នកស្ម័គ្រចិត្ត ឬព័ត៌មានបញ្ជាក់អត្តសញ្ញាណបុគ្គលត្រូវបានរួមបញ្ចូលទេ ។"
+  "This packet leaves out volunteer names and individual credentials.": "មិនមានឈ្មោះអ្នកស្ម័គ្រចិត្ត ឬព័ត៌មានបញ្ជាក់អត្តសញ្ញាណបុគ្គលត្រូវបានរួមបញ្ចូលទេ ។",
+  "Funder packet preview": "ការមើលកញ្ចប់អ្នកផ្តល់មូលនិធិជាមុន",
+  "Page {page} of {count}": "ទំព័រ {page} នៃ {count}"
 }

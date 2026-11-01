@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "{revision} revizyonundaki senkronize kopyadan oluşturuldu.",
   "Waiting to upload: {pending}.": "Yükleme bekleniyor: {pending}.",
   "Funder packet": "Fon sağlayıcı raporu",
-  "This packet leaves out volunteer names and individual credentials.": "Gönüllü isimleri veya bireysel kimlik bilgileri dahil değildir."
+  "This packet leaves out volunteer names and individual credentials.": "Gönüllü isimleri veya bireysel kimlik bilgileri dahil değildir.",
+  "Funder packet preview": "Finansör paketi önizlemesi",
+  "Page {page} of {count}": "Sayfa {page} / {count}"
 }

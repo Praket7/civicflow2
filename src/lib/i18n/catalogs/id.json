@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Dibuat dari salinan yang disinkronkan pada revisi {revision}.",
   "Waiting to upload: {pending}.": "Menunggu untuk diunggah: {pending}.",
   "Funder packet": "Laporan penyandang dana",
-  "This packet leaves out volunteer names and individual credentials.": "Tidak ada nama sukarelawan atau kredensial individu yang disertakan."
+  "This packet leaves out volunteer names and individual credentials.": "Tidak ada nama sukarelawan atau kredensial individu yang disertakan.",
+  "Funder packet preview": "Pratinjau paket pemberi dana",
+  "Page {page} of {count}": "Halaman {page} dari {count}"
 }

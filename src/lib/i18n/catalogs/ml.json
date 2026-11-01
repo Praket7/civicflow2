@@ -2997,5 +2997,7 @@
   "volunteers.": "സന്നദ്ധപ്രവർത്തകർ.",
   "Waiting to upload: {pending}.": "അപ്‌ലോഡ് ചെയ്യാൻ കാത്തിരിക്കുന്നു: {pending}.",
   "Funder packet": "ധനസഹായ റിപ്പോർട്ട്",
-  "This packet leaves out volunteer names and individual credentials.": "സന്നദ്ധപ്രവർത്തകരുടെ പേരോ വ്യക്തിഗത ക്രെഡൻഷ്യലുകളോ ഉൾപ്പെടുത്തിയിട്ടില്ല."
+  "This packet leaves out volunteer names and individual credentials.": "സന്നദ്ധപ്രവർത്തകരുടെ പേരോ വ്യക്തിഗത ക്രെഡൻഷ്യലുകളോ ഉൾപ്പെടുത്തിയിട്ടില്ല.",
+  "Funder packet preview": "ധനസഹായ റിപ്പോർട്ട് പ്രിവ്യൂ",
+  "Page {page} of {count}": "പേജ് {page} / {count}"
 }

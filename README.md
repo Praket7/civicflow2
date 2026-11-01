@@ -225,9 +225,10 @@ version instead of one overwriting the other.
 attendance, completed shifts, the program breakdown, the monthly rhythm and credential
 readiness are computed from every live report row in the replica, not from a screen's newest
 page, so a year-to-date total cannot quietly stop at the 500th hour. The screen works with the
-network down and exports a spreadsheet-ready CSV. **Print / save PDF** turns the same numbers into
-a funder packet; it leaves out volunteer names and individual credentials, and the browser's print
-dialog names the file after the organization and period.
+network down and exports a spreadsheet-ready CSV. **Preview** lays the funder packet out on Letter
+pages so every page break can be checked before anything is saved. **Print / save PDF** then turns
+the same numbers into that packet; it leaves out volunteer names and individual credentials, and
+the browser's print dialog names the file after the organization and period.
 
 AutoRoster's local planner still runs as Rust code over the local SQLite workspace. On the
 shared screens, Quick plan and Rescue upcoming gaps build a deterministic plan over the replica,

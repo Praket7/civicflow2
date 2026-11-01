@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { readFileSync } from "node:fs";
 import { MemoryRouter } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SharedReportsPage } from "./SharedReportsPage";
 
 vi.mock("../../lib/sync/sharedReportSource", () => ({
@@ -115,6 +115,16 @@ vi.mock("../../lib/sync/sharedReportSource", () => ({
   }),
 }));
 
+// jsdom does not implement the dialog element's modal methods.
+beforeAll(() => {
+  HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close = function (this: HTMLDialogElement) {
+    this.removeAttribute("open");
+  };
+});
+
 const createObjectURL = vi.fn((_blob: Blob) => "blob:report");
 
 beforeEach(() => {
@@ -129,6 +139,10 @@ beforeEach(() => {
     configurable: true,
   });
   createObjectURL.mockClear();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 function mount() {
@@ -221,14 +235,73 @@ describe("shared impact report", () => {
     print.mockRestore();
   });
 
-  it("keeps the packet print-only and the working screen off paper", () => {
+  it("previews the packet on Letter pages before printing", async () => {
+    const print = vi.spyOn(window, "print").mockImplementation(() => {});
+    mount();
+
+    await userEvent.click(await screen.findByRole("button", { name: "Preview" }));
+    const dialog = await screen.findByRole("dialog", { name: "Funder packet preview" });
+
+    expect(within(dialog).getByText("Page 1 of 1")).toBeInTheDocument();
+    expect(within(dialog).getAllByText("Rivergate Kitchen").length).toBeGreaterThan(0);
+    expect(within(dialog).queryByText("Alice Able")).not.toBeInTheDocument();
+    expect(document.body.style.overflow).toBe("hidden");
+
+    await userEvent.click(within(dialog).getByRole("button", { name: "Print / save PDF" }));
+    expect(print).toHaveBeenCalledTimes(1);
+    print.mockRestore();
+
+    await userEvent.click(within(dialog).getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("dialog", { name: "Funder packet preview" })).not.toBeInTheDocument();
+    expect(document.body.style.overflow).toBe("");
+  });
+
+  it("splits a measured packet into one sheet per Letter page", async () => {
+    const heights: Record<string, number> = {
+      header: 40,
+      cover: 280,
+      programs: 420,
+      months: 320,
+      participation: 230,
+      method: 160,
+      footer: 40,
+    };
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (
+      this: HTMLElement,
+    ) {
+      const key = this.dataset.packetSection;
+      const height = key ? (heights[key] ?? 0) : 0;
+      return {
+        height,
+        width: 800,
+        top: 0,
+        left: 0,
+        bottom: height,
+        right: 800,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      } as DOMRect;
+    });
+    mount();
+
+    await userEvent.click(await screen.findByRole("button", { name: "Preview" }));
+    const dialog = await screen.findByRole("dialog", { name: "Funder packet preview" });
+
+    expect(await within(dialog).findByText("Page 1 of 2")).toBeInTheDocument();
+    expect(within(dialog).getByText("Page 2 of 2")).toBeInTheDocument();
+  });
+
+  it("keeps the working screen and the preview off paper", () => {
     const css = readFileSync("src/features/shared/shared.module.css", "utf8");
-    const printBlock = css.slice(css.indexOf("@media print"));
+    const printBlock = css.slice(css.lastIndexOf("@media print"));
     expect(printBlock).toContain(".shell > :not(.packet)");
     expect(printBlock).toContain("display: none !important");
     expect(printBlock).toContain(".packet");
     expect(printBlock).toContain("display: block");
-    expect(printBlock).toContain("padding: 14mm 14mm 16mm");
+    expect(printBlock).toContain(".previewDialog");
+    expect(css).toContain("padding: 14mm 14mm 16mm");
+    expect(css).toContain("width: 8.5in");
     expect(css).not.toContain("@page");
   });
 });

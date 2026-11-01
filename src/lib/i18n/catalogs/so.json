@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Waxaa laga dhisay nuqulka la isku dhejiyay ee dib u eegis {revision}.",
   "Waiting to upload: {pending}.": "Sugitaanka soo dejinta: {pending}.",
   "Funder packet": "Warbixinta maalgeliyaha",
-  "This packet leaves out volunteer names and individual credentials.": "Ma jiro magacyo iskaa wax u qabso ah ama aqoonsi shaqsiyeed oo lagu daro."
+  "This packet leaves out volunteer names and individual credentials.": "Ma jiro magacyo iskaa wax u qabso ah ama aqoonsi shaqsiyeed oo lagu daro.",
+  "Funder packet preview": "Fiiri xirmo funder",
+  "Page {page} of {count}": "Bogga {page} ee {count}"
 }

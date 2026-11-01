@@ -2997,5 +2997,7 @@
   "volunteers.": "தொண்டர்கள்.",
   "Waiting to upload: {pending}.": "பதிவேற்ற காத்திருக்கிறது: {pending}.",
   "Funder packet": "நிதியுதவி அறிக்கை",
-  "This packet leaves out volunteer names and individual credentials.": "தன்னார்வப் பெயர்கள் அல்லது தனிப்பட்ட நற்சான்றிதழ்கள் எதுவும் சேர்க்கப்படவில்லை."
+  "This packet leaves out volunteer names and individual credentials.": "தன்னார்வப் பெயர்கள் அல்லது தனிப்பட்ட நற்சான்றிதழ்கள் எதுவும் சேர்க்கப்படவில்லை.",
+  "Funder packet preview": "ஃபண்டர் பாக்கெட் மாதிரிக்காட்சி",
+  "Page {page} of {count}": "பக்கம் {page} இன் {count}"
 }

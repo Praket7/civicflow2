@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Створана з сінхранізаванай копіі ў рэвізіі {revision}.",
   "Waiting to upload: {pending}.": "Чаканне загрузкі: {pending}.",
   "Funder packet": "Справаздача для фундатараў",
-  "This packet leaves out volunteer names and individual credentials.": "Няма імёнаў валанцёраў або асобных уліковых дадзеных."
+  "This packet leaves out volunteer names and individual credentials.": "Няма імёнаў валанцёраў або асобных уліковых дадзеных.",
+  "Funder packet preview": "Папярэдні прагляд пакета Funder",
+  "Page {page} of {count}": "Старонка {page} з {count}"
 }

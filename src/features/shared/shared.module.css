@@ -723,10 +723,532 @@
 
 /* ------------------------------ funder packet ----------------------------- */
 
-/* The packet is a print surface. The screen keeps the working report, and the
-   print dialog turns this article into the PDF a funder receives. */
+/* The packet is a print surface, but the same styles render the in-app
+   preview. The preview pages are real Letter sheets, so a line wrap there is
+   the line wrap a funder receives. */
 .packet {
   display: none;
+  max-width: 100%;
+  color: #151d28;
+  background: #fff;
+  /* The certificate deliberately sets the sheet's page margin to zero, so
+     the packet owns its own paper margin instead of relying on a page rule. */
+  padding: 14mm 14mm 16mm;
+  font-size: 9.5pt;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The preview pages and the hidden measuring copy opt back into layout. */
+.packetPage,
+.packetMeasure {
+  display: block;
+}
+
+.packetPage {
+  width: 8.5in;
+  min-height: 11in;
+  border-radius: 2px;
+  box-shadow:
+    0 30px 70px -34px rgb(0 0 0 / 0.72),
+    0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+.packetMeasure {
+  position: absolute;
+  top: 0;
+  left: -10000px;
+  width: 8.5in;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.packetHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12pt;
+  padding-bottom: 7pt;
+  border-bottom: 2pt solid #151d28;
+}
+
+.packetBrand {
+  font-family: var(--font-serif);
+  font-size: 15pt;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+
+.packetHeaderMeta {
+  font-family: var(--font-mono);
+  font-size: 7.2pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.packetCover {
+  padding: 22pt 0 18pt;
+  border-bottom: 1pt solid #d6dbe1;
+  break-inside: avoid;
+}
+
+.packetOrg {
+  font-family: var(--font-mono);
+  font-size: 7.8pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #244f7a;
+}
+
+.packetTitle {
+  margin-top: 6pt;
+  font-family: var(--font-serif);
+  font-size: 34pt;
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: #151d28;
+}
+
+.packetPeriod {
+  margin-top: 7pt;
+  font-size: 10.5pt;
+  color: #374151;
+}
+
+.packetKicker {
+  margin-top: 3pt;
+  font-size: 9pt;
+  color: #4b5563;
+}
+
+.packetSummary {
+  display: flex;
+  align-items: flex-end;
+  gap: 20pt;
+  margin-top: 18pt;
+}
+
+.packetHeadline {
+  flex: 0 0 48mm;
+  padding-right: 18pt;
+  border-right: 1pt solid #d6dbe1;
+}
+
+.packetHeadlineValue {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 50pt;
+  font-weight: 600;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+}
+
+.packetHeadlineLabel {
+  display: block;
+  margin-top: 7pt;
+  font-family: var(--font-mono);
+  font-size: 7.2pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.packetMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: 1;
+  gap: 10pt 22pt;
+}
+
+.packetMetrics dt,
+.packetStats dt {
+  font-family: var(--font-mono);
+  font-size: 7pt;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.packetMetrics dd,
+.packetStats dd {
+  margin: 3pt 0 0;
+  font-size: 17pt;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.packetAside {
+  margin-top: 12pt;
+  font-family: var(--font-mono);
+  font-size: 7.6pt;
+  color: #4b5563;
+}
+
+.packetSection {
+  padding: 15pt 0;
+  border-bottom: 1pt solid #d6dbe1;
+}
+
+.packetSectionLast {
+  border-bottom: 0;
+}
+
+.packetSectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12pt;
+  margin-bottom: 8pt;
+  break-after: avoid;
+}
+
+.packetSectionTitle {
+  font-family: var(--font-serif);
+  font-size: 14pt;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #151d28;
+}
+
+.packetSectionNote {
+  font-family: var(--font-mono);
+  font-size: 7.2pt;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.packetTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 8.2pt;
+}
+
+.packetProgramTable th:nth-child(1) {
+  width: 25%;
+}
+
+.packetProgramTable th:nth-child(2) {
+  width: 19%;
+}
+
+.packetProgramTable th:nth-child(3) {
+  width: 14%;
+}
+
+.packetProgramTable th:nth-child(4) {
+  width: 17%;
+}
+
+.packetProgramTable th:nth-child(5),
+.packetProgramTable th:nth-child(6) {
+  width: 12.5%;
+}
+
+.packetMonthTable th:nth-child(1) {
+  width: 34%;
+}
+
+.packetMonthTable th:nth-child(2),
+.packetMonthTable th:nth-child(3) {
+  width: 33%;
+}
+
+.packetTable thead {
+  display: table-header-group;
+}
+
+.packetTable th {
+  padding: 4.5pt 5pt;
+  text-align: left;
+  border-bottom: 1.2pt solid #151d28;
+  font-family: var(--font-mono);
+  font-size: 6.8pt;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #374151;
+}
+
+.packetTable thead th:not(:first-child):not(.packetLeft) {
+  text-align: right;
+}
+
+.packetTable tbody th,
+.packetTable td {
+  padding: 4.5pt 5pt;
+  border-bottom: 0.5pt solid #e2e6ea;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.packetTable tbody td:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.packetTable tbody td.packetLeft {
+  text-align: left;
+}
+
+.packetTable tr {
+  break-inside: avoid;
+}
+
+.packetTableNote {
+  margin-top: 6pt;
+  font-size: 7.4pt;
+  color: #4b5563;
+}
+
+.packetEmpty {
+  font-size: 8.6pt;
+  color: #4b5563;
+}
+
+.packetTwoUp {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 18pt;
+  break-inside: avoid;
+}
+
+.packetStats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9pt 14pt;
+  margin-top: 9pt;
+}
+
+.packetSmallNote {
+  margin-top: 10pt;
+  font-size: 8.4pt;
+  color: #4b5563;
+}
+
+.packetCounts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8pt 14pt;
+  margin-top: 9pt;
+}
+
+.packetCounts div {
+  padding-top: 5pt;
+  border-top: 0.75pt solid #d6dbe1;
+}
+
+.packetCounts dt {
+  font-family: var(--font-mono);
+  font-size: 7pt;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.packetCounts dd {
+  margin: 3pt 0 0;
+  font-family: var(--font-serif);
+  font-size: 20pt;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.packetMethodCopy {
+  max-width: 155mm;
+  font-size: 8.8pt;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.packetMethodCopy + .packetMethodCopy {
+  margin-top: 5pt;
+}
+
+.packetPrivacy {
+  margin-top: 9pt;
+  padding: 7pt 9pt;
+  border-left: 2.5pt solid #244f7a;
+  background: #f4f6f8;
+  font-size: 8.4pt;
+  line-height: 1.45;
+  color: #243447;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.packetFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 12pt;
+  margin-top: 14pt;
+  padding-top: 7pt;
+  border-top: 1pt solid #151d28;
+  font-family: var(--font-mono);
+  font-size: 7pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4b5563;
+  break-inside: avoid;
+}
+
+/* ----------------------------- packet preview ----------------------------- */
+
+.previewDialog {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #14110d;
+  color: #f8f1e3;
+  overflow: hidden;
+}
+
+.previewDialog:not([open]) {
+  display: none;
+}
+
+.previewDialog::backdrop {
+  background: rgb(10 8 6 / 0.78);
+}
+
+.previewPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.previewToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding: 14px 22px;
+  background: #1c1914;
+  border-bottom: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.previewEyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(248 241 227 / 0.5);
+}
+
+.previewTitle {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #f8f1e3;
+}
+
+.previewMeta {
+  margin-top: 3px;
+  font-size: 12px;
+  color: rgb(248 241 227 / 0.62);
+}
+
+.previewActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.previewClose {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: rgb(248 241 227 / 0.8);
+  cursor: pointer;
+}
+
+.previewClose:hover {
+  border-color: rgb(255 255 255 / 0.34);
+  color: #fff;
+}
+
+/* The desk is deliberately fixed and dark in both themes: white paper on a
+   neutral surface is the least ambiguous way to judge a printed page. */
+.previewDesk {
+  flex: 1;
+  overflow: auto;
+  padding: 28px 24px 64px;
+  background: radial-gradient(circle at 50% 0%, #26211a 0%, #14110d 58%);
+}
+
+.previewStack {
+  display: grid;
+  justify-content: center;
+  gap: 28px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.previewSheet {
+  display: grid;
+  gap: 8px;
+}
+
+.previewPageLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(248 241 227 / 0.46);
+}
+
+@media (max-width: 900px) {
+  .previewToolbar {
+    padding: 12px 14px;
+  }
+
+  .previewDesk {
+    padding: 20px 12px 48px;
+  }
+
+  /* Keep the whole sheet visible in a split window or at high UI zoom. */
+  .previewSheet {
+    zoom: 0.85;
+  }
+}
+
+@media (max-width: 760px) {
+  .previewSheet {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 620px) {
+  .previewSheet {
+    zoom: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .previewPanel {
+    animation: packetPreviewIn 220ms var(--ease-out);
+  }
+}
+
+@keyframes packetPreviewIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 @media print {
@@ -752,347 +1274,11 @@
 
   .packet {
     display: block;
-    max-width: 100%;
-    color: #151d28;
-    background: #fff;
-    /* The certificate deliberately sets the sheet's page margin to zero, so
-       the packet owns its own paper margin instead of relying on a page rule. */
-    padding: 14mm 14mm 16mm;
-    font-size: 9.5pt;
-    line-height: 1.45;
-    font-variant-numeric: tabular-nums;
   }
 
-  .packetHeader {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12pt;
-    padding-bottom: 7pt;
-    border-bottom: 2pt solid #151d28;
-  }
-
-  .packetBrand {
-    font-family: var(--font-serif);
-    font-size: 15pt;
-    font-weight: 620;
-    letter-spacing: -0.02em;
-  }
-
-  .packetHeaderMeta {
-    font-family: var(--font-mono);
-    font-size: 7.2pt;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #4b5563;
-  }
-
-  .packetCover {
-    padding: 22pt 0 18pt;
-    border-bottom: 1pt solid #d6dbe1;
-    break-inside: avoid;
-  }
-
-  .packetOrg {
-    font-family: var(--font-mono);
-    font-size: 7.8pt;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #244f7a;
-  }
-
-  .packetTitle {
-    margin-top: 6pt;
-    font-family: var(--font-serif);
-    font-size: 34pt;
-    font-weight: 600;
-    line-height: 0.98;
-    letter-spacing: -0.035em;
-    color: #151d28;
-  }
-
-  .packetPeriod {
-    margin-top: 7pt;
-    font-size: 10.5pt;
-    color: #374151;
-  }
-
-  .packetKicker {
-    margin-top: 3pt;
-    font-size: 9pt;
-    color: #4b5563;
-  }
-
-  .packetSummary {
-    display: flex;
-    align-items: flex-end;
-    gap: 20pt;
-    margin-top: 18pt;
-  }
-
-  .packetHeadline {
-    flex: 0 0 48mm;
-    padding-right: 18pt;
-    border-right: 1pt solid #d6dbe1;
-  }
-
-  .packetHeadlineValue {
-    display: block;
-    font-family: var(--font-serif);
-    font-size: 50pt;
-    font-weight: 600;
-    line-height: 0.86;
-    letter-spacing: -0.045em;
-  }
-
-  .packetHeadlineLabel {
-    display: block;
-    margin-top: 7pt;
-    font-family: var(--font-mono);
-    font-size: 7.2pt;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #4b5563;
-  }
-
-  .packetMetrics {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    flex: 1;
-    gap: 10pt 22pt;
-  }
-
-  .packetMetrics dt,
-  .packetStats dt {
-    font-family: var(--font-mono);
-    font-size: 7pt;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: #4b5563;
-  }
-
-  .packetMetrics dd,
-  .packetStats dd {
-    margin: 3pt 0 0;
-    font-size: 17pt;
-    font-weight: 650;
-    line-height: 1;
-  }
-
-  .packetAside {
-    margin-top: 12pt;
-    font-family: var(--font-mono);
-    font-size: 7.6pt;
-    color: #4b5563;
-  }
-
-  .packetSection {
-    padding: 15pt 0;
-    border-bottom: 1pt solid #d6dbe1;
-  }
-
-  .packetSection:last-of-type {
-    border-bottom: 0;
-  }
-
-  .packetSectionHead {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12pt;
-    margin-bottom: 8pt;
-    break-after: avoid;
-  }
-
-  .packetSectionTitle {
-    font-family: var(--font-serif);
-    font-size: 14pt;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: #151d28;
-  }
-
-  .packetSectionNote {
-    font-family: var(--font-mono);
-    font-size: 7.2pt;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #4b5563;
-  }
-
-  .packetTable {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 8.2pt;
-  }
-
-  .packetProgramTable th:nth-child(1) {
-    width: 25%;
-  }
-
-  .packetProgramTable th:nth-child(2) {
-    width: 19%;
-  }
-
-  .packetProgramTable th:nth-child(3) {
-    width: 14%;
-  }
-
-  .packetProgramTable th:nth-child(4) {
-    width: 17%;
-  }
-
-  .packetProgramTable th:nth-child(5),
-  .packetProgramTable th:nth-child(6) {
-    width: 12.5%;
-  }
-
-  .packetMonthTable th:nth-child(1) {
-    width: 34%;
-  }
-
-  .packetMonthTable th:nth-child(2),
-  .packetMonthTable th:nth-child(3) {
-    width: 33%;
-  }
-
-  .packetTable thead {
-    display: table-header-group;
-  }
-
-  .packetTable th {
-    padding: 4.5pt 5pt;
-    text-align: left;
-    border-bottom: 1.2pt solid #151d28;
-    font-family: var(--font-mono);
-    font-size: 6.8pt;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: #374151;
-  }
-
-  .packetTable thead th:not(:first-child):not(.packetLeft) {
-    text-align: right;
-  }
-
-  .packetTable tbody th,
-  .packetTable td {
-    padding: 4.5pt 5pt;
-    border-bottom: 0.5pt solid #e2e6ea;
-    text-align: left;
-    vertical-align: top;
-    overflow-wrap: anywhere;
-  }
-
-  .packetTable tbody td:not(:first-child) {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .packetTable tbody td.packetLeft {
-    text-align: left;
-  }
-
-  .packetTable tr {
-    break-inside: avoid;
-  }
-
-  .packetTableNote {
-    margin-top: 6pt;
-    font-size: 7.4pt;
-    color: #4b5563;
-  }
-
-  .packetEmpty {
-    font-size: 8.6pt;
-    color: #4b5563;
-  }
-
-  .packetTwoUp {
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-    gap: 18pt;
-    break-inside: avoid;
-  }
-
-  .packetStats {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 9pt 14pt;
-    margin-top: 9pt;
-  }
-
-  .packetSmallNote {
-    margin-top: 10pt;
-    font-size: 8.4pt;
-    color: #4b5563;
-  }
-
-  .packetCounts {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8pt 14pt;
-    margin-top: 9pt;
-  }
-
-  .packetCounts div {
-    padding-top: 5pt;
-    border-top: 0.75pt solid #d6dbe1;
-  }
-
-  .packetCounts dt {
-    font-family: var(--font-mono);
-    font-size: 7pt;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: #4b5563;
-  }
-
-  .packetCounts dd {
-    margin: 3pt 0 0;
-    font-family: var(--font-serif);
-    font-size: 20pt;
-    font-weight: 600;
-    line-height: 1;
-  }
-
-  .packetMethodCopy {
-    max-width: 155mm;
-    font-size: 8.8pt;
-    line-height: 1.5;
-    color: #374151;
-  }
-
-  .packetMethodCopy + .packetMethodCopy {
-    margin-top: 5pt;
-  }
-
-  .packetPrivacy {
-    margin-top: 9pt;
-    padding: 7pt 9pt;
-    border-left: 2.5pt solid #244f7a;
-    background: #f4f6f8;
-    font-size: 8.4pt;
-    line-height: 1.45;
-    color: #243447;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
-
-  .packetFooter {
-    display: flex;
-    justify-content: space-between;
-    gap: 12pt;
-    margin-top: 14pt;
-    padding-top: 7pt;
-    border-top: 1pt solid #151d28;
-    font-family: var(--font-mono);
-    font-size: 7pt;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #4b5563;
-    break-inside: avoid;
+  .packetPage,
+  .packetMeasure,
+  .previewDialog {
+    display: none !important;
   }
 }

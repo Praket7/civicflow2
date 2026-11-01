@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Gebou uit die gesinkroniseerde kopie by hersiening {revision}.",
   "Waiting to upload: {pending}.": "Wag tans om op te laai: {pending}.",
   "Funder packet": "Finansieringsverslag",
-  "This packet leaves out volunteer names and individual credentials.": "Geen vrywilligersname of individuele geloofsbriewe word ingesluit nie."
+  "This packet leaves out volunteer names and individual credentials.": "Geen vrywilligersname of individuele geloofsbriewe word ingesluit nie.",
+  "Funder packet preview": "Funder pakkie voorskou",
+  "Page {page} of {count}": "Bladsy {page} van {count}"
 }

@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "개정판 {revision}의 동기화된 복사본에서 빌드되었습니다.",
   "Waiting to upload: {pending}.": "업로드 대기 중: {pending}.",
   "Funder packet": "자금 제공자 보고서",
-  "This packet leaves out volunteer names and individual credentials.": "자원봉사자 이름이나 개인 자격 증명은 포함되지 않습니다."
+  "This packet leaves out volunteer names and individual credentials.": "자원봉사자 이름이나 개인 자격 증명은 포함되지 않습니다.",
+  "Funder packet preview": "자금 조달 패킷 미리보기",
+  "Page {page} of {count}": "{count}의 페이지 {page}"
 }

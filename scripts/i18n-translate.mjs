@@ -97,6 +97,14 @@ function chunk(values) {
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// A stalled connection used to hold a whole locale open until the process was
+// killed. Cap each request so a dead route fails over to the relay instead.
+const REQUEST_TIMEOUT_MS = 25_000;
+
+function fetchWithTimeout(url, init = {}) {
+  return fetch(url, { ...init, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+}
+
 function joinQuery(texts, code) {
   return new URLSearchParams({
     client: "gtx",
@@ -133,9 +141,10 @@ async function readTranslationResponse(response) {
  */
 async function requestThroughRelay(texts, code) {
   const target = `https://translate.googleapis.com/translate_a/single?${joinQuery(texts, code)}`;
-  const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`, {
-    headers: { accept: "application/json" },
-  });
+  const response = await fetchWithTimeout(
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
+    { headers: { accept: "application/json" } },
+  );
   if (!response.ok) {
     throw new Error(`relay HTTP ${response.status}`);
   }
@@ -145,7 +154,7 @@ async function requestThroughRelay(texts, code) {
 async function requestTranslation(texts, code) {
   const query = joinQuery(texts, code);
   try {
-    const response = await fetch("https://translate.googleapis.com/translate_a/single", {
+    const response = await fetchWithTimeout("https://translate.googleapis.com/translate_a/single", {
       method: "POST",
       body: query,
       headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
@@ -153,7 +162,7 @@ async function requestTranslation(texts, code) {
     return await readTranslationResponse(response);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (!/blocked|429|HTTP 5\d\d|Failed to fetch/i.test(message)) throw error;
+    if (!/blocked|429|HTTP 5\d\d|Failed to fetch|aborted|timeout/i.test(message)) throw error;
     return requestThroughRelay(texts, code);
   }
 }

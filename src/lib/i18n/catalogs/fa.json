@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "ساخته شده از نسخه همگام‌سازی شده در بازبینی {revision}.",
   "Waiting to upload: {pending}.": "در انتظار آپلود: {pending}.",
   "Funder packet": "گزارش تأمین‌کننده مالی",
-  "This packet leaves out volunteer names and individual credentials.": "هیچ نام داوطلب یا اعتبارنامه فردی درج نشده است."
+  "This packet leaves out volunteer names and individual credentials.": "هیچ نام داوطلب یا اعتبارنامه فردی درج نشده است.",
+  "Funder packet preview": "پیش نمایش بسته سرمایه گذار",
+  "Page {page} of {count}": "صفحه {page} از {count}"
 }

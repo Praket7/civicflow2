@@ -2996,5 +2996,7 @@
   "Waiting to upload: {pending}.": "Gutegereza kohereza: {pending}.",
   "serving for the first time": "gukorera bwa mbere",
   "Funder packet": "Raporo y'abaterankunga",
-  "This packet leaves out volunteer names and individual credentials.": "Nta mazina y'abakorerabushake cyangwa imyirondoro y'umuntu ku giti cye yashyizwe mo."
+  "This packet leaves out volunteer names and individual credentials.": "Nta mazina y'abakorerabushake cyangwa imyirondoro y'umuntu ku giti cye yashyizwe mo.",
+  "Funder packet preview": "Igaragaza rya raporo y'abaterankunga",
+  "Page {page} of {count}": "Paji {page} kuri {count}"
 }

@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "リビジョン {revision} の同期されたコピーから構築されました。",
   "Waiting to upload: {pending}.": "アップロードを待機しています: {pending}。",
   "Funder packet": "ファンダーレポート",
-  "This packet leaves out volunteer names and individual credentials.": "ボランティアの名前や個人の資格情報は含まれていません。"
+  "This packet leaves out volunteer names and individual credentials.": "ボランティアの名前や個人の資格情報は含まれていません。",
+  "Funder packet preview": "ファンダーパケットのプレビュー",
+  "Page {page} of {count}": "ページ {page} / {count}"
 }

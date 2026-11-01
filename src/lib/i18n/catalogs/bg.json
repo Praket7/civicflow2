@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Създаден от синхронизираното копие при ревизия {revision}.",
   "Waiting to upload: {pending}.": "Изчакване за качване: {pending}.",
   "Funder packet": "Отчет за донори",
-  "This packet leaves out volunteer names and individual credentials.": "Не са включени имена на доброволци или индивидуални идентификационни данни."
+  "This packet leaves out volunteer names and individual credentials.": "Не са включени имена на доброволци или индивидуални идентификационни данни.",
+  "Funder packet preview": "Визуализация на пакета Funder",
+  "Page {page} of {count}": "Страница {page} от {count}"
 }

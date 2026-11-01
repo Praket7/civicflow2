@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Gebouwd op basis van de gesynchroniseerde kopie bij revisie {revision}.",
   "Waiting to upload: {pending}.": "Wachten om te uploaden: {pending}.",
   "Funder packet": "Rapport voor financiers",
-  "This packet leaves out volunteer names and individual credentials.": "Er zijn geen namen van vrijwilligers of individuele inloggegevens opgenomen."
+  "This packet leaves out volunteer names and individual credentials.": "Er zijn geen namen van vrijwilligers of individuele inloggegevens opgenomen.",
+  "Funder packet preview": "Voorbeeld van Funder-pakket",
+  "Page {page} of {count}": "Pagina {page} van {count}"
 }

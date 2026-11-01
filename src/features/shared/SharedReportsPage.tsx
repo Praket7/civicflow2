@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { BarChart3, Download, Printer, RefreshCw } from "lucide-react";
+import { BarChart3, Download, Eye, Printer, RefreshCw } from "lucide-react";
 import {
   Button,
   ButtonLink,
@@ -20,17 +20,15 @@ import {
   type ReportPreset,
   type ReportRange,
 } from "../../lib/sync/sharedReports";
+import { FunderPacket, funderPacketSections } from "./FunderPacket";
+import { FunderPacketPreview } from "./FunderPacketPreview";
+import {
+  formatHours as hours,
+  formatReportDate as prettyDate,
+  formatReportMonth as prettyMonth,
+} from "./reportFormat";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
-
-const HOURS = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
-const DATE = new Intl.DateTimeFormat(undefined, {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-});
-const MONTH = new Intl.DateTimeFormat(undefined, { month: "short", year: "2-digit" });
-const PACKET_MONTH = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" });
 
 const PRESETS: { value: ReportPreset; label: string }[] = [
   { value: "ytd", label: "Year to date" },
@@ -41,27 +39,6 @@ const PRESETS: { value: ReportPreset; label: string }[] = [
   { value: "custom", label: "Custom range" },
 ];
 
-function hours(minutes: number): string {
-  return HOURS.format(Math.round((minutes / 60) * 10) / 10);
-}
-
-function prettyDate(key: string): string {
-  if (!key) return "No date";
-  const date = new Date(`${key}T12:00:00`);
-  return Number.isNaN(date.getTime()) ? key : DATE.format(date);
-}
-
-function prettyMonth(key: string): string {
-  const date = new Date(`${key}-01T12:00:00`);
-  return Number.isNaN(date.getTime()) ? key : MONTH.format(date);
-}
-
-/** A funder reads the packet away from the dashboard, so spell the month out. */
-function packetMonth(key: string): string {
-  const date = new Date(`${key}-01T12:00:00`);
-  return Number.isNaN(date.getTime()) ? key : PACKET_MONTH.format(date);
-}
-
 function share(part: number, total: number): number {
   return total > 0 ? Math.round((part / total) * 100) : 0;
 }
@@ -71,6 +48,7 @@ export function SharedReportsPage() {
   const [preset, setPreset] = useState<ReportPreset>("ytd");
   const [range, setRange] = useState<ReportRange>(() => presetRange("ytd"));
   const [opportunityId, setOpportunityId] = useState("");
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const opportunities = useMemo(
     () =>
@@ -90,12 +68,17 @@ export function SharedReportsPage() {
   const selectedProgramTitle = opportunityId
     ? String(opportunities.find((row) => row.id === opportunityId)?.title ?? "")
     : "";
-  const averageSessionMinutes =
-    report.totals.shiftsCompleted > 0
-      ? report.totals.verifiedMinutes / report.totals.shiftsCompleted
-      : 0;
-  const packetMonths = report.months.filter(
-    (month) => month.verifiedMinutes > 0 || month.pendingMinutes > 0,
+  const packetSections = useMemo(
+    () =>
+      funderPacketSections({
+        report,
+        organizationName,
+        rangeLabel,
+        selectedProgramTitle,
+        revision: sync.revision,
+        pendingLabel,
+      }),
+    [report, organizationName, rangeLabel, selectedProgramTitle, sync.revision, pendingLabel],
   );
 
   const programTotal = Math.max(1, ...report.programs.map((program) => program.verifiedMinutes));
@@ -164,6 +147,14 @@ export function SharedReportsPage() {
                 onClick={exportCsv}
               >
                 Export CSV
+              </Button>
+              <Button
+                variant="secondary"
+                icon={<Eye aria-hidden size={14} />}
+                disabled={!report.hasData || !isTauri()}
+                onClick={() => setPreviewOpen(true)}
+              >
+                Preview
               </Button>
               <Button
                 variant="primary"
@@ -496,207 +487,17 @@ export function SharedReportsPage() {
         )}
 
         {isTauri() && report.hasData ? (
-          <article className={styles.packet} aria-label="Funder packet" data-testid="funder-packet">
-            <header className={styles.packetHeader}>
-              <span className={styles.packetBrand}>CivicFlow</span>
-              <span className={styles.packetHeaderMeta}>
-                Funder packet
-                <span aria-hidden="true"> · </span>
-                {rangeLabel}
-              </span>
-            </header>
+          <FunderPacket sections={packetSections} testId="funder-packet" />
+        ) : null}
 
-            <section className={styles.packetCover}>
-              <p className={styles.packetOrg}>{organizationName}</p>
-              <h2 className={styles.packetTitle}>Impact report</h2>
-              <p className={styles.packetPeriod}>{rangeLabel}</p>
-              <p className={styles.packetKicker}>Verified service</p>
-
-              <div className={styles.packetSummary}>
-                <div className={styles.packetHeadline}>
-                  <span className={styles.packetHeadlineValue} data-testid="packet-verified-hours">
-                    {hours(report.totals.verifiedMinutes)}
-                  </span>
-                  <span className={styles.packetHeadlineLabel}>Verified hours</span>
-                </div>
-                <dl className={styles.packetMetrics}>
-                  <div>
-                    <dt>Volunteers</dt>
-                    <dd>{report.totals.volunteers}</dd>
-                  </div>
-                  <div>
-                    <dt>New volunteers</dt>
-                    <dd>{report.totals.newVolunteers}</dd>
-                  </div>
-                  <div>
-                    <dt>Shifts completed</dt>
-                    <dd>{report.totals.shiftsCompleted}</dd>
-                  </div>
-                  <div>
-                    <dt>Attendance rate</dt>
-                    <dd>{report.totals.attendanceRate}%</dd>
-                  </div>
-                </dl>
-              </div>
-
-              <p className={styles.packetAside}>
-                {t("{hours} h awaiting review", {
-                  hours: hours(report.totals.pendingMinutes),
-                })}
-                <span aria-hidden="true"> · </span>
-                {report.totals.registrations} registrations in range
-              </p>
-            </section>
-
-            <section className={styles.packetSection}>
-              <div className={styles.packetSectionHead}>
-                <h3 className={styles.packetSectionTitle}>Hours by program</h3>
-                <p className={styles.packetSectionNote}>{selectedProgramTitle || "All programs"}</p>
-              </div>
-              {report.programs.length === 0 ? (
-                <p className={styles.packetEmpty}>No program has hours in this range yet.</p>
-              ) : (
-                <table
-                  className={`${styles.packetTable} ${styles.packetProgramTable}`}
-                  data-testid="packet-programs"
-                >
-                  <thead>
-                    <tr>
-                      <th scope="col">Program</th>
-                      <th scope="col" className={styles.packetLeft}>
-                        Cause
-                      </th>
-                      <th scope="col">Verified hours</th>
-                      <th scope="col">Hours awaiting review</th>
-                      <th scope="col">Volunteers</th>
-                      <th scope="col">Shifts</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {report.programs.map((program) => (
-                      <tr key={program.id || "unassigned"}>
-                        <th scope="row">{program.title}</th>
-                        <td className={styles.packetLeft}>{program.cause || "—"}</td>
-                        <td>{hours(program.verifiedMinutes)}</td>
-                        <td>{hours(program.pendingMinutes)}</td>
-                        <td>{program.volunteers}</td>
-                        <td>{program.shiftsCompleted}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-              <p className={styles.packetTableNote}>
-                Verified service only; pending hours are named on each row.
-              </p>
-            </section>
-
-            <section className={styles.packetSection}>
-              <div className={styles.packetSectionHead}>
-                <h3 className={styles.packetSectionTitle}>Monthly rhythm</h3>
-                <p className={styles.packetSectionNote}>Verified hours by month</p>
-              </div>
-              {packetMonths.length === 0 ? (
-                <p className={styles.packetEmpty}>No verified hours in this range yet.</p>
-              ) : (
-                <table
-                  className={`${styles.packetTable} ${styles.packetMonthTable}`}
-                  data-testid="packet-months"
-                >
-                  <thead>
-                    <tr>
-                      <th scope="col">Period</th>
-                      <th scope="col">Verified hours</th>
-                      <th scope="col">Hours awaiting review</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {packetMonths.map((month) => (
-                      <tr key={month.key}>
-                        <th scope="row">{packetMonth(month.key)}</th>
-                        <td>{hours(month.verifiedMinutes)}</td>
-                        <td>{hours(month.pendingMinutes)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </section>
-
-            <section className={`${styles.packetSection} ${styles.packetTwoUp}`}>
-              <div>
-                <h3 className={styles.packetSectionTitle}>Participation</h3>
-                <dl className={styles.packetStats}>
-                  <div>
-                    <dt>Volunteers</dt>
-                    <dd>{report.totals.volunteers}</dd>
-                  </div>
-                  <div>
-                    <dt>New volunteers</dt>
-                    <dd>{report.totals.newVolunteers}</dd>
-                  </div>
-                  <div>
-                    <dt>Avg. approved session</dt>
-                    <dd>{hours(averageSessionMinutes)} h</dd>
-                  </div>
-                  <div>
-                    <dt>Attendance rate</dt>
-                    <dd>{report.totals.attendanceRate}%</dd>
-                  </div>
-                </dl>
-                <p className={styles.packetSmallNote}>
-                  {report.totals.attended} attended · {noShowLabel}
-                </p>
-              </div>
-
-              <div>
-                <h3 className={styles.packetSectionTitle}>Credential readiness</h3>
-                <dl className={styles.packetCounts}>
-                  <div>
-                    <dt>valid</dt>
-                    <dd>{report.credentials.valid}</dd>
-                  </div>
-                  <div>
-                    <dt>expiring</dt>
-                    <dd>{report.credentials.expiring}</dd>
-                  </div>
-                  <div>
-                    <dt>expired</dt>
-                    <dd>{report.credentials.expired}</dd>
-                  </div>
-                  <div>
-                    <dt>unverified</dt>
-                    <dd>{report.credentials.unverified}</dd>
-                  </div>
-                </dl>
-              </div>
-            </section>
-
-            <section className={styles.packetSection} data-testid="packet-method">
-              <h3 className={styles.packetSectionTitle}>How this was measured</h3>
-              <p className={styles.packetMethodCopy}>
-                Only approved service is issued. Pending and rejected hours are excluded.
-              </p>
-              <p className={styles.packetMethodCopy}>
-                {t("Built from the synced copy at revision {revision}.", {
-                  revision: sync.revision,
-                })}{" "}
-                {t("Waiting to upload: {pending}.", { pending: pendingLabel })}
-              </p>
-              <p className={styles.packetPrivacy}>
-                This packet leaves out volunteer names and individual credentials.
-              </p>
-            </section>
-
-            <footer className={styles.packetFooter}>
-              <span>CivicFlow</span>
-              <span>
-                {organizationName}
-                <span aria-hidden="true"> · </span>
-                {rangeLabel}
-              </span>
-            </footer>
-          </article>
+        {isTauri() && report.hasData && previewOpen ? (
+          <FunderPacketPreview
+            sections={packetSections}
+            organizationName={organizationName}
+            rangeLabel={rangeLabel}
+            onClose={() => setPreviewOpen(false)}
+            onPrint={printPacket}
+          />
         ) : null}
       </div>
     </Page>

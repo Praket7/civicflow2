@@ -92,5 +92,6 @@ Record results here:
 - Kiosk mode is a route in the main window, not an OS-level kiosk.
 - The desktop and the volunteer PWA share the hosted workspace. Scheduling, participation,
   volunteer records, reports, conflicts, and roster plans have native shared screens. The
-  shared report reads the replica, exports CSV, and prints a funder packet. AutoRoster still
-  runs over the local SQLite workspace, and local reports travel as exports.
+  shared report reads the replica, previews the funder packet page by page, exports CSV, and
+  prints that packet. AutoRoster still runs over the local SQLite workspace, and local reports
+  travel as exports.

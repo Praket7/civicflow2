@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "పునర్విమర్శ {revision} వద్ద సమకాలీకరించబడిన కాపీ నుండి నిర్మించబడింది.",
   "Waiting to upload: {pending}.": "అప్‌లోడ్ చేయడానికి వేచి ఉంది: {pending}.",
   "Funder packet": "నిధుల నివేదిక",
-  "This packet leaves out volunteer names and individual credentials.": "వాలంటీర్ పేర్లు లేదా వ్యక్తిగత ఆధారాలు ఏవీ చేర్చబడలేదు."
+  "This packet leaves out volunteer names and individual credentials.": "వాలంటీర్ పేర్లు లేదా వ్యక్తిగత ఆధారాలు ఏవీ చేర్చబడలేదు.",
+  "Funder packet preview": "ఫండర్ ప్యాకెట్ ప్రివ్యూ",
+  "Page {page} of {count}": "{count}లో పేజీ {page}"
 }

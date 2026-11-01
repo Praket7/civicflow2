@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "A szinkronizált másolatból készült a következő verzióban: {revision}.",
   "Waiting to upload: {pending}.": "Feltöltésre vár: {pending}.",
   "Funder packet": "Támogatói jelentés",
-  "This packet leaves out volunteer names and individual credentials.": "Nem tartalmazza az önkéntesek nevét vagy az egyéni hitelesítő adatokat."
+  "This packet leaves out volunteer names and individual credentials.": "Nem tartalmazza az önkéntesek nevét vagy az egyéni hitelesítő adatokat.",
+  "Funder packet preview": "Finanszírozói csomag előnézete",
+  "Page {page} of {count}": "{page} oldal / {count}"
 }

@@ -2996,5 +2996,7 @@
   "Waiting to upload: {pending}.": "ଅପଲୋଡ୍ କରିବାକୁ ଅପେକ୍ଷା: {pending}",
   "No verified hours in this range yet.": "ଏହି ପରିସରରେ ଏପର୍ଯ୍ୟନ୍ତ କ ified ଣସି ଯାଞ୍ଚ ସମୟ ନାହିଁ |",
   "Funder packet": "ପାଣ୍ଠିଦାତା ରିପୋର୍ଟ",
-  "This packet leaves out volunteer names and individual credentials.": "କୌଣସି ସ୍ୱେଚ୍ଛାସେବୀ ନାମ କିମ୍ବା ବ୍ୟକ୍ତିଗତ ପରିଚୟପତ୍ର ଅନ୍ତର୍ଭୁକ୍ତ କରାଯାଇନାହିଁ ।"
+  "This packet leaves out volunteer names and individual credentials.": "କୌଣସି ସ୍ୱେଚ୍ଛାସେବୀ ନାମ କିମ୍ବା ବ୍ୟକ୍ତିଗତ ପରିଚୟପତ୍ର ଅନ୍ତର୍ଭୁକ୍ତ କରାଯାଇନାହିଁ ।",
+  "Funder packet preview": "ପାଣ୍ଠିଦାତା ରିପୋର୍ଟ ପୂର୍ବାବଲୋକନ",
+  "Page {page} of {count}": "ପୃଷ୍ଠା {page} / {count}"
 }

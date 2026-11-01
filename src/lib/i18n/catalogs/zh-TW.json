@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "根據版本 {revision} 的同步副本建置。",
   "Waiting to upload: {pending}.": "正在等待上傳：{pending}。",
   "Funder packet": "資助方報告",
-  "This packet leaves out volunteer names and individual credentials.": "不包括志願者姓名或個人憑證。"
+  "This packet leaves out volunteer names and individual credentials.": "不包括志願者姓名或個人憑證。",
+  "Funder packet preview": "資助者資料包預覽",
+  "Page {page} of {count}": "頁 {page}（共 {count}）"
 }

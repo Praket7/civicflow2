@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "ပြန်လည်ပြင်ဆင်မှု {revision} တွင် စင့်ခ်လုပ်ထားသော မိတ္တူမှ တည်ဆောက်ထားသည်။",
   "Waiting to upload: {pending}.": "အပ်လုဒ်လုပ်ရန် စောင့်ဆိုင်းနေသည်- {pending}.",
   "Funder packet": "ရန်ပုံငွေအစီရင်ခံစာ",
-  "This packet leaves out volunteer names and individual credentials.": "စေတနာ့ဝန်ထမ်းအမည်များ သို့မဟုတ် တစ်ဦးချင်း အထောက်အထားများ မပါဝင်ပါ ။"
+  "This packet leaves out volunteer names and individual credentials.": "စေတနာ့ဝန်ထမ်းအမည်များ သို့မဟုတ် တစ်ဦးချင်း အထောက်အထားများ မပါဝင်ပါ ။",
+  "Funder packet preview": "Funder packet အစမ်းကြည့်ရှုခြင်း။",
+  "Page {page} of {count}": "စာမျက်နှာ {page} ၏ {count}"
 }

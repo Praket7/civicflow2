@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "สร้างจากสำเนาที่ซิงค์เมื่อแก้ไข {revision}",
   "Waiting to upload: {pending}.": "กำลังรออัปโหลด: {pending}",
   "Funder packet": "รายงานผู้ให้ทุน",
-  "This packet leaves out volunteer names and individual credentials.": "ไม่มีการรวมชื่ออาสาสมัครหรือข้อมูลประจำตัวของแต่ละบุคคล"
+  "This packet leaves out volunteer names and individual credentials.": "ไม่มีการรวมชื่ออาสาสมัครหรือข้อมูลประจำตัวของแต่ละบุคคล",
+  "Funder packet preview": "ดูตัวอย่างแพ็คเก็ต Funder",
+  "Page {page} of {count}": "หน้า {page} ของ {count}"
 }

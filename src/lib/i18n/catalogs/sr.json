@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Направљено од синхронизоване копије у ревизији {revision}.",
   "Waiting to upload: {pending}.": "Чека се отпремање: {pending}.",
   "Funder packet": "Izveštaj o finansiranju",
-  "This packet leaves out volunteer names and individual credentials.": "Nisu uključena imena volontera ili pojedinačni akreditivi."
+  "This packet leaves out volunteer names and individual credentials.": "Nisu uključena imena volontera ili pojedinačni akreditivi.",
+  "Funder packet preview": "Преглед пакета донатора",
+  "Page {page} of {count}": "Страница {page} од {count}"
 }

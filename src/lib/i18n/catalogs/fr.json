@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Construit à partir de la copie synchronisée à la révision {revision}.",
   "Waiting to upload: {pending}.": "En attente de téléchargement : {pending}.",
   "Funder packet": "Rapport du bailleur de fonds",
-  "This packet leaves out volunteer names and individual credentials.": "Aucun nom de bénévole ou identifiant individuel n'est inclus."
+  "This packet leaves out volunteer names and individual credentials.": "Aucun nom de bénévole ou identifiant individuel n'est inclus.",
+  "Funder packet preview": "Aperçu du dossier du bailleur de fonds",
+  "Page {page} of {count}": "Page {page} de {count}"
 }

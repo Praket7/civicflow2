@@ -2999,5 +2999,7 @@
   "Built from the synced copy at revision {revision}.": "Ji kopiya hevdengkirî di guhertoya {revision} de hatî çêkirin.",
   "Waiting to upload: {pending}.": "Li benda barkirinê ye: {pending}.",
   "Funder packet": "Rapora fînansor",
-  "This packet leaves out volunteer names and individual credentials.": "Navên xwebexşan an bawernameyên kesane nehatine bicihkirin."
+  "This packet leaves out volunteer names and individual credentials.": "Navên xwebexşan an bawernameyên kesane nehatine bicihkirin.",
+  "Funder packet preview": "Pêşdîtina pakêta Funder",
+  "Page {page} of {count}": "Rûpel {page} ji {count}"
 }

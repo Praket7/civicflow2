@@ -2,6 +2,7 @@ import { Badge, Card, SectionHeader } from "../../components/ui";
 import { t } from "../../lib/i18n";
 import { useCredentialReadiness, useEngagementMetrics } from "../../lib/workspace/queries";
 import styles from "./DecisionReadout.module.css";
+import { messageOf } from "../../lib/errors";
 
 interface Readout {
   label: string;
@@ -29,7 +30,7 @@ export function DecisionReadoutCard() {
       <Card className={styles.card} ariaLabel={t("Decision readouts")}>
         <SectionHeader title={t("Decision readouts")} subtitle={t("Reading the record…")} />
         <p className={styles.error} role="alert">
-          {error instanceof Error ? error.message : String(error)}
+          {messageOf(error)}
         </p>
       </Card>
     ) : null;

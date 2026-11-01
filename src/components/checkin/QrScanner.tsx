@@ -3,6 +3,7 @@ import { CameraOff, X } from "lucide-react";
 import { BrowserQRCodeReader } from "@zxing/browser";
 import type { IScannerControls } from "@zxing/browser";
 import styles from "./QrScanner.module.css";
+import { messageOf } from "../../lib/errors";
 
 interface QrScannerProps {
   onScan: (payload: string) => void;
@@ -41,9 +42,10 @@ export function QrScanner({ onScan, onClose }: QrScannerProps) {
         if (!active) return;
         setStarting(false);
         setError(
-          caught instanceof Error
-            ? caught.message
-            : "The camera could not start. Allow camera access for CivicFlow and try again.",
+          messageOf(
+            caught,
+            "The camera could not start. Allow camera access for CivicFlow and try again.",
+          ),
         );
       });
     return () => {

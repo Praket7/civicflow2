@@ -12,6 +12,7 @@ import {
 import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
+import { messageOf } from "../../lib/errors";
 
 function formatJson(value: Record<string, unknown> | null): string {
   if (!value) return "No local value was kept.";
@@ -40,7 +41,7 @@ export function SharedConflictsPage() {
       setConflicts(await listSharedConflicts());
       setError("");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setLoading(false);
     }
@@ -69,7 +70,7 @@ export function SharedConflictsPage() {
           : "Conflict dismissed without changing the organization.",
       );
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -84,7 +85,7 @@ export function SharedConflictsPage() {
       await reload();
       setNotice("Replica rebuilt from the organization's current state.");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }

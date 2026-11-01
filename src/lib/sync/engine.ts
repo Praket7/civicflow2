@@ -8,6 +8,7 @@ import {
   type CommandResult,
   type PullResult,
 } from "./protocol";
+import { messageOf } from "../errors";
 
 export interface SyncStore {
   recoverStaleSending(cutoff: number, now: number): Promise<number>;
@@ -226,7 +227,7 @@ export class SyncEngine {
     } catch (error) {
       await this.publish({
         online: false,
-        lastError: error instanceof Error ? error.message : String(error),
+        lastError: messageOf(error),
       });
     } finally {
       await this.publish({ running: false });
@@ -247,7 +248,7 @@ export class SyncEngine {
       try {
         result = await this.transport.push(row.envelope);
       } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
+        const message = messageOf(error);
         await this.store.markRetry(
           row.id,
           message,

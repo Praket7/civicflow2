@@ -45,6 +45,7 @@ import {
   useInstallPrompt,
 } from "./ui";
 import styles from "./pwa.module.css";
+import { messageOf } from "../lib/errors";
 
 const CAUSE_LABEL: Record<string, string> = {
   food: "Food security",
@@ -112,7 +113,7 @@ export function SignInScreen() {
             setBusy(true);
             void signIn(email, password)
               .catch((caught: unknown) => {
-                setProblem(caught instanceof Error ? caught.message : String(caught));
+                setProblem(messageOf(caught));
               })
               .finally(() => setBusy(false));
           }}
@@ -498,7 +499,7 @@ export function ShiftDetailScreen() {
       await queue(command, { shiftId: shift.id, volunteerId: view.volunteerId, ...payload });
       setMessage(note);
     } catch (caught) {
-      setProblem(caught instanceof Error ? caught.message : String(caught));
+      setProblem(messageOf(caught));
     } finally {
       setBusy(null);
     }
@@ -913,9 +914,7 @@ export function ProfileScreen() {
             { [view.volunteerId]: view.rowVersion },
           )
             .then(() => setMessage("Profile saved. It will sync with the shared roster."))
-            .catch((caught: unknown) =>
-              setProblem(caught instanceof Error ? caught.message : String(caught)),
-            )
+            .catch((caught: unknown) => setProblem(messageOf(caught)))
             .finally(() => setBusy(false));
         }}
       >
@@ -1053,7 +1052,7 @@ export function NotificationsScreen() {
       await markAllRead(workspace.organizationId);
       await syncNow();
     } catch (caught) {
-      setProblem(caught instanceof Error ? caught.message : String(caught));
+      setProblem(messageOf(caught));
     } finally {
       setBusy(false);
     }
@@ -1329,7 +1328,7 @@ function NotificationSettings() {
         setProblem(null);
       })
       .catch((caught: unknown) => {
-        if (active) setProblem(caught instanceof Error ? caught.message : String(caught));
+        if (active) setProblem(messageOf(caught));
       });
     return () => {
       active = false;
@@ -1384,7 +1383,7 @@ function NotificationSettings() {
       setPush(await pushState());
       setMessage("Notification settings saved. New reminders will use them.");
     } catch (caught) {
-      setProblem(caught instanceof Error ? caught.message : String(caught));
+      setProblem(messageOf(caught));
     } finally {
       setBusy(false);
     }
@@ -1581,9 +1580,7 @@ export function CheckInScreen() {
               clientAt: new Date().toISOString(),
             })
               .then(() => setSubmitted(true))
-              .catch((caught: unknown) =>
-                setProblem(caught instanceof Error ? caught.message : String(caught)),
-              )
+              .catch((caught: unknown) => setProblem(messageOf(caught)))
               .finally(() => setBusy(false));
           }}
         />

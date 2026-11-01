@@ -3,6 +3,7 @@ import { t } from "../../lib/i18n";
 import { useRetentionSignals } from "../../lib/workspace/queries";
 import styles from "./RetentionSignals.module.css";
 import type { RetentionSignalKind } from "../../types/domain";
+import { messageOf } from "../../lib/errors";
 
 const SIGNAL_LABEL: Record<RetentionSignalKind, string> = {
   inactive: "Inactive",
@@ -44,7 +45,7 @@ export function RetentionSignalsCard() {
       />
       {error ? (
         <p className={styles.error} role="alert">
-          {error instanceof Error ? error.message : String(error)}
+          {messageOf(error)}
         </p>
       ) : null}
       {signals.length === 0 ? (

@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { Check, ClipboardCheck, LogIn, LogOut, RefreshCw, UserX, Wand2, X } from "lucide-react";
 import { Button, Page, PageHeader, SelectField, TextField } from "../../components/ui";
 import { isTauri } from "../../lib/platform";
-import { number, text, useSharedReplica, type SharedRow } from "../../lib/sync/sharedReplica";
+import { useSharedReplica } from "../../lib/sync/sharedReplica";
+import { number, text, type SharedRow } from "../../lib/sync/sharedRows";
 import { planShift, planUpcoming } from "../../lib/sync/sharedPlan";
 import {
   applySharedRosterPlan,
@@ -17,6 +18,7 @@ import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
 import { formatWhen } from "./sharedFormat";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
+import { messageOf } from "../../lib/errors";
 
 export function SharedParticipationPage() {
   const { sync, data, loading, reload } = useSharedReplica();
@@ -84,7 +86,7 @@ export function SharedParticipationPage() {
       await action();
       await reload();
     } catch (error) {
-      flash("bad", error instanceof Error ? error.message : String(error));
+      flash("bad", messageOf(error));
     } finally {
       setBusy("");
     }
@@ -135,7 +137,7 @@ export function SharedParticipationPage() {
       );
       await reload();
     } catch (error) {
-      flash("bad", error instanceof Error ? error.message : String(error));
+      flash("bad", messageOf(error));
     } finally {
       setBusy("");
     }

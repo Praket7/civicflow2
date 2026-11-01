@@ -11,7 +11,8 @@ import {
 } from "../../components/ui";
 import { t } from "../../lib/i18n";
 import { isTauri } from "../../lib/platform";
-import { number, text, useSharedReplica, type SharedRow } from "../../lib/sync/sharedReplica";
+import { useSharedReplica } from "../../lib/sync/sharedReplica";
+import { number, text, type SharedRow } from "../../lib/sync/sharedRows";
 import {
   createSharedOpportunity,
   createSharedSeries,
@@ -23,6 +24,7 @@ import { filterOpportunities, filterShifts, OPPORTUNITY_PAGE, SHIFT_PAGE } from 
 import { formatWhen } from "./sharedFormat";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
+import { messageOf } from "../../lib/errors";
 
 function localInput(value: unknown): string {
   if (typeof value !== "string" || !value) return "";
@@ -168,7 +170,7 @@ export function SharedSchedulePage() {
       setNotice({ tone: "good", message: "Opportunity queued for the organization." });
       await reload();
     } catch (error) {
-      setNotice({ tone: "bad", message: error instanceof Error ? error.message : String(error) });
+      setNotice({ tone: "bad", message: messageOf(error) });
     } finally {
       setBusy(false);
     }
@@ -222,7 +224,7 @@ export function SharedSchedulePage() {
       setShiftRepeat("1");
       await reload();
     } catch (error) {
-      setNotice({ tone: "bad", message: error instanceof Error ? error.message : String(error) });
+      setNotice({ tone: "bad", message: messageOf(error) });
     } finally {
       setBusy(false);
     }
@@ -260,7 +262,7 @@ export function SharedSchedulePage() {
       setNotice({ tone: "good", message: "Shift change queued. The server will confirm it." });
       await reload();
     } catch (error) {
-      setNotice({ tone: "bad", message: error instanceof Error ? error.message : String(error) });
+      setNotice({ tone: "bad", message: messageOf(error) });
     } finally {
       setBusy(false);
     }
@@ -274,7 +276,7 @@ export function SharedSchedulePage() {
       setNotice({ tone: "good", message: "Shift cancellation queued." });
       await reload();
     } catch (error) {
-      setNotice({ tone: "bad", message: error instanceof Error ? error.message : String(error) });
+      setNotice({ tone: "bad", message: messageOf(error) });
     } finally {
       setBusy(false);
     }

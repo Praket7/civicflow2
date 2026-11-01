@@ -16,14 +16,11 @@ import { useWorkspace } from "../../lib/workspace/session";
 import { formatDateTime, formatTime } from "../../lib/workspace/selectors";
 import type { BackupSnapshot } from "../../types/domain";
 import styles from "./Records.module.css";
+import { messageOf } from "../../lib/errors";
 
 function formatBytes(bytes: number): string {
   if (bytes < 1_048_576) return `${Math.round(bytes / 1024)} KB`;
   return `${(bytes / 1_048_576).toFixed(1)} MB`;
-}
-
-function describeError(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
 }
 
 export function BackupPage() {
@@ -66,7 +63,7 @@ export function BackupPage() {
         setMessage(`Snapshot created: ${created.rows} rows, ${formatBytes(created.bytes)}.`);
       }
     } catch (caught) {
-      setError(`Snapshot failed: ${describeError(caught)}`);
+      setError(`Snapshot failed: ${messageOf(caught)}`);
     } finally {
       setBusy(false);
     }
@@ -87,7 +84,7 @@ export function BackupPage() {
       );
     } catch (caught) {
       setPendingRestore(null);
-      setError(`Restore failed: ${describeError(caught)}`);
+      setError(`Restore failed: ${messageOf(caught)}`);
     } finally {
       setBusy(false);
     }
@@ -111,7 +108,7 @@ export function BackupPage() {
         );
       }
     } catch (caught) {
-      setError(`Encrypted copy failed: ${describeError(caught)}`);
+      setError(`Encrypted copy failed: ${messageOf(caught)}`);
     } finally {
       setArchiveBusy(false);
     }
@@ -133,7 +130,7 @@ export function BackupPage() {
         );
       }
     } catch (caught) {
-      setError(`Restore from archive failed: ${describeError(caught)}`);
+      setError(`Restore from archive failed: ${messageOf(caught)}`);
     } finally {
       setArchiveBusy(false);
     }

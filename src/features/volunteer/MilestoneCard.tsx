@@ -3,6 +3,7 @@ import { Badge, Card, SectionHeader } from "../../components/ui";
 import { t } from "../../lib/i18n";
 import { useVolunteerInsight } from "../../lib/workspace/queries";
 import styles from "./MilestoneCard.module.css";
+import { messageOf } from "../../lib/errors";
 
 /** A few milestones and the next one; no leaderboard. */
 export function MilestoneCard({
@@ -28,7 +29,7 @@ export function MilestoneCard({
       />
       {error ? (
         <p className={styles.error} role="alert">
-          {error instanceof Error ? error.message : String(error)}
+          {messageOf(error)}
         </p>
       ) : null}
       {!insight ? null : (

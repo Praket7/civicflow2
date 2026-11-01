@@ -6,6 +6,7 @@ import { useNotificationRules, useUpdateNotificationRule } from "../../lib/works
 import { useWorkspace } from "../../lib/workspace/session";
 import type { NotificationRule, ReminderTrigger } from "../../types/domain";
 import styles from "./ReminderRules.module.css";
+import { messageOf } from "../../lib/errors";
 
 const TRIGGER_LABEL: Record<ReminderTrigger, string> = {
   shift_reminder: "Shift reminder",
@@ -51,7 +52,7 @@ export function ReminderRulesCard() {
     try {
       await update.mutateAsync({ ruleId: rule.id, patch: { enabled } });
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -72,7 +73,7 @@ export function ReminderRulesCard() {
         ),
       );
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -132,7 +133,7 @@ export function ReminderRulesCard() {
       ) : null}
       {error || readError ? (
         <p className={styles.error} role="alert">
-          {error || (readError instanceof Error ? readError.message : String(readError))}
+          {error || messageOf(readError)}
         </p>
       ) : null}
     </Card>

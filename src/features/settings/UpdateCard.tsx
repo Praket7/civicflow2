@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Download, RefreshCw } from "lucide-react";
 import { Button } from "../../components/ui";
 import { isTauri } from "../../lib/platform";
+import { messageOf } from "../../lib/errors";
 
 type State =
   | { kind: "idle" }
@@ -66,7 +67,7 @@ export function UpdateCard() {
     } catch (caught) {
       setState({
         kind: "error",
-        message: caught instanceof Error ? caught.message : String(caught),
+        message: messageOf(caught),
       });
     }
   }
@@ -95,7 +96,7 @@ export function UpdateCard() {
     } catch (caught) {
       setState({
         kind: "error",
-        message: caught instanceof Error ? caught.message : String(caught),
+        message: messageOf(caught),
       });
     }
   }
@@ -107,7 +108,7 @@ export function UpdateCard() {
     } catch (caught) {
       setState({
         kind: "error",
-        message: caught instanceof Error ? caught.message : String(caught),
+        message: messageOf(caught),
       });
     }
   }

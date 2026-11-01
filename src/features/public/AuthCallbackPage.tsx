@@ -23,6 +23,7 @@ import {
 import { isTauri } from "../../lib/platform";
 import { AuthPortrait } from "./AuthPortrait";
 import styles from "./auth.module.css";
+import { messageOf } from "../../lib/errors";
 
 type Failure = {
   message: string;
@@ -162,7 +163,7 @@ export function AuthCallbackPage() {
       } catch (caught) {
         if (!live) return;
         setFailure({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: messageOf(caught),
           kind: "retry",
         });
       }

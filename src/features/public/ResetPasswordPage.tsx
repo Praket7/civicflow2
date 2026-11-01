@@ -14,6 +14,7 @@ import {
 } from "../../lib/auth/hosted";
 import { AuthPortrait } from "./AuthPortrait";
 import styles from "./auth.module.css";
+import { messageOf } from "../../lib/errors";
 
 type Stage = "checking" | "ready" | "missing" | "saved";
 
@@ -52,11 +53,7 @@ export function ResetPasswordPage() {
         setStage("ready");
       } catch (caught) {
         setStage("missing");
-        setMessage(
-          caught instanceof Error
-            ? caught.message
-            : "That link could not be verified. Request a new one.",
-        );
+        setMessage(messageOf(caught, "That link could not be verified. Request a new one."));
       }
     })();
   }, []);
@@ -77,7 +74,7 @@ export function ResetPasswordPage() {
       await updateHostedPassword(password);
       setStage("saved");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }

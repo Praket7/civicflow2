@@ -1,9 +1,6 @@
+import { formatCalendarDate } from "./sharedFormat";
+
 const HOURS = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
-const DATE = new Intl.DateTimeFormat(undefined, {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-});
 const MONTH = new Intl.DateTimeFormat(undefined, { month: "short", year: "2-digit" });
 const PACKET_MONTH = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" });
 
@@ -13,9 +10,7 @@ export function formatHours(minutes: number): string {
 }
 
 export function formatReportDate(key: string): string {
-  if (!key) return "No date";
-  const date = new Date(`${key}T12:00:00`);
-  return Number.isNaN(date.getTime()) ? key : DATE.format(date);
+  return formatCalendarDate(key);
 }
 
 export function formatReportMonth(key: string): string {

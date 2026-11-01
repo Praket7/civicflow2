@@ -1,5 +1,5 @@
 import { csvRow } from "../csv";
-import type { SharedRow } from "./sharedReplica";
+import { number, text, type SharedRow } from "./sharedRows";
 
 /**
  * The coordinator's impact report over the shared organization.
@@ -106,16 +106,6 @@ export const EMPTY_REPORT_DATA: SharedReportData = {
 };
 
 const EXPIRING_DAYS = 60;
-
-export function text(row: SharedRow | undefined, key: string): string {
-  const value = row?.[key];
-  return typeof value === "string" ? value : "";
-}
-
-function number(row: SharedRow | undefined, key: string): number {
-  const value = row?.[key];
-  return typeof value === "number" ? value : Number(value) || 0;
-}
 
 function datePart(value: unknown): string {
   return typeof value === "string" ? value.slice(0, 10) : "";

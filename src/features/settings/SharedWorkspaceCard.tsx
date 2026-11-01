@@ -15,6 +15,7 @@ import { desktopDevice } from "../../lib/cloud/device";
 import { publishLocalSchedule, type PublishResult } from "../../lib/sync/publish";
 import { replicaId, writeWorkspace } from "../../lib/sync/db";
 import { useWorkspace } from "../../lib/workspace/session";
+import { messageOf } from "../../lib/errors";
 
 export function SharedWorkspaceCard() {
   const available = cloudAvailable();
@@ -35,7 +36,7 @@ export function SharedWorkspaceCard() {
     try {
       setWorkspaces(await cloudWorkspaces());
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     }
   }, []);
 
@@ -67,7 +68,7 @@ export function SharedWorkspaceCard() {
       await loadWorkspaces();
       setNotice("Connected. Choose an organization below.");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }
@@ -83,7 +84,7 @@ export function SharedWorkspaceCard() {
       setRegistered(null);
       setNotice("Disconnected this desktop from the shared workspace.");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }
@@ -103,7 +104,7 @@ export function SharedWorkspaceCard() {
         `Queued ${result.opportunities} opportunities and ${result.shifts} shifts for ${workspace.organization.name}. ${result.skipped} rows were already there or had no hosted match.`,
       );
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }
@@ -131,7 +132,7 @@ export function SharedWorkspaceCard() {
         `This desktop is registered with ${workspace.organization.name}. The coordinator health page will list it.`,
       );
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }

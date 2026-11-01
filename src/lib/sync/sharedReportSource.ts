@@ -1,15 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
-import { isTauri } from "../platform";
-import {
-  desktopSyncSnapshot,
-  startDesktopSync,
-  subscribeDesktopSync,
-  syncDesktopNow,
-  type DesktopSyncState,
-} from "./desktop";
+import type { DesktopSyncState } from "./desktop";
 import { readReplicaReportEntities } from "./desktopStore";
 import { EMPTY_REPORT_DATA, type SharedReportData } from "./sharedReports";
-import type { SharedRow } from "./sharedReplica";
+import type { SharedRow } from "./sharedRows";
+import { useReplicaSource } from "./useReplicaSource";
 
 /**
  * The reporting read model over the desktop replica.
@@ -45,53 +38,11 @@ export interface SharedReportSource {
   reload: () => Promise<void>;
 }
 
+function readReport(organizationId: string): Promise<SharedReportData> {
+  return readReplicaReportEntities(organizationId).then(reportDataFrom);
+}
+
 export function useSharedReportData(): SharedReportSource {
-  const [sync, setSync] = useState<DesktopSyncState>(() => desktopSyncSnapshot());
-  const [data, setData] = useState<SharedReportData>(EMPTY_REPORT_DATA);
-  const [loading, setLoading] = useState(() => isTauri());
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => subscribeDesktopSync(setSync), []);
-
-  useEffect(() => {
-    if (!isTauri()) return;
-    void startDesktopSync();
-  }, []);
-
-  const load = useCallback(async () => {
-    const organizationId = desktopSyncSnapshot().organizationId;
-    if (!isTauri() || !organizationId) {
-      setData(EMPTY_REPORT_DATA);
-      setLoading(false);
-      return;
-    }
-    try {
-      setData(reportDataFrom(await readReplicaReportEntities(organizationId)));
-      setError(null);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    let current = true;
-    void (async () => {
-      await Promise.resolve();
-      if (current) await load();
-    })();
-    return () => {
-      current = false;
-    };
-  }, [load, sync.organizationId, sync.cursor, sync.entities]);
-
-  const reload = useCallback(async () => {
-    setLoading(true);
-    await startDesktopSync().catch(() => {});
-    await syncDesktopNow().catch(() => {});
-    await load();
-  }, [load]);
-
+  const { sync, data, loading, error, reload } = useReplicaSource(EMPTY_REPORT_DATA, readReport);
   return { sync, data, loading, error, reload };
 }

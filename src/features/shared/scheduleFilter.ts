@@ -1,4 +1,4 @@
-import { text, type SharedRow } from "../../lib/sync/sharedReplica";
+import { text, type SharedRow } from "../../lib/sync/sharedRows";
 
 /**
  * A realistic organization can hold hundreds of programs and thousands of

@@ -29,6 +29,7 @@ import {
 } from "../../lib/workspace/selectors";
 import { useWorkspace } from "../../lib/workspace/session";
 import styles from "./OnboardingPage.module.css";
+import { messageOf } from "../../lib/errors";
 
 const SKILL_OPTIONS = [
   "Spanish",
@@ -96,7 +97,7 @@ export function OnboardingPage() {
       setPhoto(await profilePhoto(file));
       setError("");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     }
   }
 

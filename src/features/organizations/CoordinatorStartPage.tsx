@@ -11,6 +11,7 @@ import {
 } from "../../lib/organizations/store";
 import { useOrganizationWorkspace } from "../../lib/organizations/useOrganizationWorkspace";
 import styles from "./onboarding.module.css";
+import { messageOf } from "../../lib/errors";
 
 export function CoordinatorStartPage() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export function CoordinatorStartPage() {
         { replace: true },
       );
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }
@@ -66,7 +67,7 @@ export function CoordinatorStartPage() {
       await refresh();
       navigate("/coordinator/mission-control");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }

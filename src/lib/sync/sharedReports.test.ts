@@ -7,7 +7,7 @@ import {
   reportToCsv,
   type SharedReportData,
 } from "./sharedReports";
-import type { SharedRow } from "./sharedReplica";
+import type { SharedRow } from "./sharedRows";
 
 const NOW = new Date("2026-03-15T12:00:00Z");
 const RANGE = { from: "2026-01-01", to: "2026-03-31" };

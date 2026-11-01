@@ -30,6 +30,7 @@ import {
 } from "../../lib/workspace/selectors";
 import type { HourRow } from "../../lib/workspace/selectors";
 import styles from "./Reports.module.css";
+import { messageOf } from "../../lib/errors";
 
 const FIELD_OPTIONS = [
   { id: "volunteer", label: "Volunteer name" },
@@ -157,7 +158,7 @@ export function CustomReportPage() {
           : `Exported ${receipt.title} (${receipt.format.toUpperCase()}) to ${receipt.path}.`,
       );
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     }
   }
 
@@ -394,7 +395,7 @@ export function CustomReportPage() {
                     );
                     setError("");
                   } catch (caught) {
-                    setError(caught instanceof Error ? caught.message : String(caught));
+                    setError(messageOf(caught));
                   }
                 })();
               }}

@@ -10,6 +10,7 @@ import type {
   ShiftSeriesRecord,
 } from "../../types/domain";
 import styles from "./SeriesSchedule.module.css";
+import { messageOf } from "../../lib/errors";
 
 const WEEKDAYS = [
   { value: 1, label: "Mon" },
@@ -90,7 +91,7 @@ export function SeriesScheduleCard({ opportunity }: { opportunity: Opportunity }
       };
       setCreated(await actions.createShiftSeries(opportunity.id, rule, parseRoles(roles)));
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }

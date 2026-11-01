@@ -44,6 +44,7 @@ import { useCheckinWindow } from "../../lib/workspace/queries";
 import { useWorkspace } from "../../lib/workspace/session";
 import type { Cause, Shift } from "../../types/domain";
 import styles from "./VolunteerShiftPage.module.css";
+import { messageOf } from "../../lib/errors";
 
 const TASKS: Record<Cause, string[]> = {
   food: [
@@ -231,7 +232,7 @@ export function VolunteerShiftPage() {
       await actions.cancelRegistration(activeShift.id, volunteer.id, "Canceled from shift detail");
       navigate("/volunteer/schedule", { replace: true });
     } catch (caught) {
-      setCancelError(caught instanceof Error ? caught.message : String(caught));
+      setCancelError(messageOf(caught));
       setCancelArmed(false);
     }
   }

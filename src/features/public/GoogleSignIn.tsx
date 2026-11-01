@@ -3,6 +3,7 @@ import { Button } from "../../components/ui";
 import { hostedRedirect, startHostedOAuth } from "../../lib/auth/hosted";
 import { isTauri, openExternal } from "../../lib/platform";
 import styles from "./auth.module.css";
+import { messageOf } from "../../lib/errors";
 
 interface GoogleSignInProps {
   label: string;
@@ -51,7 +52,7 @@ export function GoogleSignIn({ label, disabled, onError }: GoogleSignInProps) {
       await openExternal(url);
       if (isTauri()) setHandedOff(true);
     } catch (caught) {
-      onError(caught instanceof Error ? caught.message : String(caught));
+      onError(messageOf(caught));
     } finally {
       setBusy(false);
     }

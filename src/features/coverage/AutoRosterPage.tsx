@@ -37,6 +37,7 @@ import {
   timeRange,
 } from "../../lib/workspace/selectors";
 import type { ShiftRow } from "../../lib/workspace/selectors";
+import { messageOf } from "../../lib/errors";
 
 interface RoleGap {
   name: string;
@@ -279,7 +280,7 @@ export function AutoRosterPage() {
         if (active) setEvaluation(result);
       })
       .catch((caught) => {
-        if (active) setError(caught instanceof Error ? caught.message : String(caught));
+        if (active) setError(messageOf(caught));
       });
     return () => {
       active = false;
@@ -526,7 +527,7 @@ export function AutoRosterPage() {
       );
       setAnswer({ slotId, candidateName, answer: result });
     } catch (caught) {
-      setAnswerError(caught instanceof Error ? caught.message : String(caught));
+      setAnswerError(messageOf(caught));
     } finally {
       setAsking("");
     }
@@ -563,7 +564,7 @@ export function AutoRosterPage() {
       setApplied(false);
       setAppliedCount(0);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setPlanning(false);
     }
@@ -595,7 +596,7 @@ export function AutoRosterPage() {
       setPlan(null);
       setAnswer(null);
     } catch (caught) {
-      const message = caught instanceof Error ? caught.message : String(caught);
+      const message = messageOf(caught);
       if (/PLAN_STALE|roster changed after this plan/i.test(message)) {
         setStale(true);
         setError(

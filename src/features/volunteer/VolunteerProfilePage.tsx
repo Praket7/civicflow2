@@ -47,6 +47,7 @@ import {
 } from "../../lib/workspace/selectors";
 import { useWorkspace } from "../../lib/workspace/session";
 import styles from "./VolunteerProfilePage.module.css";
+import { messageOf } from "../../lib/errors";
 
 type ProfileTab = "overview" | "skills" | "availability" | "activity";
 
@@ -160,7 +161,7 @@ export function VolunteerProfilePage() {
       await actions.saveVolunteerProfile({ ...profile, photo: next });
       setPhoto(next);
     } catch (caught) {
-      setPhotoError(caught instanceof Error ? caught.message : String(caught));
+      setPhotoError(messageOf(caught));
     } finally {
       setPhotoBusy(false);
     }
@@ -173,7 +174,7 @@ export function VolunteerProfilePage() {
     try {
       await savePhoto(await profilePhoto(file));
     } catch (caught) {
-      setPhotoError(caught instanceof Error ? caught.message : String(caught));
+      setPhotoError(messageOf(caught));
       setPhotoBusy(false);
     }
   }

@@ -1,4 +1,5 @@
-import { number, text, type SharedReplicaData, type SharedRow } from "./sharedReplica";
+import type { SharedReplicaData } from "./sharedReplica";
+import { number, text, type SharedRow } from "./sharedRows";
 import type { SharedAssignment } from "./writes";
 
 /**

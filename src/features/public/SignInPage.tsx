@@ -9,6 +9,7 @@ import type { Account } from "../../types/domain";
 import { AuthPortrait } from "./AuthPortrait";
 import { GoogleSignIn } from "./GoogleSignIn";
 import styles from "./auth.module.css";
+import { messageOf } from "../../lib/errors";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,7 +17,7 @@ function describeError(caught: unknown): string {
   if (caught && typeof caught === "object" && "message" in caught) {
     return String((caught as { message: unknown }).message);
   }
-  return caught instanceof Error ? caught.message : String(caught);
+  return messageOf(caught);
 }
 
 export function SignInPage() {

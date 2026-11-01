@@ -12,12 +12,9 @@ import type { Column } from "../../components/ui";
 import { t } from "../../lib/i18n";
 import { useWorkspace } from "../../lib/workspace/session";
 import type { VolunteerImportPreview, VolunteerImportRow } from "../../types/domain";
+import { messageOf } from "../../lib/errors";
 
 type CheckedRow = VolunteerImportRow & { id: string };
-
-function message(caught: unknown): string {
-  return caught instanceof Error ? caught.message : String(caught);
-}
 
 /**
  * Rows are checked before anything is written; a file with any problem is
@@ -53,7 +50,7 @@ export function VolunteerImportCard() {
     try {
       setPreview(await actions.previewVolunteerImport(next));
     } catch (caught) {
-      setError(message(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }
@@ -78,7 +75,7 @@ export function VolunteerImportCard() {
       setText("");
       setPreview(await actions.previewVolunteerImport(""));
     } catch (caught) {
-      setError(message(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }
@@ -92,7 +89,7 @@ export function VolunteerImportCard() {
       const receipt = await actions.exportVolunteerRoster();
       if (receipt) setDone(`Roster written to ${receipt.path}.`);
     } catch (caught) {
-      setError(message(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }

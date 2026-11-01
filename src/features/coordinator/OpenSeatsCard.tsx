@@ -6,6 +6,7 @@ import { useReplacementRecommendations } from "../../lib/workspace/queries";
 import { useWorkspace } from "../../lib/workspace/session";
 import type { Shift } from "../../types/domain";
 import styles from "./OpenSeatsCard.module.css";
+import { messageOf } from "../../lib/errors";
 
 /**
  * First waitlisted volunteer who meets every requirement; the people passed
@@ -51,7 +52,7 @@ export function OpenSeatsCard({ shift }: { shift: Shift }) {
       await actions.promoteWaitlist(shift.id, volunteerId);
       setNotice(t("{name} is on the roster. The seat is filled.", { name }));
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }

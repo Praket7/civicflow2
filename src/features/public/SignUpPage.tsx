@@ -16,6 +16,7 @@ import { AuthPortrait } from "./AuthPortrait";
 import { GoogleSignIn } from "./GoogleSignIn";
 import styles from "./auth.module.css";
 import local from "./SignUpPage.module.css";
+import { messageOf } from "../../lib/errors";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -35,7 +36,7 @@ function readError(caught: unknown): { message: string; field?: string } {
       field: typeof bag.field === "string" ? bag.field : undefined,
     };
   }
-  return { message: caught instanceof Error ? caught.message : String(caught) };
+  return { message: messageOf(caught) };
 }
 
 function newCode(): string {

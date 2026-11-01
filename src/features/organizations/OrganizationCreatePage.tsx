@@ -12,6 +12,7 @@ import { ORGANIZATION_COVERS } from "../../lib/organizations/types";
 import type { OrganizationVisibility } from "../../lib/organizations/types";
 import { US_STATES, stateCode } from "../../lib/us-states";
 import styles from "./onboarding.module.css";
+import { messageOf } from "../../lib/errors";
 
 interface FormState {
   name: string;
@@ -58,7 +59,7 @@ export function OrganizationCreatePage() {
     } catch (caught) {
       setErrors((current) => ({
         ...current,
-        form: caught instanceof Error ? caught.message : String(caught),
+        form: messageOf(caught),
       }));
     }
   }
@@ -121,7 +122,7 @@ export function OrganizationCreatePage() {
       await refresh();
       setCreated(organization);
     } catch (caught) {
-      setErrors({ form: caught instanceof Error ? caught.message : String(caught) });
+      setErrors({ form: messageOf(caught) });
     }
   }
 

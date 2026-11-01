@@ -23,6 +23,7 @@ import { useCheckinWindow } from "../../lib/workspace/queries";
 import { useWorkspace } from "../../lib/workspace/session";
 import type { CheckinStatus } from "../../types/domain";
 import styles from "./CheckInPage.module.css";
+import { messageOf } from "../../lib/errors";
 
 const CODE_LENGTH = 6;
 
@@ -215,7 +216,7 @@ function CheckInBody({ liveEvent }: { liveEvent: LiveEvent }) {
       .checkIn(shift.id, volunteer.id, digits.join(""))
       .then(() => setCodeAccepted(true))
       .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(messageOf(caught));
         resetCode();
       });
   }

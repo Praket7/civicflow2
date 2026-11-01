@@ -6,6 +6,7 @@ import { useShiftSeries } from "../../lib/workspace/queries";
 import { useWorkspace } from "../../lib/workspace/session";
 import type { ShiftSeriesRecord } from "../../types/domain";
 import styles from "./SeriesSchedule.module.css";
+import { messageOf } from "../../lib/errors";
 
 const WEEKDAY_LABELS: Record<number, string> = {
   0: "Sun",
@@ -62,7 +63,7 @@ export function SeriesManagerCard() {
     try {
       await work();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -225,7 +226,7 @@ export function SeriesManagerCard() {
       ) : null}
       {error || readError ? (
         <p className={styles.error} role="alert">
-          {error || (readError instanceof Error ? readError.message : String(readError))}
+          {error || messageOf(readError)}
         </p>
       ) : null}
     </Card>

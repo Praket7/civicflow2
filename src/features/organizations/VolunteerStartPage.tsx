@@ -23,6 +23,7 @@ import {
 import { useOrganizationWorkspace } from "../../lib/organizations/useOrganizationWorkspace";
 import { getWorkspaceRepository } from "../../lib/workspace/repository";
 import styles from "./onboarding.module.css";
+import { messageOf } from "../../lib/errors";
 
 export function VolunteerStartPage() {
   const repository = getWorkspaceRepository();
@@ -86,7 +87,7 @@ export function VolunteerStartPage() {
       await refresh();
       navigate("/volunteer/home", { replace: true });
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -104,7 +105,7 @@ export function VolunteerStartPage() {
       setNotice(`You're in. ${organization.name} is now your current workspace.`);
       window.setTimeout(() => navigate("/volunteer/home"), 650);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -136,7 +137,7 @@ export function VolunteerStartPage() {
         650,
       );
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }

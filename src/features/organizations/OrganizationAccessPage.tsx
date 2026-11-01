@@ -13,6 +13,7 @@ import type {
 } from "../../lib/organizations/types";
 import { isCoordinatorRole, membershipRoleLabel } from "../../lib/organizations/types";
 import styles from "./OrganizationAccessPage.module.css";
+import { messageOf } from "../../lib/errors";
 
 const repository = getWorkspaceRepository();
 
@@ -56,7 +57,7 @@ export function OrganizationAccessPage() {
         setInvites(nextInvites);
       })
       .catch((caught: unknown) => {
-        if (active) setError(caught instanceof Error ? caught.message : String(caught));
+        if (active) setError(messageOf(caught));
       });
     return () => {
       active = false;
@@ -85,7 +86,7 @@ export function OrganizationAccessPage() {
       setEmail("");
       setInvites(await repository.listOrganizationInvites(organizationId));
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -99,7 +100,7 @@ export function OrganizationAccessPage() {
       setMembers(await repository.setOrganizationMemberRole(organizationId, member.userId, next));
       setNotice(`${displayName(member)} is now a ${next}.`);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -115,7 +116,7 @@ export function OrganizationAccessPage() {
       );
       setNotice(`${displayName(member)} can no longer sign in to this organization.`);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -131,7 +132,7 @@ export function OrganizationAccessPage() {
       );
       setNotice(`${displayName(member)} can sign in again.`);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -154,7 +155,7 @@ export function OrganizationAccessPage() {
       hydrateOrganizations(await repository.listOrganizations());
       setNotice(`${displayName(member)} is now an owner.`);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -172,7 +173,7 @@ export function OrganizationAccessPage() {
       if (issued?.id === invite.id) setIssued(null);
       setNotice("Invitation revoked.");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }

@@ -14,6 +14,7 @@ import {
 } from "./desktopStore";
 import { SyncEngine, type SyncStatus } from "./engine";
 import { createSupabaseTransport } from "./transport";
+import { messageOf } from "../errors";
 
 /**
  * The desktop's own shared workspace.
@@ -354,7 +355,7 @@ async function runStart(forceBootstrap: boolean): Promise<DesktopSyncState> {
     });
     return state;
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = messageOf(error);
     publish({ phase: state.configured ? "offline" : "error", online: false, error: message });
     return state;
   }

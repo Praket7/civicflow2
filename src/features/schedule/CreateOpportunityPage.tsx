@@ -18,6 +18,7 @@ import { CAUSE_LABELS } from "../../lib/workspace/selectors";
 import type { Cause, NewOpportunityInput, Opportunity } from "../../types/domain";
 import { SeriesScheduleCard } from "./SeriesScheduleCard";
 import styles from "./Schedule.module.css";
+import { messageOf } from "../../lib/errors";
 
 const CAUSE_IMAGE: Record<Cause, string> = {
   food: "/media/opp-food-distribution.jpg",
@@ -157,7 +158,7 @@ export function CreateOpportunityPage() {
       setCreated(opportunity);
       setError("");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "The program could not be saved.");
+      setError(messageOf(caught, "The program could not be saved."));
     }
   }
 

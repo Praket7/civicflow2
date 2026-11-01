@@ -11,13 +11,8 @@ import {
 } from "../../components/ui";
 import { initialsOf } from "../../lib/initials";
 import { isTauri } from "../../lib/platform";
-import {
-  number,
-  text,
-  useSharedReplica,
-  type SharedReplicaData,
-  type SharedRow,
-} from "../../lib/sync/sharedReplica";
+import { useSharedReplica, type SharedReplicaData } from "../../lib/sync/sharedReplica";
+import { number, text, type SharedRow } from "../../lib/sync/sharedRows";
 import {
   createSharedCredentialType,
   saveSharedCredential,
@@ -31,6 +26,7 @@ import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
 import { SharedNav } from "./SharedNav";
 import { formatCalendarDate } from "./sharedFormat";
 import styles from "./shared.module.css";
+import { messageOf } from "../../lib/errors";
 
 const DAYS = [
   { id: "mon", short: "Mon", label: "Monday" },
@@ -244,7 +240,7 @@ function VolunteerDetail({ volunteer, data, online, reload }: VolunteerDetailPro
       flash("good", success);
       await reload();
     } catch (caught) {
-      flash("bad", caught instanceof Error ? caught.message : String(caught));
+      flash("bad", messageOf(caught));
     } finally {
       setBusy("");
     }

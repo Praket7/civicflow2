@@ -7,6 +7,7 @@ import { useWorkspace } from "../../lib/workspace/session";
 import { formatDate } from "../../lib/workspace/selectors";
 import type { RecoveryChange, RecoveryChangeRequest, RecoveryPlan } from "../../types/domain";
 import styles from "./CoveragePage.module.css";
+import { messageOf } from "../../lib/errors";
 
 const CHANGE_LABEL: Record<RecoveryChange["kind"], string> = {
   assign: "New assignment",
@@ -63,7 +64,7 @@ export function RecoveryRescueCard() {
         setNotice(t("No eligible volunteer can take the open seats on this shift right now."));
       }
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }
@@ -88,7 +89,7 @@ export function RecoveryRescueCard() {
       setPlan(null);
       setChosen({});
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy("");
     }

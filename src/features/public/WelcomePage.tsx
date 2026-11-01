@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { accountHome, useAuth } from "../../lib/auth/session";
 import { t } from "../../lib/i18n";
 import styles from "./WelcomePage.module.css";
+import { messageOf } from "../../lib/errors";
 
 const trustChips: { label: string; icon: typeof WifiOff; tone: "green" | "violet" | "teal" }[] = [
   { label: "Runs offline", icon: WifiOff, tone: "green" },
@@ -22,7 +23,7 @@ export function WelcomePage() {
       const session = await openDemo(true);
       navigate(accountHome(session.user));
     } catch (caught) {
-      setDemoError(caught instanceof Error ? caught.message : String(caught));
+      setDemoError(messageOf(caught));
     }
   }
 

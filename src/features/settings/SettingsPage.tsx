@@ -44,6 +44,7 @@ import { VolunteerImportCard } from "./VolunteerImportCard";
 import type { PriorityLevel, RosterPolicy } from "../../types/domain";
 import type { Account } from "../../types/domain";
 import styles from "../records/Records.module.css";
+import { messageOf } from "../../lib/errors";
 
 // A limit a coordinator left blank means "no cap of its own".
 function limitOrNull(value: string): number | null {
@@ -118,7 +119,7 @@ export function SettingsPage() {
         if (active) setAccounts(rows);
       })
       .catch((caught: unknown) => {
-        if (active) setAccountsError(caught instanceof Error ? caught.message : String(caught));
+        if (active) setAccountsError(messageOf(caught));
       });
     return () => {
       active = false;
@@ -137,7 +138,7 @@ export function SettingsPage() {
         setPolicyError("");
       })
       .catch((caught: unknown) => {
-        if (active) setPolicyError(caught instanceof Error ? caught.message : String(caught));
+        if (active) setPolicyError(messageOf(caught));
       });
     return () => {
       active = false;
@@ -163,7 +164,7 @@ export function SettingsPage() {
         `Matching policy saved as version ${view.policy.version}. Every plan from now on records that version.`,
       );
     } catch (caught) {
-      setPolicyError(caught instanceof Error ? caught.message : String(caught));
+      setPolicyError(messageOf(caught));
     } finally {
       setPolicyBusy(false);
     }
@@ -192,7 +193,7 @@ export function SettingsPage() {
         setSaved(`Password reset for ${target?.email ?? "the selected account"}.`);
       }
     } catch (caught) {
-      setAccountsError(caught instanceof Error ? caught.message : String(caught));
+      setAccountsError(messageOf(caught));
     } finally {
       setResetBusy(false);
     }
@@ -205,7 +206,7 @@ export function SettingsPage() {
       setCover({ src, alt: `${orgName.trim() || "Organization"} cover photo` });
       setError("");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     }
   }
 

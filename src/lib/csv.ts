@@ -4,12 +4,14 @@ export type CsvValue = string | number | boolean | null | undefined;
 
 /**
  * RFC 4180 quoting with one addition: a spreadsheet treats a leading =, +, - or
- * @ as a formula, so a volunteer name is prefixed with an apostrophe before it
- * can be quoted. Names come from people, and an export is not a program.
+ * @ as a formula, so the cell is prefixed with an apostrophe before it can be
+ * quoted. A signed number or a phone number is not a formula, so it keeps its
+ * leading sign instead of gaining a visible apostrophe in the file.
  */
 export function csvCell(value: CsvValue): string {
   const raw = value === null || value === undefined ? "" : String(value);
-  const neutral = /^[=+\-@]/.test(raw) ? `'${raw}` : raw;
+  const formulaLike = /^[=@]/.test(raw) || (/^[+-]/.test(raw) && !/^[+-][\d\s().-]*$/.test(raw));
+  const neutral = formulaLike ? `'${raw}` : raw;
   return /[",\r\n]/.test(neutral) ? `"${neutral.replace(/"/g, '""')}"` : neutral;
 }
 

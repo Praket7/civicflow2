@@ -20,6 +20,7 @@ import {
   takeStoredHostedLink,
   type HostedIdentity,
 } from "./hosted";
+import { messageOf } from "../errors";
 
 const repository = getWorkspaceRepository();
 const TOKEN_KEY = "civicflow.auth.token";
@@ -251,9 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (caught) {
           // Bouncing to the sign-in screen hid every reason a link failed; the
           // callback page can now say what the provider said.
-          window.location.hash = hostedProblemRoute(
-            caught instanceof Error ? caught.message : String(caught),
-          );
+          window.location.hash = hostedProblemRoute(messageOf(caught));
         }
       }
     }

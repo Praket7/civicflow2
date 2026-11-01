@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { planShift, planUpcoming } from "./sharedPlan";
-import type { SharedReplicaData, SharedRow } from "./sharedReplica";
+import type { SharedReplicaData } from "./sharedReplica";
+import type { SharedRow } from "./sharedRows";
 
 const SHIFT_A = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee1";
 const SHIFT_B = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee2";

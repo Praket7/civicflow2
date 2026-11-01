@@ -15,6 +15,7 @@ import {
   timeRange,
 } from "../../lib/workspace/selectors";
 import styles from "./Attendance.module.css";
+import { messageOf } from "../../lib/errors";
 
 function publicName(name: string): string {
   const parts = name.trim().split(" ");
@@ -90,7 +91,7 @@ function KioskBody({ event }: { event: LiveEvent }) {
         if (active) setEventCode(code.code);
       })
       .catch((caught: unknown) => {
-        if (active) setError(caught instanceof Error ? caught.message : String(caught));
+        if (active) setError(messageOf(caught));
       });
     return () => {
       active = false;
@@ -131,7 +132,7 @@ function KioskBody({ event }: { event: LiveEvent }) {
       })
       .catch((caught: unknown) => {
         setScannedToken(null);
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(messageOf(caught));
       });
   }
 

@@ -17,9 +17,15 @@ describe("csv", () => {
 
   it("stops a leading formula character from executing in a spreadsheet", () => {
     expect(csvCell('=HYPERLINK("https://example.org")')).toContain("'=HYPERLINK");
-    expect(csvCell("+1 (716) 555-0100")).toBe("'+1 (716) 555-0100");
+    expect(csvCell("+SUM(A1)")).toBe("'+SUM(A1)");
     expect(csvCell("-5 hours")).toBe("'-5 hours");
     expect(csvCell("@handle")).toBe("'@handle");
+  });
+
+  it("keeps signed numbers and phone numbers readable", () => {
+    expect(csvCell(-5)).toBe("-5");
+    expect(csvCell("-5")).toBe("-5");
+    expect(csvCell("+1 (716) 555-0100")).toBe("+1 (716) 555-0100");
   });
 
   it("joins rows with CRLF so Windows and macOS both see one row per line", () => {

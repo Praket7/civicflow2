@@ -6,6 +6,7 @@ import { Button, TextField } from "../../components/ui";
 import { hostedAuthConfigured, requestHostedPasswordReset } from "../../lib/auth/hosted";
 import { AuthPortrait } from "./AuthPortrait";
 import styles from "./auth.module.css";
+import { messageOf } from "../../lib/errors";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -28,7 +29,7 @@ export function ForgotPasswordPage() {
       await requestHostedPasswordReset(clean);
       setSent(true);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(messageOf(caught));
     } finally {
       setBusy(false);
     }

@@ -35,6 +35,7 @@ import { isTauri } from "../platform";
 import { buildVolunteerView, type Row, type VolunteerView } from "./views";
 import type { ConflictRow } from "./db";
 import type { CommandType } from "./protocol";
+import { messageOf } from "../errors";
 
 type Phase = "loading" | "signed-out" | "ready" | "error";
 
@@ -334,7 +335,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
         await openWorkspace(chosen, next.user.id);
       } catch (caught) {
         setPhase("error");
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(messageOf(caught));
       } finally {
         starting.current = false;
       }
@@ -358,7 +359,7 @@ export function CloudProvider({ children }: { children: ReactNode }) {
         // reached, must say so instead of sitting on the splash screen.
         if (!active) return;
         setPhase("error");
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(messageOf(caught));
       }
     })();
     const unsubscribe = onAuthChange((next) => {

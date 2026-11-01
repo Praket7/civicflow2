@@ -48,6 +48,7 @@ import {
 } from "../../lib/workspace/selectors";
 import { useWorkspace } from "../../lib/workspace/session";
 import styles from "./OpportunityDetailPage.module.css";
+import { messageOf } from "../../lib/errors";
 
 type TabKey = "overview" | "shifts" | "location" | "organization";
 
@@ -190,7 +191,7 @@ export function OpportunityDetailPage() {
         `You're signed up for ${formatDate(activeShift.startsAt)} as ${effectiveRole.toLowerCase()}.`,
       );
     } catch (caught) {
-      setConfirmation(caught instanceof Error ? caught.message : String(caught));
+      setConfirmation(messageOf(caught));
     }
   }
 
@@ -202,7 +203,7 @@ export function OpportunityDetailPage() {
         `You're on the waitlist for ${formatDate(activeShift.startsAt)}. We'll notify you if a seat opens.`,
       );
     } catch (caught) {
-      setConfirmation(caught instanceof Error ? caught.message : String(caught));
+      setConfirmation(messageOf(caught));
     }
   }
 

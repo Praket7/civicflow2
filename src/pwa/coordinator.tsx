@@ -12,6 +12,7 @@ import { supabase } from "../lib/sync/auth";
 import { useCloud } from "../lib/sync/provider";
 import { Button, Card, PageTitle, Pill, relativeTime } from "./ui";
 import styles from "./pwa.module.css";
+import { messageOf } from "../lib/errors";
 
 interface DeviceRow {
   replicaId: string;
@@ -121,7 +122,7 @@ export function CoordinatorApp() {
         setProblem(null);
         setRefreshedAt(new Date().toISOString());
       } catch (caught) {
-        if (active) setProblem(caught instanceof Error ? caught.message : String(caught));
+        if (active) setProblem(messageOf(caught));
       } finally {
         if (active) setLoading(false);
       }
@@ -154,7 +155,7 @@ export function CoordinatorApp() {
       setProblem(null);
       setRefreshedAt(new Date().toISOString());
     } catch (caught) {
-      setProblem(caught instanceof Error ? caught.message : String(caught));
+      setProblem(messageOf(caught));
     } finally {
       setLoading(false);
     }

@@ -51,6 +51,7 @@ import { workspaceReadKeys } from "./queries";
 import { getWorkspaceRepository } from "./repository";
 import { WorkspaceScopeProvider } from "./scope";
 import { setDisplayTimeZone } from "./selectors";
+import { messageOf } from "../errors";
 
 const localRepository = getWorkspaceRepository();
 
@@ -152,10 +153,6 @@ interface WorkspaceSessionValue {
 }
 
 const WorkspaceSessionContext = createContext<WorkspaceSessionValue | null>(null);
-
-function describeError(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 // Writes run in order so an older snapshot never lands last.
 let pendingWrites: Promise<unknown> = Promise.resolve();
@@ -272,7 +269,7 @@ export function WorkspaceSessionProvider({ children }: { children: ReactNode }) 
         if (active) setSession(snapshot);
       })
       .catch((caught: unknown) => {
-        if (active) setError(describeError(caught));
+        if (active) setError(messageOf(caught));
       });
     // Only the steward reads installation snapshots.
     (account ? repository.installationAccess() : Promise.resolve({ steward: false }))
@@ -315,7 +312,7 @@ export function WorkspaceSessionProvider({ children }: { children: ReactNode }) 
         try {
           apply(await operation());
         } catch (caught) {
-          setError(describeError(caught));
+          setError(messageOf(caught));
         }
       }),
     [apply],

@@ -2997,5 +2997,7 @@
   "volunteers.": "dilxwazan.",
   "{pending} waiting to upload.": "{pending} li benda barkirinê ye.",
   "Built from the synced copy at revision {revision}.": "Ji kopiya hevdengkirî di guhertoya {revision} de hatî çêkirin.",
-  "Waiting to upload: {pending}.": "Li benda barkirinê ye: {pending}."
+  "Waiting to upload: {pending}.": "Li benda barkirinê ye: {pending}.",
+  "Funder packet": "Rapora fînansor",
+  "This packet leaves out volunteer names and individual credentials.": "Navên xwebexşan an bawernameyên kesane nehatine bicihkirin."
 }

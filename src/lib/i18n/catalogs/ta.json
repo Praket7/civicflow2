@@ -2995,5 +2995,7 @@
   "Verified service only; pending hours are named on each row.": "சரிபார்க்கப்பட்ட சேவை மட்டுமே; நிலுவையிலுள்ள மணிநேரங்கள் ஒவ்வொரு வரிசையிலும் பெயரிடப்பட்டுள்ளன.",
   "Verified service over the hosted organization, computed from the synced copy. The report works with the network down and never edits a row.": "ஹோஸ்ட் செய்யப்பட்ட நிறுவனத்தில் சரிபார்க்கப்பட்ட சேவை, ஒத்திசைக்கப்பட்ட நகலில் இருந்து கணக்கிடப்பட்டது. அறிக்கையானது பிணையத்தில் செயலிழந்து, வரிசையைத் திருத்தாது.",
   "volunteers.": "தொண்டர்கள்.",
-  "Waiting to upload: {pending}.": "பதிவேற்ற காத்திருக்கிறது: {pending}."
+  "Waiting to upload: {pending}.": "பதிவேற்ற காத்திருக்கிறது: {pending}.",
+  "Funder packet": "நிதியுதவி அறிக்கை",
+  "This packet leaves out volunteer names and individual credentials.": "தன்னார்வப் பெயர்கள் அல்லது தனிப்பட்ட நற்சான்றிதழ்கள் எதுவும் சேர்க்கப்படவில்லை."
 }

@@ -2997,5 +2997,7 @@
   "volunteers.": "ndị ọrụ afọ ofufo.",
   "{pending} waiting to upload.": "{pending} na-eche bulite.",
   "Built from the synced copy at revision {revision}.": "Ewupụtara site na nnomi emekọrịtara na ngbanwe {revision}.",
-  "Waiting to upload: {pending}.": "Na-eche bulite: {pending}."
+  "Waiting to upload: {pending}.": "Na-eche bulite: {pending}.",
+  "Funder packet": "Akụkọ onye nkwado",
+  "This packet leaves out volunteer names and individual credentials.": "Enweghị aha ndị ọrụ afọ ofufo ma ọ bụ nzere onye ọ bụla etinyere."
 }

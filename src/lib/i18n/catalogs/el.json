@@ -2997,5 +2997,7 @@
   "volunteers.": "εθελοντές.",
   "{pending} waiting to upload.": "{pending} αναμονή για μεταφόρτωση.",
   "Built from the synced copy at revision {revision}.": "Δημιουργήθηκε από το συγχρονισμένο αντίγραφο στην αναθεώρηση {revision}.",
-  "Waiting to upload: {pending}.": "Αναμονή για μεταφόρτωση: {pending}."
+  "Waiting to upload: {pending}.": "Αναμονή για μεταφόρτωση: {pending}.",
+  "Funder packet": "Αναφορά χρηματοδότη",
+  "This packet leaves out volunteer names and individual credentials.": "Δεν περιλαμβάνονται ονόματα εθελοντών ή ατομικά διαπιστευτήρια."
 }

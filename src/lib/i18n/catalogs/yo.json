@@ -2997,5 +2997,7 @@
   "volunteers.": "iranwo.",
   "{pending} waiting to upload.": "{pending} nduro lati gbejade.",
   "Built from the synced copy at revision {revision}.": "Ti a ṣe lati ẹda ti a ti muṣiṣẹpọ ni atunyẹwo {revision}.",
-  "Waiting to upload: {pending}.": "Nduro lati gbejade: {pending}."
+  "Waiting to upload: {pending}.": "Nduro lati gbejade: {pending}.",
+  "Funder packet": "Ìròyìn fún àwọn olùfúnni",
+  "This packet leaves out volunteer names and individual credentials.": "Kò sí orúkọ àwọn olùyọ̀ǹda ara ẹni tàbí ìwé-ẹ̀rí ẹnìkọ̀ọ̀kan tí ó wà nínú rẹ̀."
 }

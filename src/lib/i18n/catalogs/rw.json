@@ -2994,5 +2994,7 @@
   "Verified service over the hosted organization, computed from the synced copy. The report works with the network down and never edits a row.": "Serivisi yagenzuwe hejuru yumuryango wakiriwe, ubarwa uhereye kuri kopi ihuriweho. Raporo ikorana numuyoboro hasi kandi ntabwo yigeze ihindura umurongo.",
   "volunteers.": "abakorerabushake.",
   "Waiting to upload: {pending}.": "Gutegereza kohereza: {pending}.",
-  "serving for the first time": "gukorera bwa mbere"
+  "serving for the first time": "gukorera bwa mbere",
+  "Funder packet": "Raporo y'abaterankunga",
+  "This packet leaves out volunteer names and individual credentials.": "Nta mazina y'abakorerabushake cyangwa imyirondoro y'umuntu ku giti cye yashyizwe mo."
 }

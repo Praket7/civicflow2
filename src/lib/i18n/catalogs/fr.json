@@ -2997,5 +2997,7 @@
   "volunteers.": "des bénévoles.",
   "{pending} waiting to upload.": "{pending} en attente de téléchargement.",
   "Built from the synced copy at revision {revision}.": "Construit à partir de la copie synchronisée à la révision {revision}.",
-  "Waiting to upload: {pending}.": "En attente de téléchargement : {pending}."
+  "Waiting to upload: {pending}.": "En attente de téléchargement : {pending}.",
+  "Funder packet": "Rapport du bailleur de fonds",
+  "This packet leaves out volunteer names and individual credentials.": "Aucun nom de bénévole ou identifiant individuel n'est inclus."
 }

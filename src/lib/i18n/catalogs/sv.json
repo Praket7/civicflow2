@@ -2997,5 +2997,7 @@
   "volunteers.": "frivilliga.",
   "{pending} waiting to upload.": "{pending} väntar på att ladda upp.",
   "Built from the synced copy at revision {revision}.": "Byggd från den synkroniserade kopian vid revision {revision}.",
-  "Waiting to upload: {pending}.": "Väntar på att ladda upp: {pending}."
+  "Waiting to upload: {pending}.": "Väntar på att ladda upp: {pending}.",
+  "Funder packet": "Finansieringsrapport",
+  "This packet leaves out volunteer names and individual credentials.": "Inga volontärnamn eller individuella referenser ingår."
 }

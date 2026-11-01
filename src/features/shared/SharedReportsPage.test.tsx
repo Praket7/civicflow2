@@ -1,5 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { readFileSync } from "node:fs";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SharedReportsPage } from "./SharedReportsPage";
@@ -117,6 +118,7 @@ vi.mock("../../lib/sync/sharedReportSource", () => ({
 const createObjectURL = vi.fn((_blob: Blob) => "blob:report");
 
 beforeEach(() => {
+  document.title = "CivicFlow";
   (window as unknown as { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ = {};
   Object.defineProperty(URL, "createObjectURL", {
     value: createObjectURL,
@@ -141,12 +143,15 @@ describe("shared impact report", () => {
   it("shows verified hours, participation, attendance, and credential risk", async () => {
     mount();
 
-    expect(await screen.findByRole("heading", { name: "Impact report" })).toBeInTheDocument();
-    expect(screen.getByText("3 h")).toBeInTheDocument();
-    expect(screen.getByText("0.5 h waiting for review")).toBeInTheDocument();
-    expect(screen.getByText("1 serving for the first time")).toBeInTheDocument();
-    expect(screen.getByText("50%")).toBeInTheDocument();
-    expect(screen.getByText("1 attended · 1 no-show")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Impact report", level: 1 }),
+    ).toBeInTheDocument();
+    const summary = screen.getByRole("region", { name: "Report summary" });
+    expect(within(summary).getByText("3 h")).toBeInTheDocument();
+    expect(within(summary).getByText("0.5 h waiting for review")).toBeInTheDocument();
+    expect(within(summary).getByText("1 serving for the first time")).toBeInTheDocument();
+    expect(within(summary).getByText("50%")).toBeInTheDocument();
+    expect(within(summary).getByText("1 attended · 1 no-show")).toBeInTheDocument();
     expect(
       within(screen.getByRole("region", { name: "Hours by program" })).getByText("Pantry"),
     ).toBeInTheDocument();
@@ -181,5 +186,49 @@ describe("shared impact report", () => {
     expect(createObjectURL).toHaveBeenCalledTimes(1);
     const blob = createObjectURL.mock.calls[0][0] as Blob;
     expect(await blob.text()).toContain("CivicFlow shared impact report");
+  });
+
+  it("builds a funder packet from aggregates without naming people", async () => {
+    mount();
+
+    const packet = await screen.findByTestId("funder-packet");
+    expect(packet).toHaveTextContent("Rivergate Kitchen");
+    expect(packet).toHaveTextContent("Funder packet");
+    expect(within(packet).getByTestId("packet-verified-hours")).toHaveTextContent("3");
+    expect(within(packet).getByTestId("packet-programs")).toHaveTextContent("Pantry");
+    expect(within(packet).getByTestId("packet-months")).toHaveTextContent("Jan");
+    expect(within(packet).getByTestId("packet-method")).toHaveTextContent(
+      "This packet leaves out volunteer names and individual credentials.",
+    );
+    expect(packet).not.toHaveTextContent("Alice Able");
+    expect(packet).not.toHaveTextContent("Bob Baker");
+    expect(packet).not.toHaveTextContent("Food handler");
+  });
+
+  it("opens the print dialog with a report-named PDF", async () => {
+    const print = vi.spyOn(window, "print").mockImplementation(() => {});
+    mount();
+
+    const button = await screen.findByRole("button", { name: "Print / save PDF" });
+    expect(button).toBeEnabled();
+    await userEvent.click(button);
+
+    expect(print).toHaveBeenCalledTimes(1);
+    expect(document.title).toContain("Rivergate Kitchen impact report");
+
+    window.dispatchEvent(new Event("afterprint"));
+    expect(document.title).toBe("CivicFlow");
+    print.mockRestore();
+  });
+
+  it("keeps the packet print-only and the working screen off paper", () => {
+    const css = readFileSync("src/features/shared/shared.module.css", "utf8");
+    const printBlock = css.slice(css.indexOf("@media print"));
+    expect(printBlock).toContain(".shell > :not(.packet)");
+    expect(printBlock).toContain("display: none !important");
+    expect(printBlock).toContain(".packet");
+    expect(printBlock).toContain("display: block");
+    expect(printBlock).toContain("padding: 14mm 14mm 16mm");
+    expect(css).not.toContain("@page");
   });
 });

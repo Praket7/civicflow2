@@ -2995,5 +2995,7 @@
   "Verified service only; pending hours are named on each row.": "ಪರಿಶೀಲಿಸಿದ ಸೇವೆ ಮಾತ್ರ; ಪ್ರತಿ ಸಾಲಿನಲ್ಲಿ ಬಾಕಿ ಇರುವ ಸಮಯವನ್ನು ಹೆಸರಿಸಲಾಗಿದೆ.",
   "Verified service over the hosted organization, computed from the synced copy. The report works with the network down and never edits a row.": "ಹೋಸ್ಟ್ ಮಾಡಿದ ಸಂಸ್ಥೆಯ ಮೂಲಕ ಪರಿಶೀಲಿಸಿದ ಸೇವೆ, ಸಿಂಕ್ ಮಾಡಿದ ನಕಲಿನಿಂದ ಲೆಕ್ಕಹಾಕಲಾಗಿದೆ. ವರದಿಯು ನೆಟ್‌ವರ್ಕ್ ಡೌನ್‌ನೊಂದಿಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ ಮತ್ತು ಸಾಲನ್ನು ಎಂದಿಗೂ ಸಂಪಾದಿಸುವುದಿಲ್ಲ.",
   "volunteers.": "ಸ್ವಯಂಸೇವಕರು.",
-  "Waiting to upload: {pending}.": "ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ನಿರೀಕ್ಷಿಸಲಾಗುತ್ತಿದೆ: {pending}."
+  "Waiting to upload: {pending}.": "ಅಪ್‌ಲೋಡ್ ಮಾಡಲು ನಿರೀಕ್ಷಿಸಲಾಗುತ್ತಿದೆ: {pending}.",
+  "Funder packet": "ಧನಸಹಾಯದ ವರದಿ",
+  "This packet leaves out volunteer names and individual credentials.": "ಯಾವುದೇ ಸ್ವಯಂಸೇವಕರ ಹೆಸರುಗಳು ಅಥವಾ ವೈಯಕ್ತಿಕ ರುಜುವಾತುಗಳನ್ನು ಸೇರಿಸಲಾಗಿಲ್ಲ."
 }

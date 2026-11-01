@@ -2995,5 +2995,7 @@
   "Verified service only; pending hours are named on each row.": "പരിശോധിച്ചുറപ്പിച്ച സേവനം മാത്രം; ഓരോ വരിയിലും തീർപ്പുകൽപ്പിക്കാത്ത മണിക്കൂർ പേരിട്ടിരിക്കുന്നു.",
   "Verified service over the hosted organization, computed from the synced copy. The report works with the network down and never edits a row.": "സമന്വയിപ്പിച്ച പകർപ്പിൽ നിന്ന് കണക്കാക്കിയ, ഹോസ്റ്റ് ചെയ്ത ഓർഗനൈസേഷനിലൂടെ പരിശോധിച്ചുറപ്പിച്ച സേവനം. റിപ്പോർട്ട് നെറ്റ്‌വർക്ക് ഡൗൺ ആയി പ്രവർത്തിക്കുന്നു, ഒരു വരിയും എഡിറ്റ് ചെയ്യുന്നില്ല.",
   "volunteers.": "സന്നദ്ധപ്രവർത്തകർ.",
-  "Waiting to upload: {pending}.": "അപ്‌ലോഡ് ചെയ്യാൻ കാത്തിരിക്കുന്നു: {pending}."
+  "Waiting to upload: {pending}.": "അപ്‌ലോഡ് ചെയ്യാൻ കാത്തിരിക്കുന്നു: {pending}.",
+  "Funder packet": "ധനസഹായ റിപ്പോർട്ട്",
+  "This packet leaves out volunteer names and individual credentials.": "സന്നദ്ധപ്രവർത്തകരുടെ പേരോ വ്യക്തിഗത ക്രെഡൻഷ്യലുകളോ ഉൾപ്പെടുത്തിയിട്ടില്ല."
 }

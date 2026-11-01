@@ -2997,5 +2997,7 @@
   "volunteers.": "tình nguyện viên.",
   "{pending} waiting to upload.": "{pending} đang chờ tải lên.",
   "Built from the synced copy at revision {revision}.": "Được xây dựng từ bản sao đã đồng bộ hóa tại bản sửa đổi {revision}.",
-  "Waiting to upload: {pending}.": "Đang chờ tải lên: {pending}."
+  "Waiting to upload: {pending}.": "Đang chờ tải lên: {pending}.",
+  "Funder packet": "Báo cáo nhà tài trợ",
+  "This packet leaves out volunteer names and individual credentials.": "Không bao gồm tên tình nguyện viên hoặc thông tin cá nhân."
 }

@@ -526,7 +526,18 @@ export const routes: RouteMeta[] = [
     path: "/shared/reports",
     role: "coordinator",
     spec: "Verified service, attendance, and credential readiness in the shared organization",
-    keywords: ["shared", "report", "impact", "hours", "attendance", "credential", "csv"],
+    keywords: [
+      "shared",
+      "report",
+      "impact",
+      "hours",
+      "attendance",
+      "credential",
+      "csv",
+      "print",
+      "pdf",
+      "funder",
+    ],
   },
 ];
 

@@ -2997,5 +2997,7 @@
   "volunteers.": "داوطلبان",
   "{pending} waiting to upload.": "{pending} در انتظار آپلود.",
   "Built from the synced copy at revision {revision}.": "ساخته شده از نسخه همگام‌سازی شده در بازبینی {revision}.",
-  "Waiting to upload: {pending}.": "در انتظار آپلود: {pending}."
+  "Waiting to upload: {pending}.": "در انتظار آپلود: {pending}.",
+  "Funder packet": "گزارش تأمین‌کننده مالی",
+  "This packet leaves out volunteer names and individual credentials.": "هیچ نام داوطلب یا اعتبارنامه فردی درج نشده است."
 }

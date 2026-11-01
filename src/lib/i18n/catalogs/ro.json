@@ -2997,5 +2997,7 @@
   "volunteers.": "voluntari.",
   "{pending} waiting to upload.": "{pending} așteaptă încărcarea.",
   "Built from the synced copy at revision {revision}.": "Construit din copia sincronizată la revizuirea {revision}.",
-  "Waiting to upload: {pending}.": "Se așteaptă încărcarea: {pending}."
+  "Waiting to upload: {pending}.": "Se așteaptă încărcarea: {pending}.",
+  "Funder packet": "Raport finanțator",
+  "This packet leaves out volunteer names and individual credentials.": "Nu sunt incluse nume de voluntari sau acreditări individuale."
 }

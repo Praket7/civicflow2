@@ -2997,5 +2997,7 @@
   "volunteers.": "könüllülər.",
   "{pending} waiting to upload.": "{pending} yüklənməni gözləyir.",
   "Built from the synced copy at revision {revision}.": "{revision} versiyada sinxronlaşdırılmış nüsxədən qurulmuşdur.",
-  "Waiting to upload: {pending}.": "Yükləmə gözlənilir: {pending}."
+  "Waiting to upload: {pending}.": "Yükləmə gözlənilir: {pending}.",
+  "Funder packet": "Maliyyələşdirmə hesabatı",
+  "This packet leaves out volunteer names and individual credentials.": "Heç bir könüllü ad və ya fərdi sənəd daxil edilməyib."
 }

@@ -2997,5 +2997,7 @@
   "volunteers.": "volontè.",
   "{pending} waiting to upload.": "{pending} ap tann pou yo telechaje.",
   "Built from the synced copy at revision {revision}.": "Bati apati kopi senkronize a nan revizyon {revision}.",
-  "Waiting to upload: {pending}.": "Ap tann pou telechaje: {pending}."
+  "Waiting to upload: {pending}.": "Ap tann pou telechaje: {pending}.",
+  "Funder packet": "Rapò finansman",
+  "This packet leaves out volunteer names and individual credentials.": "Pa gen non volontè oswa kalifikasyon endividyèl yo enkli."
 }

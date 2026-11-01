@@ -2997,5 +2997,7 @@
   "volunteers.": "อาสาสมัคร",
   "{pending} waiting to upload.": "{pending} กำลังรอการอัปโหลด",
   "Built from the synced copy at revision {revision}.": "สร้างจากสำเนาที่ซิงค์เมื่อแก้ไข {revision}",
-  "Waiting to upload: {pending}.": "กำลังรออัปโหลด: {pending}"
+  "Waiting to upload: {pending}.": "กำลังรออัปโหลด: {pending}",
+  "Funder packet": "รายงานผู้ให้ทุน",
+  "This packet leaves out volunteer names and individual credentials.": "ไม่มีการรวมชื่ออาสาสมัครหรือข้อมูลประจำตัวของแต่ละบุคคล"
 }

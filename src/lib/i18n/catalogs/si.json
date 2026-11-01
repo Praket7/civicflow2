@@ -2997,5 +2997,7 @@
   "volunteers.": "ස්වේච්ඡා සේවකයන්.",
   "{pending} waiting to upload.": "{pending} උඩුගත කිරීමට බලා සිටී.",
   "Built from the synced copy at revision {revision}.": "{revision} සංශෝධනයේදී සමමුහුර්ත කළ පිටපතෙන් ගොඩනගා ඇත.",
-  "Waiting to upload: {pending}.": "උඩුගත කිරීමට රැඳී සිටිමින්: {pending}."
+  "Waiting to upload: {pending}.": "උඩුගත කිරීමට රැඳී සිටිමින්: {pending}.",
+  "Funder packet": "අරමුදල් වාර්තාව",
+  "This packet leaves out volunteer names and individual credentials.": "ස්වේච්ඡා සේවකයින්ගේ නම් හෝ තනි අක්තපත් ‍ ර ඇතුළත් නොවේ."
 }

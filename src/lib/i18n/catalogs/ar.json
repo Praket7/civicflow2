@@ -2997,5 +2997,7 @@
   "volunteers.": "المتطوعين.",
   "{pending} waiting to upload.": "{pending} في انتظار التحميل.",
   "Built from the synced copy at revision {revision}.": "تم إنشاؤه من النسخة التي تمت مزامنتها عند المراجعة {revision}.",
-  "Waiting to upload: {pending}.": "في انتظار التحميل: {pending}."
+  "Waiting to upload: {pending}.": "في انتظار التحميل: {pending}.",
+  "Funder packet": "تقرير الممول",
+  "This packet leaves out volunteer names and individual credentials.": "لا يتم تضمين أسماء المتطوعين أو أوراق الاعتماد الفردية."
 }

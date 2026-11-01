@@ -2997,5 +2997,7 @@
   "volunteers.": "מתנדבים.",
   "{pending} waiting to upload.": "{pending} ממתין להעלאה.",
   "Built from the synced copy at revision {revision}.": "נבנה מהעותק המסונכרן בגרסה {revision}.",
-  "Waiting to upload: {pending}.": "ממתין להעלאה: {pending}."
+  "Waiting to upload: {pending}.": "ממתין להעלאה: {pending}.",
+  "Funder packet": "דוח למממנים",
+  "This packet leaves out volunteer names and individual credentials.": "לא נכללים שמות מתנדבים או אישורים אישיים."
 }

@@ -2997,5 +2997,7 @@
   "volunteers.": "amavolontiya.",
   "{pending} waiting to upload.": "{pending} ilinde ukulayisha.",
   "Built from the synced copy at revision {revision}.": "Yakhiwe ngekhophi evumelanisiwe ekubuyekezweni {revision}.",
-  "Waiting to upload: {pending}.": "Ilinde ukulayisha: {pending}."
+  "Waiting to upload: {pending}.": "Ilinde ukulayisha: {pending}.",
+  "Funder packet": "Umbiko womxhasi",
+  "This packet leaves out volunteer names and individual credentials.": "Awekho amagama amavolontiya noma iziqinisekiso zomuntu ngamunye ezifakiwe."
 }

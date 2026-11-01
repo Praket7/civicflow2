@@ -2997,5 +2997,7 @@
   "volunteers.": "sukarelawan.",
   "{pending} waiting to upload.": "{pending} menunggu untuk memuat naik.",
   "Built from the synced copy at revision {revision}.": "Dibina daripada salinan yang disegerakkan pada semakan {revision}.",
-  "Waiting to upload: {pending}.": "Menunggu untuk memuat naik: {pending}."
+  "Waiting to upload: {pending}.": "Menunggu untuk memuat naik: {pending}.",
+  "Funder packet": "Laporan penyumbang dana",
+  "This packet leaves out volunteer names and individual credentials.": "Tiada nama sukarelawan atau kelayakan individu disertakan."
 }

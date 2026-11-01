@@ -2997,5 +2997,7 @@
   "volunteers.": "志愿者。",
   "{pending} waiting to upload.": "{pending} 正在等待上传。",
   "Built from the synced copy at revision {revision}.": "根据版本 {revision} 的同步副本构建。",
-  "Waiting to upload: {pending}.": "正在等待上传：{pending}。"
+  "Waiting to upload: {pending}.": "正在等待上传：{pending}。",
+  "Funder packet": "资助方报告",
+  "This packet leaves out volunteer names and individual credentials.": "不包括志愿者姓名或个人证书。"
 }

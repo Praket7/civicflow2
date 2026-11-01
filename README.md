@@ -225,7 +225,9 @@ version instead of one overwriting the other.
 attendance, completed shifts, the program breakdown, the monthly rhythm and credential
 readiness are computed from every live report row in the replica, not from a screen's newest
 page, so a year-to-date total cannot quietly stop at the 500th hour. The screen works with the
-network down and exports a spreadsheet-ready CSV.
+network down and exports a spreadsheet-ready CSV. **Print / save PDF** turns the same numbers into
+a funder packet; it leaves out volunteer names and individual credentials, and the browser's print
+dialog names the file after the organization and period.
 
 AutoRoster's local planner still runs as Rust code over the local SQLite workspace. On the
 shared screens, Quick plan and Rescue upcoming gaps build a deterministic plan over the replica,
@@ -684,8 +686,9 @@ been exercised on a physical phone.
   available in both shells: the desktop signs in once (keychain) and mounts the hosted client,
   which carries the same offline outbox and command authority as the phone. Native coordinator
   screens write opportunities, shifts, series, attendance, hours decisions, volunteer records
-  and roster plans through the same command log. The shared impact report reads the replica and
-  exports CSV; the local AutoRoster still runs on the local workspace and travels as an export.
+  and roster plans through the same command log. The shared impact report reads the replica,
+  exports CSV, and prints a funder packet without volunteer names or individual credentials; the
+  local AutoRoster still runs on the local workspace and travels as an export.
 - The native desktop replica at `/shared/replica` is read-only by design. It bootstraps, pulls,
   survives a restart and shows the server's rows. Writes happen on `/shared/schedule`,
   `/shared/participation` and `/shared/volunteers`; `/shared/reports` reads the same replica.

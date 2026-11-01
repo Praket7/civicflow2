@@ -2997,5 +2997,7 @@
   "volunteers.": "អ្នកស្ម័គ្រចិត្ត។",
   "{pending} waiting to upload.": "{pending} កំពុងរង់ចាំការបង្ហោះ។",
   "Built from the synced copy at revision {revision}.": "បង្កើតឡើងពីច្បាប់ចម្លងដែលបានធ្វើសមកាលកម្មនៅការកែសម្រួល {revision} ។",
-  "Waiting to upload: {pending}.": "កំពុងរង់ចាំការបង្ហោះ៖ {pending}."
+  "Waiting to upload: {pending}.": "កំពុងរង់ចាំការបង្ហោះ៖ {pending}.",
+  "Funder packet": "របាយការណ៍អ្នកផ្តល់មូលនិធិ",
+  "This packet leaves out volunteer names and individual credentials.": "មិនមានឈ្មោះអ្នកស្ម័គ្រចិត្ត ឬព័ត៌មានបញ្ជាក់អត្តសញ្ញាណបុគ្គលត្រូវបានរួមបញ្ចូលទេ ។"
 }

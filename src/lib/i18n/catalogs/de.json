@@ -2997,5 +2997,7 @@
   "volunteers.": "Freiwillige.",
   "{pending} waiting to upload.": "{pending} wartet auf Hochladen.",
   "Built from the synced copy at revision {revision}.": "Erstellt aus der synchronisierten Kopie bei Revision {revision}.",
-  "Waiting to upload: {pending}.": "Warten auf Hochladen: {pending}."
+  "Waiting to upload: {pending}.": "Warten auf Hochladen: {pending}.",
+  "Funder packet": "Förderbericht",
+  "This packet leaves out volunteer names and individual credentials.": "Es sind keine Freiwilligennamen oder individuellen Anmeldedaten enthalten."
 }

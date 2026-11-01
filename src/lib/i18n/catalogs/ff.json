@@ -2997,5 +2997,7 @@
   "volunteers.": "wallidiiɓe.",
   "{pending} waiting to upload.": "{pending} ina fadi ngam neldude.",
   "Built from the synced copy at revision {revision}.": "Mahaa ko e koppi sinkronisaasiyoŋ e ƴeewndo {revision}.",
-  "Waiting to upload: {pending}.": "Ina ɗaminii neldude: {pending}."
+  "Waiting to upload: {pending}.": "Ina ɗaminii neldude: {pending}.",
+  "Funder packet": "Ciimtol balloowo",
+  "This packet leaves out volunteer names and individual credentials.": "Alaa inɗe wallidiiɓe walla seedanteeje neɗɗo gooto ina heen."
 }

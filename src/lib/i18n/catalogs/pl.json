@@ -2997,5 +2997,7 @@
   "volunteers.": "wolontariusze.",
   "{pending} waiting to upload.": "{pending} oczekuje na przesłanie.",
   "Built from the synced copy at revision {revision}.": "Utworzono na podstawie zsynchronizowanej kopii w wersji {revision}.",
-  "Waiting to upload: {pending}.": "Oczekiwanie na przesłanie: {pending}."
+  "Waiting to upload: {pending}.": "Oczekiwanie na przesłanie: {pending}.",
+  "Funder packet": "Raport grantodawcy",
+  "This packet leaves out volunteer names and individual credentials.": "Nie uwzględniono nazwisk wolontariuszy ani indywidualnych danych uwierzytelniających."
 }

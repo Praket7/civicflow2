@@ -2997,5 +2997,7 @@
   "volunteers.": "স্বেচ্ছাসেবক",
   "{pending} waiting to upload.": "{pending} আপলোডের অপেক্ষায়।",
   "Built from the synced copy at revision {revision}.": "পুনর্বিবেচনা {revision} এ সিঙ্ক করা অনুলিপি থেকে নির্মিত।",
-  "Waiting to upload: {pending}.": "আপলোডের জন্য অপেক্ষা করা হচ্ছে: {pending}।"
+  "Waiting to upload: {pending}.": "আপলোডের জন্য অপেক্ষা করা হচ্ছে: {pending}।",
+  "Funder packet": "অর্থদাতা প্রতিবেদন",
+  "This packet leaves out volunteer names and individual credentials.": "কোনও স্বেচ্ছাসেবকের নাম বা স্বতন্ত্র শংসাপত্র অন্তর্ভুক্ত নেই ।"
 }

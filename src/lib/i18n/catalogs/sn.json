@@ -2995,5 +2995,7 @@
   "Verified service only; pending hours are named on each row.": "Verified service chete; nguva dzakamirira dzinotaurwa pamutsara wega wega.",
   "Verified service over the hosted organization, computed from the synced copy. The report works with the network down and never edits a row.": "Sevhisi yakasimbiswa pamusoro pesangano rakatambirwa, rakaverengerwa kubva kukopi yakawiriraniswa. Chirevo chinoshanda netiweki pasi uye hachimbogadzirisi mutsara.",
   "volunteers.": "vazvipiri.",
-  "Waiting to upload: {pending}.": "Yakamirira kurodha: {pending}."
+  "Waiting to upload: {pending}.": "Yakamirira kurodha: {pending}.",
+  "Funder packet": "Mushumo wemubatsiri",
+  "This packet leaves out volunteer names and individual credentials.": "Hapana mazita ekuzvipira kana zvitupa zveumwe neumwe zvinosanganisirwa."
 }

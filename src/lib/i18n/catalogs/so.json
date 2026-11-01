@@ -2997,5 +2997,7 @@
   "volunteers.": "iskaa wax u qabso.",
   "{pending} waiting to upload.": "{pending} sugaya in la soo geliyo.",
   "Built from the synced copy at revision {revision}.": "Waxaa laga dhisay nuqulka la isku dhejiyay ee dib u eegis {revision}.",
-  "Waiting to upload: {pending}.": "Sugitaanka soo dejinta: {pending}."
+  "Waiting to upload: {pending}.": "Sugitaanka soo dejinta: {pending}.",
+  "Funder packet": "Warbixinta maalgeliyaha",
+  "This packet leaves out volunteer names and individual credentials.": "Ma jiro magacyo iskaa wax u qabso ah ama aqoonsi shaqsiyeed oo lagu daro."
 }

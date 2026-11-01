@@ -2997,5 +2997,7 @@
   "volunteers.": "स्वयंसेवकहरू।",
   "{pending} waiting to upload.": "{pending} अपलोड गर्न पर्खँदै।",
   "Built from the synced copy at revision {revision}.": "संशोधन {revision} मा सिंक गरिएको प्रतिलिपिबाट निर्मित।",
-  "Waiting to upload: {pending}.": "अपलोड गर्न प्रतिक्षा गर्दै: {pending}।"
+  "Waiting to upload: {pending}.": "अपलोड गर्न प्रतिक्षा गर्दै: {pending}।",
+  "Funder packet": "अनुदानकर्ता प्रतिवेदन",
+  "This packet leaves out volunteer names and individual credentials.": "कुनै स्वयंसेवक नाम वा व्यक्तिगत परिचयपत्र समावेश गरिएको छैन ।"
 }

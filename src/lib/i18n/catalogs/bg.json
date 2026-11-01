@@ -2997,5 +2997,7 @@
   "volunteers.": "доброволци.",
   "{pending} waiting to upload.": "{pending} чака за качване.",
   "Built from the synced copy at revision {revision}.": "Създаден от синхронизираното копие при ревизия {revision}.",
-  "Waiting to upload: {pending}.": "Изчакване за качване: {pending}."
+  "Waiting to upload: {pending}.": "Изчакване за качване: {pending}.",
+  "Funder packet": "Отчет за донори",
+  "This packet leaves out volunteer names and individual credentials.": "Не са включени имена на доброволци или индивидуални идентификационни данни."
 }

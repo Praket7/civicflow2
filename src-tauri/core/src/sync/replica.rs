@@ -10,7 +10,7 @@ use std::collections::BTreeMap;
 use chrono::Utc;
 use rusqlite::{params, Connection, OptionalExtension};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Map, Value};
 use uuid::Uuid;
 
 use crate::error::{CoreError, Result};
@@ -19,6 +19,20 @@ use super::protocol::{Change, ChangeOperation, CommandEnvelope, CommandType};
 
 const DEFAULT_ENTITY_LIMIT: i64 = 500;
 const MAX_ENTITY_LIMIT: i64 = 2_000;
+
+/// The rows a report reads. A report is the one read that cannot tolerate the
+/// screen's page limits: a single missed hour row changes a funder total, so
+/// this returns every live row of each kind instead of the newest page.
+const REPORT_ENTITY_TYPES: [&str; 8] = [
+    "attendance",
+    "credential",
+    "credential_type",
+    "hour_entry",
+    "opportunity",
+    "registration",
+    "shift",
+    "volunteer",
+];
 
 type WorkspaceRow = (
     String,
@@ -676,6 +690,40 @@ pub fn read_entities(
         }
     }
     Ok(values)
+}
+
+/// Every live report row, grouped by entity type.
+///
+/// Reports aggregate over the whole organization, so paging them the way a
+/// table view pages would silently drop the oldest hours from a year-to-date
+/// total. The query is local, indexed and bounded by the replica itself.
+pub fn read_report_entities(conn: &Connection, organization_id: &str) -> Result<Value> {
+    validate_organization(organization_id)?;
+    let mut statement = conn.prepare(
+        "SELECT entity_type, payload FROM replica_entities
+         WHERE organization_id = ?1 AND deleted = 0
+           AND entity_type IN ('attendance', 'credential', 'credential_type', 'hour_entry',
+                               'opportunity', 'registration', 'shift', 'volunteer')
+         ORDER BY entity_type, entity_id",
+    )?;
+    let rows = statement.query_map(params![organization_id], |row| {
+        Ok((row.get::<_, String>(0)?, row.get::<_, Option<String>>(1)?))
+    })?;
+
+    let mut grouped = Map::new();
+    for kind in REPORT_ENTITY_TYPES {
+        grouped.insert(kind.to_string(), Value::Array(Vec::new()));
+    }
+    for row in rows {
+        let (kind, payload) = row?;
+        let Some(text) = payload else { continue };
+        let value: Value = serde_json::from_str(&text)
+            .map_err(|error| CoreError::Data(format!("replica row is invalid: {error}")))?;
+        if let Some(Value::Array(values)) = grouped.get_mut(&kind) {
+            values.push(value);
+        }
+    }
+    Ok(Value::Object(grouped))
 }
 
 pub fn read_cursor(conn: &Connection, organization_id: &str) -> Result<i64> {

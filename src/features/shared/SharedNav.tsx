@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import {
   AlertTriangle,
+  BarChart3,
   CalendarDays,
   ClipboardCheck,
   Database,
@@ -13,6 +14,7 @@ const links = [
   { to: "/shared/schedule", label: "Schedule", icon: CalendarDays },
   { to: "/shared/participation", label: "Participation", icon: ClipboardCheck },
   { to: "/shared/volunteers", label: "Volunteers", icon: Users },
+  { to: "/shared/reports", label: "Reports", icon: BarChart3 },
   { to: "/shared/conflicts", label: "Conflicts", icon: AlertTriangle },
   { to: "/shared/replica", label: "Synced copy", icon: Database },
 ] as const;

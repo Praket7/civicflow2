@@ -14,6 +14,7 @@ import { CheckInPage } from "../features/volunteer/CheckInPage";
 import { DesktopReplicaPage } from "../pwa/DesktopReplicaPage";
 import { SharedConflictsPage } from "../features/shared/SharedConflictsPage";
 import { SharedParticipationPage } from "../features/shared/SharedParticipationPage";
+import { SharedReportsPage } from "../features/shared/SharedReportsPage";
 import { SharedSchedulePage } from "../features/shared/SharedSchedulePage";
 import { SharedVolunteersPage } from "../features/shared/SharedVolunteersPage";
 import { CoveragePage } from "../features/coverage/CoveragePage";
@@ -127,6 +128,7 @@ export const pages: Record<string, ReactNode> = {
   "shared-schedule": <SharedSchedulePage />,
   "shared-participation": <SharedParticipationPage />,
   "shared-volunteers": <SharedVolunteersPage />,
+  "shared-reports": <SharedReportsPage />,
   "shared-conflicts": <SharedConflictsPage />,
   "shared-replica": <DesktopReplicaPage />,
 };
@@ -204,6 +206,14 @@ const routeConfig = [
     element: (
       <RequireAuth>
         <SharedVolunteersPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: "/shared/reports",
+    element: (
+      <RequireAuth>
+        <SharedReportsPage />
       </RequireAuth>
     ),
   },

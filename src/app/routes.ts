@@ -519,6 +519,15 @@ export const routes: RouteMeta[] = [
     spec: "Profiles, skills, availability, and credentials in the shared organization",
     keywords: ["shared", "volunteer", "profile", "skills", "availability", "credential"],
   },
+  {
+    id: "shared-reports",
+    number: 58,
+    title: "Shared Impact Report",
+    path: "/shared/reports",
+    role: "coordinator",
+    spec: "Verified service, attendance, and credential readiness in the shared organization",
+    keywords: ["shared", "report", "impact", "hours", "attendance", "credential", "csv"],
+  },
 ];
 
 function scoreRoute(route: RouteMeta, query: string): number {

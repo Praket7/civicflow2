@@ -107,3 +107,16 @@ export async function readReplicaEntities(
 ): Promise<Record<string, unknown>[]> {
   return invoke<Record<string, unknown>[]>("sync_entities", { organizationId, entity, limit });
 }
+
+/**
+ * Every live report row, grouped by server entity type. Reports cannot use the
+ * paged `readReplicaEntities` read: a year-to-date total that stops at the
+ * newest page is wrong, not merely incomplete on screen.
+ */
+export async function readReplicaReportEntities(
+  organizationId: string,
+): Promise<Record<string, Record<string, unknown>[]>> {
+  return invoke<Record<string, Record<string, unknown>[]>>("sync_report_entities", {
+    organizationId,
+  });
+}

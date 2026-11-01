@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import { SharedConflictsPage } from "./SharedConflictsPage";
 import { SharedParticipationPage } from "./SharedParticipationPage";
+import { SharedReportsPage } from "./SharedReportsPage";
 import { SharedSchedulePage } from "./SharedSchedulePage";
 import { SharedVolunteersPage } from "./SharedVolunteersPage";
 
@@ -16,8 +17,9 @@ describe("shared coordinator screens", () => {
     ["Schedule", <SharedSchedulePage key="schedule" />],
     ["Participation", <SharedParticipationPage key="participation" />],
     ["Volunteers", <SharedVolunteersPage key="volunteers" />],
+    ["Impact report", <SharedReportsPage key="reports" />],
     ["Sync issues", <SharedConflictsPage key="conflicts" />],
-  ])("%s explains that writes live in the desktop app", async (title, page) => {
+  ])("%s explains where it runs", async (title, page) => {
     renderPage(page);
     expect(await screen.findByRole("heading", { name: title })).toBeInTheDocument();
     expect(
@@ -25,7 +27,7 @@ describe("shared coordinator screens", () => {
     ).toBeInTheDocument();
   });
 
-  it("links the three shared surfaces from their navigation", async () => {
+  it("links every shared surface from their navigation", async () => {
     renderPage(<SharedSchedulePage />);
     expect(await screen.findByRole("link", { name: "Participation" })).toHaveAttribute(
       "href",
@@ -34,6 +36,10 @@ describe("shared coordinator screens", () => {
     expect(screen.getByRole("link", { name: "Volunteers" })).toHaveAttribute(
       "href",
       "/shared/volunteers",
+    );
+    expect(screen.getByRole("link", { name: "Reports" })).toHaveAttribute(
+      "href",
+      "/shared/reports",
     );
     expect(screen.getByRole("link", { name: "Conflicts" })).toHaveAttribute(
       "href",

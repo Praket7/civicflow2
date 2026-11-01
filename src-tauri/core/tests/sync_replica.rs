@@ -100,6 +100,87 @@ fn bootstrap_replaces_the_replica_and_sets_the_cursor() {
 }
 
 #[test]
+fn a_report_reads_every_live_row_and_ignores_other_entities() {
+    let database = database();
+    let conn = database.connection();
+    replica::configure(conn, ORG, USER, 3).expect("configure");
+
+    let entities = json!({
+        "attendance": [{
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa01",
+            "status": "completed"
+        }],
+        "credential": [{
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa02",
+            "valid_through": "2030-01-01"
+        }],
+        "credential_type": [{
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa03",
+            "name": "Food handler"
+        }],
+        "hour_entry": [
+            {
+                "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa04",
+                "minutes": 120,
+                "status": "verified",
+                "date": "2026-01-10"
+            },
+            {
+                "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa05",
+                "minutes": 60,
+                "status": "verified",
+                "date": "2026-01-11"
+            }
+        ],
+        "opportunity": [{
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa06",
+            "title": "Pantry"
+        }],
+        "registration": [{
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa07",
+            "status": "completed"
+        }],
+        "shift": [{ "id": SHIFT, "capacity": 4, "starts_at": "2026-01-10T12:00:00+00:00" }],
+        "volunteer": [
+            { "id": VOLUNTEER, "name": "Vera Volunteer" },
+            { "id": VOLUNTEER_TWO, "name": "Vince Volunteer" }
+        ],
+        "application": [{
+            "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa08",
+            "stage": "review"
+        }]
+    });
+    let payroll = json!({
+        "status": "ok",
+        "cursor": 1,
+        "revision": 1,
+        "entities": entities
+    });
+    replica::apply_bootstrap(conn, ORG, USER, 3, &payroll).expect("bootstrap");
+
+    let report = replica::read_report_entities(conn, ORG).expect("report rows");
+    assert_eq!(report.as_object().expect("object").len(), 8);
+    assert_eq!(report["hour_entry"].as_array().expect("hours").len(), 2);
+    assert_eq!(report["volunteer"].as_array().expect("volunteers").len(), 2);
+    assert!(report.get("application").is_none());
+
+    // A deleted row is a tombstone: it stays in the table so a delayed insert
+    // cannot resurrect it, but a funder total must not read it either.
+    let changes = vec![Change {
+        sequence: 2,
+        entity: "volunteer".into(),
+        id: VOLUNTEER_TWO.into(),
+        operation: civicflow_core::sync::protocol::ChangeOperation::Delete,
+        row_version: None,
+        payload: None,
+    }];
+    replica::apply_changes(conn, ORG, &changes, 2, 2).expect("apply tombstone");
+
+    let report = replica::read_report_entities(conn, ORG).expect("report rows");
+    assert_eq!(report["volunteer"].as_array().expect("volunteers").len(), 1);
+}
+
+#[test]
 fn changes_apply_atomically_and_tombstones_hide_rows() {
     let database = database();
     let conn = database.connection();

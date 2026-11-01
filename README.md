@@ -18,7 +18,7 @@ click away. Deployment and the remaining gaps are covered in **Cloud workspace**
 | Fact | Value |
 | --- | --- |
 | Package version | `0.1.1` |
-| Registered routes | 56 |
+| Registered routes | 57 |
 | Migration files | 15 |
 | Database schema | v15 |
 | Application tables | 51 |
@@ -221,10 +221,16 @@ availability grid, and verify a credential against its type. The volunteer app w
 same profile and credential commands, so a phone edit and a laptop edit meet at the same row
 version instead of one overwriting the other.
 
-AutoRoster and reporting still run as Rust code over the local SQLite workspace. On the shared
-screens, Quick plan and Rescue upcoming gaps build a deterministic plan over the replica, then
-send it through one revision-guarded `APPLY_ROSTER_PLAN`; the server applies every assignment or
-refuses the whole plan. Reports remain exports until the server has a reporting read model.
+`/shared/reports` turns that organization into a funder-ready impact report. Verified hours,
+attendance, completed shifts, the program breakdown, the monthly rhythm and credential
+readiness are computed from every live report row in the replica, not from a screen's newest
+page, so a year-to-date total cannot quietly stop at the 500th hour. The screen works with the
+network down and exports a spreadsheet-ready CSV.
+
+AutoRoster's local planner still runs as Rust code over the local SQLite workspace. On the
+shared screens, Quick plan and Rescue upcoming gaps build a deterministic plan over the replica,
+then send it through one revision-guarded `APPLY_ROSTER_PLAN`; the server applies every
+assignment or refuses the whole plan.
 
 **Settings → Shared workspace → Publish local schedule** copies this computer's opportunities,
 shifts and roles into the selected hosted organization. It skips a program with the same title
@@ -677,13 +683,13 @@ been exercised on a physical phone.
 - The local SQLite workspace is local to one device. The shared hosted workspace is live and
   available in both shells: the desktop signs in once (keychain) and mounts the hosted client,
   which carries the same offline outbox and command authority as the phone. Native coordinator
-  screens write opportunities, shifts, series, attendance, hours decisions and roster plans
-  through the same command log. Reports and the local AutoRoster still run on the local
-  workspace and travel as exports.
+  screens write opportunities, shifts, series, attendance, hours decisions, volunteer records
+  and roster plans through the same command log. The shared impact report reads the replica and
+  exports CSV; the local AutoRoster still runs on the local workspace and travels as an export.
 - The native desktop replica at `/shared/replica` is read-only by design. It bootstraps, pulls,
-  survives a restart and shows the server's rows. Writes happen on `/shared/schedule` and
-  `/shared/participation`, which share the replica's cursor and outbox but never edit it from the
-  viewer.
+  survives a restart and shows the server's rows. Writes happen on `/shared/schedule`,
+  `/shared/participation` and `/shared/volunteers`; `/shared/reports` reads the same replica.
+  All four share its cursor and outbox but never edit it from the viewer.
 - Organization switching is scoped by membership in the UI and core, but all organizations in
   one installation share the same SQLite file. A future workspace manager will split them into
   per-organization databases.

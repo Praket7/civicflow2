@@ -1660,6 +1660,16 @@ fn sync_entities(
 }
 
 #[tauri::command]
+fn sync_report_entities(
+    state: State<'_, AppState>,
+    organization_id: String,
+) -> Result<Value, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    sync_replica::read_report_entities(database.connection(), &organization_id)
+        .map_err(AppError::from)
+}
+
+#[tauri::command]
 fn sync_apply_changes(
     state: State<'_, AppState>,
     organization_id: String,
@@ -1963,6 +1973,7 @@ pub fn run() {
             sync_status,
             sync_list_workspaces,
             sync_entities,
+            sync_report_entities,
             sync_apply_changes,
             sync_read_cursor,
             sync_read_revision,

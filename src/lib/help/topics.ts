@@ -744,6 +744,25 @@ export const helpTopics: HelpTopic[] = [
     ],
   },
   {
+    id: "shared-reports",
+    title: "Shared impact report",
+    purpose:
+      "Turns verified service in the hosted organization into a funder-ready report without retyping a spreadsheet.",
+    steps: [
+      "Choose a range or set the first and last day, then narrow to one program if the update is program-specific.",
+      "Read verified hours, volunteers, completed shifts, and attendance for that window.",
+      "Check expiring credentials before publishing an assignment plan.",
+      "Export CSV for a board packet or a grant report.",
+    ],
+    rules: [
+      "Hours count on the day they were served, not the day they were approved.",
+      "A shift counts on the day it starts in this computer's timezone.",
+      "Only verified hours enter the headline total; pending hours are shown separately.",
+      "The report reads the synced copy, so it works offline and never edits a row.",
+      "Expiring credentials are sixty days or less from their valid-through date.",
+    ],
+  },
+  {
     id: "shared-conflicts",
     title: "Sync issues",
     purpose:

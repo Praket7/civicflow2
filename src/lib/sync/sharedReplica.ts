@@ -19,6 +19,9 @@ export interface SharedReplicaData {
   roleRequirements: SharedRow[];
   volunteers: SharedRow[];
   volunteerSkills: SharedRow[];
+  availabilityRules: SharedRow[];
+  credentialTypes: SharedRow[];
+  credentials: SharedRow[];
   registrations: SharedRow[];
   waitlists: SharedRow[];
   attendance: SharedRow[];
@@ -35,6 +38,9 @@ const EMPTY: SharedReplicaData = {
   roleRequirements: [],
   volunteers: [],
   volunteerSkills: [],
+  availabilityRules: [],
+  credentialTypes: [],
+  credentials: [],
   registrations: [],
   waitlists: [],
   attendance: [],
@@ -52,6 +58,9 @@ async function readAll(organizationId: string): Promise<SharedReplicaData> {
     roleRequirements,
     volunteers,
     volunteerSkills,
+    availabilityRules,
+    credentialTypes,
+    credentials,
     registrations,
     waitlists,
     attendance,
@@ -66,6 +75,9 @@ async function readAll(organizationId: string): Promise<SharedReplicaData> {
     readReplicaEntities(organizationId, "role_requirement", 1000),
     readReplicaEntities(organizationId, "volunteer", 500),
     readReplicaEntities(organizationId, "volunteer_skill", 1000),
+    readReplicaEntities(organizationId, "availability_rule", 1000),
+    readReplicaEntities(organizationId, "credential_type", 200),
+    readReplicaEntities(organizationId, "credential", 1000),
     readReplicaEntities(organizationId, "registration", 1000),
     readReplicaEntities(organizationId, "waitlist_entry", 1000),
     readReplicaEntities(organizationId, "attendance", 1000),
@@ -81,6 +93,9 @@ async function readAll(organizationId: string): Promise<SharedReplicaData> {
     roleRequirements: roleRequirements as SharedRow[],
     volunteers: volunteers as SharedRow[],
     volunteerSkills: volunteerSkills as SharedRow[],
+    availabilityRules: availabilityRules as SharedRow[],
+    credentialTypes: credentialTypes as SharedRow[],
+    credentials: credentials as SharedRow[],
     registrations: registrations as SharedRow[],
     waitlists: waitlists as SharedRow[],
     attendance: attendance as SharedRow[],

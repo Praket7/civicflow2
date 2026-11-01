@@ -15,6 +15,7 @@ import { DesktopReplicaPage } from "../pwa/DesktopReplicaPage";
 import { SharedConflictsPage } from "../features/shared/SharedConflictsPage";
 import { SharedParticipationPage } from "../features/shared/SharedParticipationPage";
 import { SharedSchedulePage } from "../features/shared/SharedSchedulePage";
+import { SharedVolunteersPage } from "../features/shared/SharedVolunteersPage";
 import { CoveragePage } from "../features/coverage/CoveragePage";
 import { CreateOpportunityPage } from "../features/schedule/CreateOpportunityPage";
 import { CredentialsPage } from "../features/credentials/CredentialsPage";
@@ -68,7 +69,7 @@ const standaloneNumbers = new Set([1, 2, 3, 4, 5, 31, 43, 44, 45, 46, 47, 48, 49
 
 // The hosted workspace mounts its own history and never enters the local app
 // shell, so these routes are registered once, below, instead of twice.
-const sharedNumbers = new Set([52, 53, 54, 55, 56]);
+const sharedNumbers = new Set([52, 53, 54, 55, 56, 57]);
 
 // Exported so tests can mount every registered screen without duplicating the map.
 export const pages: Record<string, ReactNode> = {
@@ -125,6 +126,7 @@ export const pages: Record<string, ReactNode> = {
   "shared-workspace": <SharedWorkspacePage />,
   "shared-schedule": <SharedSchedulePage />,
   "shared-participation": <SharedParticipationPage />,
+  "shared-volunteers": <SharedVolunteersPage />,
   "shared-conflicts": <SharedConflictsPage />,
   "shared-replica": <DesktopReplicaPage />,
 };
@@ -194,6 +196,14 @@ const routeConfig = [
     element: (
       <RequireAuth>
         <SharedParticipationPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    path: "/shared/volunteers",
+    element: (
+      <RequireAuth>
+        <SharedVolunteersPage />
       </RequireAuth>
     ),
   },

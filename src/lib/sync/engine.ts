@@ -71,6 +71,8 @@ export function conflictClassFor(command: string, code?: string): ConflictClass 
     case "CREATE_SHIFT_SERIES":
     case "REVIEW_HOURS":
     case "UPDATE_CREDENTIAL":
+    case "SET_VOLUNTEER_SKILLS":
+    case "SET_VOLUNTEER_AVAILABILITY":
       return "invariant";
     case "SAVE_VOLUNTEER_PROFILE":
     case "UPDATE_OPPORTUNITY":

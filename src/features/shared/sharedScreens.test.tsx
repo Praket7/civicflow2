@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { SharedConflictsPage } from "./SharedConflictsPage";
 import { SharedParticipationPage } from "./SharedParticipationPage";
 import { SharedSchedulePage } from "./SharedSchedulePage";
+import { SharedVolunteersPage } from "./SharedVolunteersPage";
 
 function renderPage(page: ReactNode) {
   return render(<MemoryRouter>{page}</MemoryRouter>);
@@ -14,6 +15,7 @@ describe("shared coordinator screens", () => {
   it.each([
     ["Schedule", <SharedSchedulePage key="schedule" />],
     ["Participation", <SharedParticipationPage key="participation" />],
+    ["Volunteers", <SharedVolunteersPage key="volunteers" />],
     ["Sync issues", <SharedConflictsPage key="conflicts" />],
   ])("%s explains that writes live in the desktop app", async (title, page) => {
     renderPage(page);
@@ -28,6 +30,10 @@ describe("shared coordinator screens", () => {
     expect(await screen.findByRole("link", { name: "Participation" })).toHaveAttribute(
       "href",
       "/shared/participation",
+    );
+    expect(screen.getByRole("link", { name: "Volunteers" })).toHaveAttribute(
+      "href",
+      "/shared/volunteers",
     );
     expect(screen.getByRole("link", { name: "Conflicts" })).toHaveAttribute(
       "href",

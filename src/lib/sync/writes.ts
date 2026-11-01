@@ -258,6 +258,99 @@ export async function createSharedSeries(input: SharedSeriesInput): Promise<stri
   return id;
 }
 
+export interface VolunteerPatch {
+  name?: string;
+  firstName?: string;
+  initials?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  status?: "active" | "onboarding" | "inactive";
+  interests?: string;
+  languages?: string[];
+  causes?: string[];
+}
+
+/**
+ * The profile command edits the descriptive record; membership and roster
+ * authority stay in their own tables. A coordinator editing someone else names
+ * the volunteer, and the server checks that the row is in this organization.
+ */
+export async function saveSharedVolunteer(
+  volunteer: SharedEntity,
+  patch: VolunteerPatch,
+): Promise<void> {
+  const version = rowVersion(volunteer);
+  await enqueue(
+    "SAVE_VOLUNTEER_PROFILE",
+    { volunteerId: volunteer.id, ...patch },
+    versionPayload(volunteer, version, "volunteer"),
+  );
+}
+
+/**
+ * Skills are a set, not a record. Sending the whole list makes a retry safe:
+ * the server replaces the set rather than appending a second copy of it.
+ */
+export async function setSharedVolunteerSkills(
+  volunteerId: string,
+  skills: string[],
+): Promise<void> {
+  await enqueue("SET_VOLUNTEER_SKILLS", { volunteerId, skills });
+}
+
+export type AvailabilityDay = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+export type AvailabilityPeriod = "morning" | "afternoon" | "evening";
+
+export interface AvailabilitySlot {
+  day: AvailabilityDay;
+  period: AvailabilityPeriod;
+}
+
+export async function setSharedVolunteerAvailability(
+  volunteerId: string,
+  slots: AvailabilitySlot[],
+): Promise<void> {
+  await enqueue("SET_VOLUNTEER_AVAILABILITY", { volunteerId, slots });
+}
+
+export async function createSharedCredentialType(
+  name: string,
+  validityMonths: number,
+): Promise<string> {
+  const id = crypto.randomUUID();
+  await enqueue("CREATE_CREDENTIAL_TYPE", {
+    id,
+    name: name.trim(),
+    validityMonths: Math.max(1, Math.min(120, Math.trunc(validityMonths))),
+  });
+  return id;
+}
+
+export interface CredentialInput {
+  credentialTypeId: string;
+  identifier?: string;
+  issuedAt?: string;
+  validFrom?: string;
+  validThrough: string;
+  notes?: string;
+  verified?: boolean;
+}
+
+export async function saveSharedCredential(
+  volunteerId: string,
+  credential: SharedEntity | null,
+  input: CredentialInput,
+): Promise<void> {
+  const payload: Record<string, unknown> = { volunteerId, ...input };
+  if (credential) payload.id = credential.id;
+  await enqueue(
+    "UPDATE_CREDENTIAL",
+    payload,
+    credential ? versionPayload(credential, rowVersion(credential), "credential") : {},
+  );
+}
+
 export async function updateSharedShift(
   shift: SharedEntity,
   patch: {

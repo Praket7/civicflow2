@@ -27,6 +27,9 @@ pub enum CommandType {
     CheckOut,
     MarkNoShow,
     SaveVolunteerProfile,
+    SetVolunteerSkills,
+    SetVolunteerAvailability,
+    CreateCredentialType,
     UpdateCredential,
     ReviewHours,
     UpdateRosterPolicy,
@@ -49,6 +52,9 @@ impl CommandType {
             Self::CheckOut => "CHECK_OUT",
             Self::MarkNoShow => "MARK_NO_SHOW",
             Self::SaveVolunteerProfile => "SAVE_VOLUNTEER_PROFILE",
+            Self::SetVolunteerSkills => "SET_VOLUNTEER_SKILLS",
+            Self::SetVolunteerAvailability => "SET_VOLUNTEER_AVAILABILITY",
+            Self::CreateCredentialType => "CREATE_CREDENTIAL_TYPE",
             Self::UpdateCredential => "UPDATE_CREDENTIAL",
             Self::ReviewHours => "REVIEW_HOURS",
             Self::UpdateRosterPolicy => "UPDATE_ROSTER_POLICY",
@@ -185,6 +191,28 @@ mod tests {
         ];
         for (name, expected) in cases {
             assert_eq!(fixture(name).envelope.command, expected, "{name}");
+        }
+    }
+
+    #[test]
+    fn volunteer_record_commands_round_trip_on_the_wire() {
+        let cases = [
+            (CommandType::SetVolunteerSkills, "SET_VOLUNTEER_SKILLS"),
+            (
+                CommandType::SetVolunteerAvailability,
+                "SET_VOLUNTEER_AVAILABILITY",
+            ),
+            (CommandType::CreateCredentialType, "CREATE_CREDENTIAL_TYPE"),
+            (CommandType::SaveVolunteerProfile, "SAVE_VOLUNTEER_PROFILE"),
+            (CommandType::UpdateCredential, "UPDATE_CREDENTIAL"),
+        ];
+        for (command, wire) in cases {
+            let encoded = serde_json::to_value(command).expect("command serializes");
+            assert_eq!(encoded, Value::String(wire.into()), "{wire}");
+            let decoded: CommandType =
+                serde_json::from_value(encoded).expect("command deserializes");
+            assert_eq!(decoded, command);
+            assert_eq!(command.as_str(), wire);
         }
     }
 

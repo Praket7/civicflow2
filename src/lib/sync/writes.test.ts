@@ -5,9 +5,14 @@ import {
   checkInShared,
   createSharedOpportunity,
   createSharedSeries,
+  createSharedCredentialType,
   listSharedConflicts,
   resolveSharedConflict,
   reviewSharedHours,
+  saveSharedCredential,
+  saveSharedVolunteer,
+  setSharedVolunteerAvailability,
+  setSharedVolunteerSkills,
   updateSharedShift,
 } from "./writes";
 
@@ -156,6 +161,102 @@ describe("shared coordinator writes", () => {
         command: "REVIEW_HOURS",
         payload: expect.objectContaining({ status: "verified", approvedMinutes: 90 }),
         entityVersions: { "hour_entry:99999999-9999-4999-8999-999999999999": 2 },
+      }),
+    );
+  });
+
+  it("saves a volunteer profile against the copy the form was built from", async () => {
+    await saveSharedVolunteer(
+      { id: VOLUNTEER, row_version: 3, name: "Vera Volunteer" },
+      { phone: "555-7777", status: "inactive", languages: ["English"] },
+    );
+
+    expect(mock).toHaveBeenCalledWith(
+      "sync_enqueue_command",
+      expect.objectContaining({
+        command: "SAVE_VOLUNTEER_PROFILE",
+        payload: {
+          volunteerId: VOLUNTEER,
+          phone: "555-7777",
+          status: "inactive",
+          languages: ["English"],
+        },
+        entityVersions: { [`volunteer:${VOLUNTEER}`]: 3 },
+      }),
+    );
+  });
+
+  it("sends skills and availability as whole sets", async () => {
+    await setSharedVolunteerSkills(VOLUNTEER, ["Packing", "Driving"]);
+    expect(mock).toHaveBeenCalledWith(
+      "sync_enqueue_command",
+      expect.objectContaining({
+        command: "SET_VOLUNTEER_SKILLS",
+        payload: { volunteerId: VOLUNTEER, skills: ["Packing", "Driving"] },
+      }),
+    );
+
+    await setSharedVolunteerAvailability(VOLUNTEER, [
+      { day: "mon", period: "morning" },
+      { day: "wed", period: "evening" },
+    ]);
+    expect(mock).toHaveBeenCalledWith(
+      "sync_enqueue_command",
+      expect.objectContaining({
+        command: "SET_VOLUNTEER_AVAILABILITY",
+        payload: {
+          volunteerId: VOLUNTEER,
+          slots: [
+            { day: "mon", period: "morning" },
+            { day: "wed", period: "evening" },
+          ],
+        },
+      }),
+    );
+  });
+
+  it("creates a credential type with a generated id and bounds its validity", async () => {
+    const id = await createSharedCredentialType("  Safe driver  ", 500);
+
+    expect(id).toMatch(/^[0-9a-f-]{36}$/);
+    expect(mock).toHaveBeenCalledWith(
+      "sync_enqueue_command",
+      expect.objectContaining({
+        command: "CREATE_CREDENTIAL_TYPE",
+        payload: { id, name: "Safe driver", validityMonths: 120 },
+      }),
+    );
+  });
+
+  it("versions an edited credential and leaves a new one unguarded", async () => {
+    await saveSharedCredential(VOLUNTEER, null, {
+      credentialTypeId: "ffffffff-ffff-4fff-8fff-fffffffffff1",
+      identifier: "FH-200",
+      validThrough: "2027-10-31",
+    });
+    expect(mock).toHaveBeenCalledWith(
+      "sync_enqueue_command",
+      expect.objectContaining({
+        command: "UPDATE_CREDENTIAL",
+        payload: expect.objectContaining({ volunteerId: VOLUNTEER }),
+        entityVersions: {},
+      }),
+    );
+
+    await saveSharedCredential(
+      VOLUNTEER,
+      { id: "99999999-9999-4999-8999-999999999999", row_version: 2 },
+      { credentialTypeId: "ffffffff-ffff-4fff-8fff-fffffffffff1", validThrough: "2028-01-01" },
+    );
+    expect(mock).toHaveBeenCalledWith(
+      "sync_enqueue_command",
+      expect.objectContaining({
+        command: "UPDATE_CREDENTIAL",
+        payload: expect.objectContaining({
+          volunteerId: VOLUNTEER,
+          id: "99999999-9999-4999-8999-999999999999",
+        }),
+        entityVersions: { "credential:99999999-9999-4999-8999-999999999999": 2 },
       }),
     );
   });

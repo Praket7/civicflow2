@@ -364,6 +364,309 @@
   font-size: 12.5px;
 }
 
+.volunteerBoard {
+  display: grid;
+  grid-template-columns: minmax(248px, 304px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.volunteerDetail {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.directoryTools {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.directoryList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  max-height: 560px;
+  overflow: auto;
+}
+
+.personButton {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.personButton:hover {
+  background: var(--surface-sunken);
+}
+
+.personButtonActive {
+  background: var(--surface-sunken);
+  border-color: var(--border-strong);
+}
+
+.personAvatar,
+.detailAvatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-sunken) 70%, var(--border-soft));
+  color: var(--text);
+  font-weight: 620;
+  letter-spacing: 0.02em;
+}
+
+.personAvatar {
+  width: 30px;
+  height: 30px;
+  font-size: 11px;
+}
+
+.detailAvatar {
+  width: 46px;
+  height: 46px;
+  font-size: 14px;
+}
+
+.personCopy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.personName {
+  overflow: hidden;
+  font-size: 12.8px;
+  font-weight: 590;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.personMeta {
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.personFlags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.detailIdentity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.detailIdentity > div {
+  flex: 1;
+  min-width: 160px;
+}
+
+.detailName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 630;
+}
+
+.detailMeta {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px 3px 9px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 12px;
+}
+
+.chipRemove {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.chipRemove:hover {
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+
+.inlineAdd {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 420px;
+}
+
+.inlineAdd > *:first-child {
+  flex: 1;
+}
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: 74px repeat(7, minmax(48px, 1fr));
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.slotRow {
+  display: contents;
+}
+
+.slotHead {
+  align-self: center;
+  padding: 0 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.slotButton {
+  min-height: 32px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.slotButton:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.slotButtonOn {
+  border-color: color-mix(in srgb, var(--tone-green-ink) 38%, transparent);
+  background: color-mix(in srgb, var(--tone-green-ink) 12%, var(--surface));
+  color: var(--tone-green-ink);
+  font-weight: 570;
+}
+
+.credentialList {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.credentialRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-soft);
+}
+
+.credentialRow:first-child {
+  border-top: 0;
+}
+
+.credentialIcon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+
+.credentialCopy {
+  flex: 1;
+  min-width: 160px;
+}
+
+.credentialName {
+  margin: 0;
+  font-size: 12.8px;
+  font-weight: 580;
+}
+
+.credentialMeta {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.subPanel {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--surface-sunken);
+}
+
+.subPanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.subPanelTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .volunteerBoard {
+    grid-template-columns: 1fr;
+  }
+
+  .directoryList {
+    max-height: 320px;
+  }
+}
+
 @media (max-width: 760px) {
   .formGrid,
   .compare {

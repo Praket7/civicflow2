@@ -90,6 +90,6 @@ Record results here:
 - Windows and Linux installers are unsigned. SmartScreen warns on Windows; Linux has no
   equivalent gate.
 - Kiosk mode is a route in the main window, not an OS-level kiosk.
-- The desktop and the volunteer PWA share the hosted workspace, but the desktop's coordinator
-  view stops at device and delivery health. Roster editing, AutoRoster, and reports run on the
-  local SQLite workspace and travel as exports.
+- The desktop and the volunteer PWA share the hosted workspace. Scheduling, participation,
+  volunteer records, conflicts, and roster plans have native shared screens. AutoRoster and
+  reports still run over the local SQLite workspace, and reports travel as exports.

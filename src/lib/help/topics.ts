@@ -726,6 +726,24 @@ export const helpTopics: HelpTopic[] = [
     ],
   },
   {
+    id: "shared-volunteers",
+    title: "Shared volunteers",
+    purpose:
+      "Keeps profiles, skills, weekly availability, and credentials for the hosted organization in one place.",
+    steps: [
+      "Search the directory by name, email, or skill, or filter to the people who need attention.",
+      "Edit contact details or status and save the profile.",
+      "Add or remove skills and paint the weekly availability grid, then save each set.",
+      "Add a credential, or a credential type first when the organization has none.",
+    ],
+    rules: [
+      "A profile edit carries the row version it was opened at; a stale copy is refused rather than overwritten.",
+      "Skills are replaced as one set, so a retry cannot duplicate a name.",
+      "Availability has three windows per day, and an invalid day or window is refused whole.",
+      "A credential is verified through its valid-through date; an expired document blocks new assignments.",
+    ],
+  },
+  {
     id: "shared-conflicts",
     title: "Sync issues",
     purpose:

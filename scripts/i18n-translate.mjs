@@ -17,6 +17,7 @@ const requested = args.get("locale")
   ? args.get("locale").split(",")
   : locales.map((locale) => locale.code);
 const force = args.has("force");
+const missingOnly = args.has("missing-only");
 const sleepMs = Number(args.get("sleep") ?? 240);
 const concurrency = Math.max(1, Number(args.get("concurrency") ?? 1));
 
@@ -96,21 +97,17 @@ function chunk(values) {
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function requestTranslation(texts, code) {
-  const query = new URLSearchParams({
+function joinQuery(texts, code) {
+  return new URLSearchParams({
     client: "gtx",
     sl: "en",
     tl: code,
     dt: "t",
     q: texts.reduce((joined, text, index) => (index === 0 ? text : `${joined}\n@@@\n${text}`), ""),
   });
+}
 
-  const response = await fetch("https://translate.googleapis.com/translate_a/single", {
-    method: "POST",
-    body: query,
-    headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
-  });
-
+async function readTranslationResponse(response) {
   if (response.status === 429 || response.status >= 500) {
     throw new Error(`HTTP ${response.status}`);
   }
@@ -127,6 +124,38 @@ async function requestTranslation(texts, code) {
   const payload = await response.json();
   const joined = (payload[0] ?? []).map((part) => part[0] ?? "").join("");
   return joined.split("@@@").map((part) => part.trim());
+}
+
+/**
+ * The direct endpoint blocks a busy IP with a captcha redirect. A public CORS
+ * relay fetches the same GET URL from its own address, which keeps a translation
+ * run moving without a key of its own.
+ */
+async function requestThroughRelay(texts, code) {
+  const target = `https://translate.googleapis.com/translate_a/single?${joinQuery(texts, code)}`;
+  const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`, {
+    headers: { accept: "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(`relay HTTP ${response.status}`);
+  }
+  return readTranslationResponse(response);
+}
+
+async function requestTranslation(texts, code) {
+  const query = joinQuery(texts, code);
+  try {
+    const response = await fetch("https://translate.googleapis.com/translate_a/single", {
+      method: "POST",
+      body: query,
+      headers: { "content-type": "application/x-www-form-urlencoded;charset=UTF-8" },
+    });
+    return await readTranslationResponse(response);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!/blocked|429|HTTP 5\d\d|Failed to fetch/i.test(message)) throw error;
+    return requestThroughRelay(texts, code);
+  }
 }
 
 async function translateChunk(texts, code, attempt = 0) {
@@ -172,7 +201,7 @@ async function translateLocale(meta) {
   // single-word key can legitimately read the same in both languages, so only
   // sentence-length entries are re-requested.
   const untranslated = (string) =>
-    !existing[string] || (existing[string] === string && string.includes(" "));
+    !existing[string] || (!missingOnly && existing[string] === string && string.includes(" "));
   if (!force && !strings.some(untranslated)) {
     console.log(`${code}: complete (${Object.keys(existing).length})`);
     return;

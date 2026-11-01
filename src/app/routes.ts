@@ -510,6 +510,15 @@ export const routes: RouteMeta[] = [
     spec: "The encrypted SQLite copy of a hosted organization",
     keywords: ["shared", "replica", "sqlite", "cursor", "offline"],
   },
+  {
+    id: "shared-volunteers",
+    number: 57,
+    title: "Shared Volunteers",
+    path: "/shared/volunteers",
+    role: "coordinator",
+    spec: "Profiles, skills, availability, and credentials in the shared organization",
+    keywords: ["shared", "volunteer", "profile", "skills", "availability", "credential"],
+  },
 ];
 
 function scoreRoute(route: RouteMeta, query: string): number {

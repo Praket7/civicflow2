@@ -18,7 +18,7 @@ click away. Deployment and the remaining gaps are covered in **Cloud workspace**
 | Fact | Value |
 | --- | --- |
 | Package version | `0.1.1` |
-| Registered routes | 55 |
+| Registered routes | 56 |
 | Migration files | 15 |
 | Database schema | v15 |
 | Application tables | 51 |
@@ -212,7 +212,14 @@ hosted organization instead. A write becomes a command in the same durable outbo
 app uses: the screen keeps working offline, the server checks the membership epoch, row versions
 and workspace revision, and a refusal lands in `/shared/conflicts` with both values instead of
 being merged silently. The commands cover opportunities, shifts, atomic weekly series,
-attendance, hours review and `APPLY_ROSTER_PLAN`.
+attendance, hours review, volunteer profiles, skills, weekly availability, credentials and
+credential types, plus `APPLY_ROSTER_PLAN`.
+
+`/shared/volunteers` keeps the roster record itself in the organization. A coordinator can
+search the directory, edit contact details or status, add and remove skills, paint a weekly
+availability grid, and verify a credential against its type. The volunteer app writes the
+same profile and credential commands, so a phone edit and a laptop edit meet at the same row
+version instead of one overwriting the other.
 
 AutoRoster and reporting still run as Rust code over the local SQLite workspace. On the shared
 screens, Quick plan and Rescue upcoming gaps build a deterministic plan over the replica, then
@@ -244,9 +251,9 @@ organization: switching accounts clears it, and a bootstrap or pull row from ano
 organization is refused before it reaches the database.
 
 `/shared/replica` is a read-only view of that same replica. Coordinator writes live on the
-schedule and participation screens, not in the replica viewer, so a local copy can be inspected
-without becoming a second source of truth. The framed client at `/shared` remains the volunteer
-surface and the health view.
+schedule, participation and volunteer screens, not in the replica viewer, so a local copy can be
+inspected without becoming a second source of truth. The framed client at `/shared` remains the
+volunteer surface and the health view.
 
 **Records → Backups** writes a sealed archive anywhere the coordinator chooses. The snapshot is
 encrypted with a passphrase (Argon2id, then XChaCha20-Poly1305) and the plaintext copy is deleted

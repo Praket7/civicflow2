@@ -23,19 +23,14 @@ if (!existsSync(README)) {
 const text = readFileSync(README, "utf8");
 
 const required = [
-  "## Product",
-  "## Architecture",
-  "## Organization and access",
+  "## Screenshots",
+  "## Core capabilities",
   "## AutoRoster",
-  "## Data model",
-  "## Security",
-  "## Accessibility",
-  "## Testing",
-  "## Install",
-  "## Build and run",
-  "## Validation",
-  "## Credits",
-  "## Known limits",
+  "## Architecture",
+  "## Development",
+  "## Testing and quality",
+  "## Install and releases",
+  "## License and acknowledgements",
 ];
 for (const heading of required) {
   if (!text.includes(heading)) problems.push(`README is missing section "${heading}"`);

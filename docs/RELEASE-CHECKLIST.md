@@ -1,106 +1,91 @@
 # Release checklist
 
-This is the manual half of a release. The automated gates run on every push; the table below is
-the part a fresh machine has to prove. Record the date and the person who ran each row, and keep
-the installer hashes with the results.
+Use this for every tagged release. The release workflow re-runs verification on the tagged
+commit, and `.github/workflows/ci.yml` covers changes on `main`. This checklist covers the manual
+checks and packaging steps that CI cannot prove.
 
-## Current status
+## Prerequisites
 
-| Item                             | Status                                                              |
-| -------------------------------- | ------------------------------------------------------------------- |
-| Code, tests, and automated gates | Green on `main`                                                     |
-| Packaged installers              | Local arm64 DMG built; no `v*` tag or public release                |
-| Clean-install matrix             | Not run — no disposable Windows or Linux machine is available       |
-| macOS Gatekeeper path            | Ad-hoc signed; not notarized or exercised on a quarantined download |
-| Updater round trip               | Not run; needs a published `v0.1.1` before `v0.1.2` can find it     |
+- A clean checkout of the exact commit to release, with no untracked secrets.
+- The Node version in `.node-version`, pnpm 12.9.1, stable Rust, and the platform's Tauri
+  prerequisites.
+- `pnpm install --frozen-lockfile` completes without changing the lockfile.
+- The signing and updater secrets are configured for the repository, or the release is explicitly
+  marked unsigned in its notes.
 
-The local artifact is `src-tauri/target/release/bundle/dmg/CivicFlow_0.1.1_aarch64.dmg` with a
-SHA-256 file beside it. It is ad-hoc signed only; Apple credentials are still required for a
-notarized production build.
+## Version and automated gate
 
-The clean-install matrix is deliberately left unchecked. Do not mark it complete from a developer
-machine that already has the toolchain, a warm WebView cache, and the repository checked out.
+1. Bump the version in all four manifests together: `package.json`, `src-tauri/tauri.conf.json`,
+   `src-tauri/Cargo.toml`, and `src-tauri/core/Cargo.toml`.
+2. Run the exact-tag check. The tag must match the manifest version; prerelease tags must use the
+   same prerelease version in every manifest.
 
-## Automated evidence
+   ```bash
+   node scripts/check-release-version.mjs vX.Y.Z
+   ```
 
-Run these before tagging. The latest green run is linked from the repository's Actions tab.
+3. Run the full local gate:
 
-| Gate                                             | What it proves                                                                                                                                                                               |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Frontend checks                                  | Typecheck, lint, formatting, copy and i18n checks, hardcode and identity scans, generated-file drift, help coverage, documentation facts, unit tests, SQL protocol tests, and the web build  |
-| Print, accessibility-tree, zoom, contrast audits | Every registered route renders a heading, named controls, no horizontal overflow at 200 percent, and AA contrast in both themes                                                              |
-| Rust checks                                      | `cargo fmt --check`, `cargo clippy -D warnings`, the core test suite, and a desktop shell compile                                                                                            |
-| Native end-to-end (macOS)                        | A real Tauri window opens signed out, opens the offline demo workspace, refuses the wrong role in both directions, signs in as a volunteer, and creates and signs in a new volunteer account |
-| Secret scan                                      | `gitleaks` finds no credential in the working tree                                                                                                                                           |
-| Dependency audit                                 | Rust advisory checks in both Cargo workspaces and `pnpm audit --prod` at high severity                                                                                                       |
+   ```bash
+   pnpm verify
+   cargo check --manifest-path src-tauri/Cargo.toml
+   pnpm audit --prod --audit-level=high
+   gitleaks dir . --no-banner --redact --config .gitleaks.toml
+   ```
+
+4. Confirm the CI run for the exact commit is green. Do not tag a different SHA.
+
+## Build installers
+
+Build on each target platform, or tag the commit and let the release workflow build the matrix.
+The workflow produces macOS (Apple silicon and Intel), Windows x64, and Linux x64 installers, plus
+the signed updater feed and `SHA256SUMS.txt`.
+
+For a local macOS build:
+
+```bash
+pnpm build:web
+pnpm tauri build --bundles dmg
+```
 
 ## Clean-install matrix
 
-Use a fresh OS install or a disposable VM for each column. Download through a browser so the
-platform's quarantine or Mark-of-the-Web applies.
+Use a fresh OS install or a disposable VM for each column. Download through a browser so
+quarantine or Mark-of-the-Web applies.
 
-| Check                                                                                                  | macOS | Windows 11 | Ubuntu 24.04 |
-| ------------------------------------------------------------------------------------------------------ | ----- | ---------- | ------------ |
-| Download the installer from the release page and verify `SHA256SUMS.txt`                               | ☐     | ☐          | ☐            |
-| Get past Gatekeeper / SmartScreen / AppImage permissions                                               | ☐     | ☐          | ☐            |
-| First launch opens the offline demo workspace with Wi-Fi off                                           | ☐     | ☐          | ☐            |
-| Build and apply an AutoRoster plan                                                                     | ☐     | ☐          | ☐            |
-| Run the check-in kiosk and record a manual check-in                                                    | ☐     | ☐          | ☐            |
-| Export a PDF report and a CSV                                                                          | ☐     | ☐          | ☐            |
-| Create a backup, change data, restore the backup                                                       | ☐     | ☐          | ☐            |
-| Quit, relaunch, and confirm the data is still there                                                    | ☐     | ☐          | ☐            |
-| Sign in to the shared workspace (proves the anon key was baked in)                                     | ☐     | ☐          | ☐            |
-| Install `v0.1.1`, then install `v0.1.2` from Settings → Updates; confirm data and keychain key survive | ☐     | ☐          | ☐            |
+| Check                                                                                                 | macOS | Windows 11 | Ubuntu 24.04 |
+| ----------------------------------------------------------------------------------------------------- | ----- | ---------- | ------------ |
+| Verify `SHA256SUMS.txt` before opening the installer                                                  | ☐     | ☐          | ☐            |
+| Complete Gatekeeper, SmartScreen, or AppImage permission flow                                         | ☐     | ☐          | ☐            |
+| Launch with the network off and open the demo workspace                                               | ☐     | ☐          | ☐            |
+| Build and apply an AutoRoster plan                                                                    | ☐     | ☐          | ☐            |
+| Check in a volunteer and record a no-show                                                             | ☐     | ☐          | ☐            |
+| Approve service hours and export a CSV and PDF report                                                 | ☐     | ☐          | ☐            |
+| Create a backup, change data, and restore the backup                                                  | ☐     | ☐          | ☐            |
+| Quit, relaunch, and confirm the data persisted                                                        | ☐     | ☐          | ☐            |
+| Sign in to the shared workspace                                                                       | ☐     | ☐          | ☐            |
+| Install the previous release, update to this release, and confirm data and the keychain entry survive | ☐     | ☐          | ☐            |
 
-Record results here:
+Do not mark a row complete from a developer machine or from an earlier build. Record the actual
+release-candidate result, and do not claim notarization or signing that was not performed.
 
-| Date | Platform | Installer / SHA-256 | Result | Notes |
-| ---- | -------- | ------------------- | ------ | ----- |
-|      |          |                     |        |       |
+## Signing constraints
 
-## Before the first tag
+- Without an Apple Developer ID certificate and notarization credentials, macOS builds are
+  ad-hoc signed and Gatekeeper will reject them on a quarantined download.
+- Without a Windows code-signing certificate, SmartScreen warns about the installer.
+- Linux AppImages need the executable bit; the deb and rpm use WebKitGTK 4.1.
+- The updater requires `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.
+  Losing either half prevents installed builds from updating.
 
-1. Rotate the three `@civicflow.test` fixture passwords and revoke their sessions. The old
-   password is still readable in earlier public commits, so deleting it from `main` is not
-   enough. Keep the new values in a password manager, never in the repository.
-2. Set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` as repository secrets if reminder dispatch
-   should run. Without them the scheduled job reports a notice and skips; push deliveries stay
-   queued.
-3. Confirm `gh secret list` shows the two Tauri signing secrets and nothing unexpected.
-4. Confirm the bundle identifier is `io.github.praket7.civicflow`, so the app-data directory and
-   keychain entry do not move after the first release.
-5. Run the full `pnpm verify` locally once more, then confirm the CI run on the tagged commit is
-   green.
-6. For a release candidate, first bump all four manifests to the candidate version (for example,
-   `0.1.1-rc.1`), then tag `v0.1.1-rc.1`. The version gate deliberately requires exact equality,
-   so a prerelease tag against the final `0.1.1` manifests will be refused. A hyphen makes the
-   workflow mark the release as a prerelease, so it never becomes `latest` and never feeds the
-   updater. After the matrix passes, bump all four manifests to `0.1.1` before the final tag.
-7. Run the matrix against the release-candidate assets. Fix what it finds, then tag `v0.1.1`.
-8. Install `v0.1.1`, tag a trivial `v0.1.2`, and complete the updater round trip.
+## Tag and publish
 
-## Release sequence
-
-- ☐ `pnpm verify` is green on `main`
-- ☐ CI is green on the commit being tagged
-- ☐ `node scripts/check-release-version.mjs vX.Y.Z` passes
-- ☐ Release-candidate installers and checksums downloaded and verified
-- ☐ Clean-install matrix completed on all three platforms
-- ☐ Updater round trip completed
-- ☐ Release notes contain no demo passwords and no real organization details
-- ☐ Final tag pushed and the release marked non-prerelease
-
-## Known constraints
-
-- macOS builds are ad-hoc signed, not notarized. Gatekeeper blocks a quarantined download until
-  the user chooses **Open Anyway**; the README documents both that and the `xattr` command.
-- Windows and Linux installers are unsigned. SmartScreen warns on Windows; Linux has no
-  equivalent gate.
-- Kiosk mode is a route in the main window, not an OS-level kiosk.
-- The desktop and the volunteer PWA share the hosted workspace. Scheduling, participation,
-  volunteer records, reports, conflicts, and roster plans have native shared screens. The
-  shared report reads the replica, previews the funder packet page by page, exports CSV, and
-  prints those measured sheets: the preview is the print path, so its sheet count is the PDF's
-  page count. The packet lists the eighteen programs with the most verified hours; the screen and
-  the CSV keep every program. The same Rust AutoRoster plans the local SQLite workspace and the
-  synchronized replica; local reports travel as exports.
+1. For a release candidate, bump all four manifests to `X.Y.Z-rc.N`, run the checks, and tag
+   `vX.Y.Z-rc.N`. A hyphen makes the GitHub release a prerelease, so it never becomes `latest`
+   or feeds the updater.
+2. Run the clean-install matrix against the candidate assets. Fix defects and repeat the
+   candidate build if necessary.
+3. Bump all four manifests to `X.Y.Z`, rerun the local gate and CI, and tag `vX.Y.Z`.
+4. Verify the release contains every installer, `SHA256SUMS.txt`, and the updater feed.
+5. Install the published release, then install the next patch release from **Settings → Updates**
+   and complete the updater round trip.

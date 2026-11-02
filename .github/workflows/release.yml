@@ -53,18 +53,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - label: macOS (Apple silicon)
+          - label: macOS (Universal)
             platform: macos-latest
-            target: aarch64-apple-darwin
-          - label: macOS (Intel)
-            platform: macos-latest
-            target: x86_64-apple-darwin
+            target: universal-apple-darwin
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
           - label: Linux (x64)
             platform: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
+            rust_targets: x86_64-unknown-linux-gnu
           - label: Windows (x64)
             platform: windows-latest
             target: x86_64-pc-windows-msvc
+            rust_targets: x86_64-pc-windows-msvc
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
@@ -96,7 +96,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.rust_targets }}
 
       - uses: Swatinem/rust-cache@v2
         with:
@@ -236,21 +236,29 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: CivicFlow ${{ github.ref_name }}
           releaseBody: |
-            CivicFlow desktop installers for macOS (Apple silicon and Intel),
-            Windows x64, and Linux x64.
+            CivicFlow desktop installers for macOS (universal Apple silicon and
+            Intel), Windows x64, and Linux x64. The macOS DMG is one universal
+            build, not separate architecture-specific downloads.
 
+            This release is built from the tagged commit by GitHub Actions.
             macOS and Windows builds are signed and notarized when the
-            repository signing secrets are configured. If your system warns
-            about an unidentified developer, that build is unsigned: on macOS,
-            click Done, then open System Settings → Privacy & Security and
-            choose Open Anyway; or run
+            repository signing secrets are configured. Without those secrets,
+            the macOS DMG is ad-hoc signed and Gatekeeper will warn on a
+            quarantined download; choose Open Anyway in System Settings →
+            Privacy & Security, or run
             `xattr -dr com.apple.quarantine /Applications/CivicFlow.app`.
-            On Windows, choose More info → Run anyway if SmartScreen appears.
-            On Linux, chmod +x the AppImage before running it; the deb and rpm
-            use the system WebKitGTK 4.1.
+            Unsigned Windows builds may show SmartScreen; choose More info →
+            Run anyway. On Linux, chmod +x the AppImage before running it; the
+            deb and rpm use the system WebKitGTK 4.1.
 
-            Verify a download against SHA256SUMS.txt:
-            `sha256sum -c SHA256SUMS.txt`
+            Verify the download against SHA256SUMS.txt (macOS/Linux:
+            `shasum -a 256 -c SHA256SUMS.txt`; Windows: compare
+            `Get-FileHash <file> -Algorithm SHA256`).
+
+            Verify GitHub's build provenance attestation with
+            `gh attestation verify <installer> --repo Praket7/civicflow2`.
+            The checksums and attestations are generated from the same tagged
+            commit as the installers.
 
             First launch starts empty. The welcome screen can open the local
             demo workspace without a password, but it never seeds or opens one
@@ -284,3 +292,22 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "$GITHUB_REF_NAME" artifacts/SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --clobber
+
+  attest:
+    name: Attest release assets
+    needs: checksums
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --dir artifacts --clobber
+
+      - name: Create GitHub build provenance attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: artifacts/*

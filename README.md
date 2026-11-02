@@ -7,7 +7,7 @@ The desktop application is local-first: its workspace, scheduling, reporting, ch
 <!-- CIVICFLOW_FACTS_START -->
 | Fact | Value |
 | --- | --- |
-| Package version | `0.1.1` |
+| Package version | `0.1.2` |
 | Registered routes | 57 |
 | Migration files | 15 |
 | Database schema | v15 |
@@ -84,9 +84,17 @@ CI additionally runs the macOS native end-to-end test with WebdriverIO, dependen
 
 ## Install and releases
 
-Installers are built by `.github/workflows/release.yml` when a `v*` tag is pushed and published with a SHA-256 checksum file. The release workflow builds macOS on Apple silicon and Intel, Windows x64, and Linux x64.
+[Download the latest CivicFlow release](https://github.com/Praket7/civicflow2/releases/latest) for macOS, Windows, or Linux. The macOS asset is one universal DMG for Apple silicon and Intel Macs; the Windows and Linux releases contain the x64 installers for those platforms.
 
-macOS builds are ad-hoc signed unless Apple signing credentials are configured. Unsigned builds need **Open Anyway** in System Settings; unsigned Windows builds need **More info → Run anyway** if SmartScreen appears. Follow [`docs/RELEASE-CHECKLIST.md`](docs/RELEASE-CHECKLIST.md) for versioning, signing, and the clean-install matrix. The updater feed is published with the same tagged release.
+| Platform | Installer |
+| --- | --- |
+| macOS | Universal DMG (Apple silicon and Intel) |
+| Windows 10/11 | x64 `.exe` or `.msi` installer |
+| Linux | x64 AppImage, `.deb`, or `.rpm` |
+
+Installers are built by `.github/workflows/release.yml` when a `v*` tag is pushed. The workflow runs the full verification gate on the tagged commit and publishes SHA-256 checksums and GitHub build provenance for the assets. Verify a download with `shasum -a 256 -c SHA256SUMS.txt` (macOS/Linux) or `Get-FileHash <file> -Algorithm SHA256` (Windows), and verify provenance with `gh attestation verify <installer> --repo Praket7/civicflow2`.
+
+macOS builds are ad-hoc signed unless Apple signing credentials are configured. Without notarization, Gatekeeper still warns on a quarantined download: open **System Settings → Privacy & Security** and choose **Open Anyway**, or run `xattr -dr com.apple.quarantine /Applications/CivicFlow.app`. Unsigned Windows builds may show SmartScreen; choose **More info → Run anyway**. Follow [`docs/RELEASE-CHECKLIST.md`](docs/RELEASE-CHECKLIST.md) for versioning, signing, and the clean-install matrix. The updater feed is published with the same tagged release.
 
 ## License and acknowledgements
 

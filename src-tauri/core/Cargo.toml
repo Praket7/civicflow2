@@ -1,6 +1,6 @@
 [package]
 name = "civicflow-core"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 rust-version = "1.77"
 description = "CivicFlow domain rules, SQLite persistence, and read models"

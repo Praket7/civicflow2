@@ -38,14 +38,14 @@ checks and packaging steps that CI cannot prove.
 ## Build installers
 
 Build on each target platform, or tag the commit and let the release workflow build the matrix.
-The workflow produces macOS (Apple silicon and Intel), Windows x64, and Linux x64 installers, plus
-the signed updater feed and `SHA256SUMS.txt`.
+The workflow produces one universal macOS DMG (Apple silicon and Intel), Windows x64, and Linux x64
+installers, plus the signed updater feed, `SHA256SUMS.txt`, and GitHub build provenance attestations.
 
 For a local macOS build:
 
 ```bash
 pnpm build:web
-pnpm tauri build --bundles dmg
+pnpm tauri build --target universal-apple-darwin --bundles dmg
 ```
 
 ## Clean-install matrix
@@ -72,8 +72,11 @@ release-candidate result, and do not claim notarization or signing that was not 
 ## Signing constraints
 
 - Without an Apple Developer ID certificate and notarization credentials, macOS builds are
-  ad-hoc signed and Gatekeeper will reject them on a quarantined download.
-- Without a Windows code-signing certificate, SmartScreen warns about the installer.
+  ad-hoc signed and Gatekeeper will reject them on a quarantined download. Publish the Open Anyway
+  instructions with the release; do not imply the artifact is notarized.
+- Without a Windows code-signing certificate, SmartScreen warns about the installer. Publish that
+  limitation explicitly and rely on SHA-256 checksums plus GitHub build provenance, not a
+  self-signed certificate.
 - Linux AppImages need the executable bit; the deb and rpm use WebKitGTK 4.1.
 - The updater requires `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.
   Losing either half prevents installed builds from updating.
@@ -86,6 +89,7 @@ release-candidate result, and do not claim notarization or signing that was not 
 2. Run the clean-install matrix against the candidate assets. Fix defects and repeat the
    candidate build if necessary.
 3. Bump all four manifests to `X.Y.Z`, rerun the local gate and CI, and tag `vX.Y.Z`.
-4. Verify the release contains every installer, `SHA256SUMS.txt`, and the updater feed.
+4. Verify the release contains the universal macOS DMG, Windows and Linux x64 installers,
+   `SHA256SUMS.txt`, the updater feed, and GitHub build provenance attestations.
 5. Install the published release, then install the next patch release from **Settings → Updates**
    and complete the updater round trip.

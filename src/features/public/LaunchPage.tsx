@@ -50,7 +50,7 @@ export function LaunchPage() {
           </span>
           <span className={styles.wordmark}>CivicFlow</span>
         </div>
-        <span className={styles.mastheadMeta}>Local workspace · v0.1.1</span>
+        <span className={styles.mastheadMeta}>Local workspace · v0.1.2</span>
       </header>
 
       <main className={styles.stage}>
@@ -122,7 +122,7 @@ export function LaunchPage() {
       </figure>
 
       <footer className={styles.footer}>
-        <span>v0.1.1 · Local-first desktop build</span>
+        <span>v0.1.2 · Local-first desktop build</span>
         <span>
           {workspace.organization.city}, {workspace.organization.state} ·{" "}
           {workspace.organization.timezone}

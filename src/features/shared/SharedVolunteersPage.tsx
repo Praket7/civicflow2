@@ -894,7 +894,7 @@ export function SharedVolunteersPage() {
 
         {!isTauri() ? (
           <DesktopOnlyNotice hosted={false}>
-            Volunteer records are written through the encrypted replica on this computer.
+            Volunteer records are saved in this computer's encrypted workspace.
           </DesktopOnlyNotice>
         ) : (
           <>

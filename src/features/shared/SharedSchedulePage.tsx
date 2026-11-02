@@ -288,7 +288,7 @@ export function SharedSchedulePage() {
         <PageHeader
           eyebrow="Shared coordinator"
           title="Schedule"
-          description="Create opportunities and shifts in the hosted organization. Writes enter a local outbox first, so the screen keeps working offline and the server confirms them later."
+          description="Create opportunities and shifts in the hosted organization. Changes are saved on this computer first, so the screen keeps working offline; the server confirms them when it can."
           backTo="/shared"
           backLabel="Hosted workspace"
           actions={
@@ -307,7 +307,7 @@ export function SharedSchedulePage() {
                 disabled={busy || !isTauri()}
                 onClick={() => void rebuild()}
               >
-                Rebuild
+                Refresh from server
               </Button>
             </div>
           }
@@ -317,8 +317,8 @@ export function SharedSchedulePage() {
 
         {!isTauri() ? (
           <DesktopOnlyNotice>
-            The browser build uses the hosted workspace. Open CivicFlow on this computer to write
-            through the encrypted replica.
+            The browser build uses the hosted workspace. Open CivicFlow on this computer to edit
+            this organization's encrypted workspace.
           </DesktopOnlyNotice>
         ) : (
           <>
@@ -327,7 +327,7 @@ export function SharedSchedulePage() {
                 ["Opportunities", String(opportunities.length), "Programs in this organization"],
                 ["Shifts", String(shifts.length), "Scheduled work"],
                 ["Open seats", String(openSeats), "Unfilled places"],
-                ["Waiting to upload", String(sync.pending), "Local commands not yet sent"],
+                ["Waiting to upload", String(sync.pending), "Changes not yet sent"],
               ].map(([label, value, hint]) => (
                 <div key={label} className={styles.stat}>
                   <p className={styles.statLabel}>{label}</p>
@@ -620,9 +620,8 @@ export function SharedSchedulePage() {
                       Edit shift
                     </h2>
                     <p className={styles.panelCopy}>
-                      The command carries the version this form was opened at. If someone else
-                      changed the shift first, the server refuses it and the conflict center
-                      explains both values.
+                      This form is based on the version it was opened at. If someone else changed
+                      the shift first, the server refuses it and Sync issues shows both values.
                     </p>
                   </div>
                   <Button
@@ -700,7 +699,7 @@ export function SharedSchedulePage() {
                       Repeating series
                     </h2>
                     <p className={styles.panelCopy}>
-                      Each series was published as one command. Editing one occurrence never moves
+                      Each series was published as one change. Editing one occurrence never moves
                       the others.
                     </p>
                   </div>
@@ -778,7 +777,7 @@ export function SharedSchedulePage() {
                 {shifts.length === 0 ? (
                   <p className={styles.panelCopy}>
                     No shifts have reached this computer yet. If the organization has some, use
-                    Rebuild to take a fresh copy.
+                    Rebuild to download a fresh copy.
                   </p>
                 ) : matchedShifts.length === 0 ? (
                   <p className={styles.panelCopy}>{t("No shift in this filter")}</p>

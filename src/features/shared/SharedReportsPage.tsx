@@ -172,7 +172,7 @@ export function SharedReportsPage() {
         {!isTauri() ? (
           <DesktopOnlyNotice>
             The browser build uses the hosted workspace. Open CivicFlow on this computer to read the
-            report from the encrypted replica.
+            report from its encrypted workspace.
           </DesktopOnlyNotice>
         ) : (
           <>

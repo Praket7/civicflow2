@@ -4,8 +4,8 @@ import styles from "./shared.module.css";
 
 /**
  * Five shared screens change the organization, and the browser build has no
- * replica to write through. Each one used to repeat this panel with slightly
- * different wording; the explanation stays here so they cannot drift.
+ * local workspace to write through. The explanation stays here so the screens
+ * cannot drift apart.
  */
 export function DesktopOnlyNotice({
   children,

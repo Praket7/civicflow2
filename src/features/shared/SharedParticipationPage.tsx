@@ -170,7 +170,7 @@ export function SharedParticipationPage() {
         next.length > 0 ? "good" : "bad",
         next.length > 0
           ? `Rescue plan prepared: ${next.length} assignments across ${shifts} upcoming shifts, with ${open} seats still open.`
-          : `No upcoming gap can be filled from this replica. ${open} seats remain open.`,
+          : `No upcoming gap can be filled from the data on this computer. ${open} seats remain open.`,
       );
     } catch (error) {
       flash("bad", messageOf(error));
@@ -274,7 +274,7 @@ export function SharedParticipationPage() {
 
         {!isTauri() ? (
           <DesktopOnlyNotice>
-            Participation is written through the encrypted replica on this computer.
+            Participation is saved in this computer's encrypted workspace.
           </DesktopOnlyNotice>
         ) : (
           <>
@@ -296,8 +296,7 @@ export function SharedParticipationPage() {
                 <div>
                   <h2 className={styles.panelTitle}>Shift</h2>
                   <p className={styles.panelCopy}>
-                    Choose the shift to work on. The list comes from the same replica as the
-                    schedule.
+                    Choose the shift to work on. The list matches the shared schedule.
                   </p>
                 </div>
               </div>
@@ -510,7 +509,7 @@ export function SharedParticipationPage() {
                       <p className={styles.panelCopy}>
                         {planScope === "recovery"
                           ? `A Rust solver plan across ${recoveryShifts} upcoming shifts. It fills only open seats, puts waitlisted volunteers first, and never double-books an overlap. The server applies every assignment or refuses the whole plan.`
-                          : "The same Rust solver AutoRoster uses, reading only this replica. The server applies every assignment or refuses the whole plan if the revision moved or any rule fails."}
+                          : "The same AutoRoster engine, using only the data on this computer. The server checks every assignment or refuses the whole plan if the workspace changed or a rule fails."}
                       </p>
                     </div>
                     <Button
@@ -665,8 +664,8 @@ export function SharedParticipationPage() {
 
             <p className={styles.muted} style={{ margin: 0, fontSize: 12.5 }}>
               {sync.online
-                ? "Connected. A refusal lands in the conflict center with both values."
-                : "Offline. These actions are queued and will be sent when the organization is reachable."}
+                ? "Connected. A refused change appears in Sync issues with both values."
+                : "Offline. These actions are saved here and sent when the organization is reachable."}
             </p>
           </>
         )}

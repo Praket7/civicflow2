@@ -66,7 +66,7 @@ export function SharedConflictsPage() {
       await load();
       setNotice(
         resolution === "resolved"
-          ? "Conflict closed. The server's value is the one in this replica."
+          ? "Issue closed. The server's value is now shown on this device."
           : "Conflict dismissed without changing the organization.",
       );
     } catch (caught) {
@@ -83,7 +83,7 @@ export function SharedConflictsPage() {
       await startDesktopSync(true);
       await load();
       await reload();
-      setNotice("Replica rebuilt from the organization's current state.");
+      setNotice("Workspace refreshed from the organization's current data.");
     } catch (caught) {
       setError(messageOf(caught));
     } finally {
@@ -100,7 +100,7 @@ export function SharedConflictsPage() {
         <PageHeader
           eyebrow="Shared coordinator"
           title="Sync issues"
-          description="Commands the server refused, with the value this device held and the value the organization now has. Nothing is merged silently."
+          description="Changes the server refused, with the value this device held and the value the organization now has. Nothing is merged silently."
           backTo="/shared"
           backLabel="Hosted workspace"
           actions={
@@ -129,8 +129,8 @@ export function SharedConflictsPage() {
 
         {!isTauri() ? (
           <DesktopOnlyNotice>
-            Conflicts belong to this computer&apos;s outbox. The hosted workspace shows its own
-            failures.
+            Changes waiting on this computer appear here. The hosted workspace shows its own failed
+            changes.
           </DesktopOnlyNotice>
         ) : (
           <>
@@ -159,7 +159,7 @@ export function SharedConflictsPage() {
                     <h2 className={styles.panelTitle}>No sync issues</h2>
                   </div>
                   <p className={styles.panelCopy} style={{ marginTop: 6 }}>
-                    Every command this computer sent was accepted. If the organization changes
+                    Every change this computer sent was accepted. If the organization changes
                     something while this device is offline, the refusal will appear here.
                   </p>
                 </div>
@@ -295,7 +295,7 @@ export function SharedConflictsPage() {
             <p className={styles.muted} style={{ margin: 0, fontSize: 12.5 }}>
               {sync.online
                 ? "Connected. New refusals appear here after the next upload."
-                : "Offline. Queued commands will be sent when the organization is reachable."}
+                : "Offline. Queued changes will be sent when the organization is reachable."}
             </p>
           </>
         )}

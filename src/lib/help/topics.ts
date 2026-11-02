@@ -704,7 +704,7 @@ export const helpTopics: HelpTopic[] = [
     rules: [
       "A shift must end after it starts and has at least one seat.",
       "A slot cannot shrink below the volunteers already registered.",
-      "An edit carries the row version it was opened at. The server refuses the edit when someone else changed the row first.",
+      "An edit is based on the version it was opened at. If someone else changed the row first, the server refuses the edit rather than overwriting their work.",
       "Creating a shift needs at least one seat and an opportunity in the same organization.",
     ],
   },
@@ -738,7 +738,7 @@ export const helpTopics: HelpTopic[] = [
       "Add a credential, or a credential type first when the organization has none.",
     ],
     rules: [
-      "A profile edit carries the row version it was opened at; a stale copy is refused rather than overwritten.",
+      "A profile edit is based on the version it was opened at. If someone else changed it first, the server refuses the edit rather than overwriting their work.",
       "Skills are replaced as one set, so a retry cannot duplicate a name.",
       "Availability has three windows per day, and an invalid day or window is refused whole.",
       "A credential is verified through its valid-through date; an expired document blocks new assignments.",
@@ -773,11 +773,11 @@ export const helpTopics: HelpTopic[] = [
     steps: [
       "Read the code and both values.",
       "Choose Keep server when the organization's value is correct, or Dismiss to close the issue without changing anything.",
-      "Choose Rebuild from server if the replica itself needs to be taken again.",
+      "Choose Rebuild from server to download this organization's data again.",
     ],
     rules: [
       "A conflict is closed locally. Closing it does not edit the organization.",
-      "A revoked membership makes queued privileged work stale; rebuilding takes the current authority and rows.",
+      "A revoked membership stops queued privileged work. Rebuilding downloads the current access and rows.",
     ],
   },
   {

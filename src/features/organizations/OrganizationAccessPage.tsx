@@ -409,7 +409,7 @@ export function OrganizationAccessPage() {
 
       <p className={styles.footNote}>
         Removing someone disables their membership here. Their local records stay on their device;
-        the next shared write is rejected because their membership epoch is out of date.
+        their next shared change is refused because their access is no longer current.
       </p>
     </Page>
   );

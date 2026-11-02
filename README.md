@@ -86,11 +86,13 @@ CI additionally runs the macOS native end-to-end test with WebdriverIO, dependen
 
 [Download the latest CivicFlow release](https://github.com/Praket7/civicflow2/releases/latest) for macOS, Windows, or Linux. The macOS asset is one universal DMG for Apple silicon and Intel Macs; the Windows and Linux releases contain the x64 installers for those platforms.
 
-| Platform | Installer |
+| Platform | Direct download |
 | --- | --- |
-| macOS | Universal DMG (Apple silicon and Intel) |
-| Windows 10/11 | x64 `.exe` or `.msi` installer |
-| Linux | x64 AppImage, `.deb`, or `.rpm` |
+| macOS | [Universal DMG](https://github.com/Praket7/civicflow2/releases/download/v0.1.2/CivicFlow_0.1.2_universal.dmg) (Apple silicon and Intel) |
+| Windows 10/11 | [x64 installer](https://github.com/Praket7/civicflow2/releases/download/v0.1.2/CivicFlow_0.1.2_x64-setup.exe) or [MSI](https://github.com/Praket7/civicflow2/releases/download/v0.1.2/CivicFlow_0.1.2_x64_en-US.msi) |
+| Linux | [AppImage](https://github.com/Praket7/civicflow2/releases/download/v0.1.2/CivicFlow_0.1.2_amd64.AppImage), [deb](https://github.com/Praket7/civicflow2/releases/download/v0.1.2/CivicFlow_0.1.2_amd64.deb), or [rpm](https://github.com/Praket7/civicflow2/releases/download/v0.1.2/CivicFlow-0.1.2-1.x86_64.rpm) |
+
+[Download `SHA256SUMS.txt`](https://github.com/Praket7/civicflow2/releases/download/v0.1.2/SHA256SUMS.txt) before running an installer.
 
 Installers are built by `.github/workflows/release.yml` when a `v*` tag is pushed. The workflow runs the full verification gate on the tagged commit and publishes SHA-256 checksums and GitHub build provenance for the assets. Verify a download with `shasum -a 256 -c SHA256SUMS.txt` (macOS/Linux) or `Get-FileHash <file> -Algorithm SHA256` (Windows), and verify provenance with `gh attestation verify <installer> --repo Praket7/civicflow2`.
 

@@ -19,10 +19,10 @@ The desktop application is local-first: its workspace, scheduling, reporting, ch
 | Coordinator home | AutoRoster |
 | --- | --- |
 | ![Coordinator home](docs/screenshots/mission-control.png) | ![AutoRoster](docs/screenshots/autoroster.png) |
-| **Schedule** | **Volunteer home** |
-| ![Schedule](docs/screenshots/schedule.png) | ![Volunteer home](docs/screenshots/volunteer-home.png) |
+| **Volunteer schedule** | **Volunteer home** |
+| ![Volunteer schedule](docs/screenshots/volunteer-schedule.png) | ![Volunteer home](docs/screenshots/volunteer-home.png) |
 
-![Volunteer schedule](docs/screenshots/volunteer-schedule.png)
+![Schedule](docs/screenshots/schedule.png)
 
 ## Core capabilities
 

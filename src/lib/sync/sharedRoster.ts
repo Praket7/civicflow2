@@ -1,12 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
 import type { CandidateAnswer, RosterEvaluation, RosterOptions } from "../../types/domain";
 
-/** The shared screen has no options panel yet; these match AutoRoster's defaults. */
+/** Defaults match the local AutoRoster screen; the shared panel exposes the same four choices. */
 export const SHARED_ROSTER_OPTIONS: RosterOptions = {
-  preferSpanish: false,
+  preferSpanish: true,
+  includeWaitlist: true,
   blockConflicts: true,
   capWeekly: false,
-  includeWaitlist: false,
 };
 
 /**

@@ -2510,6 +2510,7 @@
   "The year in numbers",
   "There are no role gaps in the upcoming schedule. New shifts appear here as soon as a role opens.",
   "These are enforced before a write, not only described here. The same rules run in the desktop core and the hosted database.",
+  "These change the next plan only. The organization policy and the server still check every assignment before it is applied.",
   "These details appear across opportunity pages, reports, and service verification records.",
   "These fields become the public listing. Write for a first-time volunteer.",
   "These preferences apply immediately across the workspace and are stored on this device.",

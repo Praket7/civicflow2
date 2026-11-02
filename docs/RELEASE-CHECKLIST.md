@@ -6,13 +6,17 @@ the installer hashes with the results.
 
 ## Current status
 
-| Item                             | Status                                                                |
-| -------------------------------- | --------------------------------------------------------------------- |
-| Code, tests, and automated gates | Green on `main`                                                       |
-| Packaged installers              | Not built yet; no `v*` tag has been pushed                            |
-| Clean-install matrix             | Not run — no disposable Windows or Linux machine is available         |
-| macOS Gatekeeper path            | Documented in the README; not yet exercised on a quarantined download |
-| Updater round trip               | Not run; needs a published `v0.1.1` before `v0.1.2` can find it       |
+| Item                             | Status                                                              |
+| -------------------------------- | ------------------------------------------------------------------- |
+| Code, tests, and automated gates | Green on `main`                                                     |
+| Packaged installers              | Local arm64 DMG built; no `v*` tag or public release                |
+| Clean-install matrix             | Not run — no disposable Windows or Linux machine is available       |
+| macOS Gatekeeper path            | Ad-hoc signed; not notarized or exercised on a quarantined download |
+| Updater round trip               | Not run; needs a published `v0.1.1` before `v0.1.2` can find it     |
+
+The local artifact is `src-tauri/target/release/bundle/dmg/CivicFlow_0.1.1_aarch64.dmg` with a
+SHA-256 file beside it. It is ad-hoc signed only; Apple credentials are still required for a
+notarized production build.
 
 The clean-install matrix is deliberately left unchecked. Do not mark it complete from a developer
 machine that already has the toolchain, a warm WebView cache, and the repository checked out.
@@ -67,8 +71,11 @@ Record results here:
    keychain entry do not move after the first release.
 5. Run the full `pnpm verify` locally once more, then confirm the CI run on the tagged commit is
    green.
-6. Tag a release candidate (`v0.1.1-rc.1`) first. A hyphen makes the workflow mark it as a
-   prerelease, so it never becomes `latest` and never feeds the updater.
+6. For a release candidate, first bump all four manifests to the candidate version (for example,
+   `0.1.1-rc.1`), then tag `v0.1.1-rc.1`. The version gate deliberately requires exact equality,
+   so a prerelease tag against the final `0.1.1` manifests will be refused. A hyphen makes the
+   workflow mark the release as a prerelease, so it never becomes `latest` and never feeds the
+   updater. After the matrix passes, bump all four manifests to `0.1.1` before the final tag.
 7. Run the matrix against the release-candidate assets. Fix what it finds, then tag `v0.1.1`.
 8. Install `v0.1.1`, tag a trivial `v0.1.2`, and complete the updater round trip.
 

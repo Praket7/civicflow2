@@ -285,9 +285,10 @@ period.
 
 AutoRoster has one planner. The local screen runs it over the SQLite workspace; the shared
 screens adapt the synchronized replica into the same candidate and slot types and call the same
-Rust min-cost flow solver, policy, and explanation model. Quick plan and Rescue upcoming gaps
-then send one revision-guarded `APPLY_ROSTER_PLAN`; the server applies every assignment or
-refuses the whole plan.
+Rust min-cost flow solver, policy, and explanation model. The shared plan exposes the same four
+matching controls and gives each assignment the same Why this? evidence and Why not? comparison
+as the local screen. Quick plan and Rescue upcoming gaps then send one revision-guarded
+`APPLY_ROSTER_PLAN`; the server applies every assignment or refuses the whole plan.
 
 **Settings → Shared workspace → Publish local schedule** copies this computer's opportunities,
 shifts and roles into the selected hosted organization. It skips a program with the same title

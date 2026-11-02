@@ -1,10 +1,14 @@
 import { useMemo, useState } from "react";
 import { Check, ClipboardCheck, LogIn, LogOut, RefreshCw, UserX, Wand2, X } from "lucide-react";
-import { Button, Page, PageHeader, SelectField, TextField } from "../../components/ui";
+import { Button, Page, PageHeader, SelectField, TextField, Toggle } from "../../components/ui";
 import { isTauri } from "../../lib/platform";
 import { useSharedReplica } from "../../lib/sync/sharedReplica";
 import { number, text, type SharedRow } from "../../lib/sync/sharedRows";
-import { evaluateSharedRoster, SHARED_ROSTER_OPTIONS } from "../../lib/sync/sharedRoster";
+import {
+  evaluateSharedRoster,
+  explainSharedRoster,
+  SHARED_ROSTER_OPTIONS,
+} from "../../lib/sync/sharedRoster";
 import {
   applySharedRosterPlan,
   cancelSharedRegistration,
@@ -13,8 +17,9 @@ import {
   markNoShowShared,
   reviewSharedHours,
 } from "../../lib/sync/writes";
-import type { PlannedAssignment } from "../../types/domain";
+import type { PlannedAssignment, RosterEvaluation, RosterOptions } from "../../types/domain";
 import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
+import { SharedPlanEvidence, type SharedAnswer } from "./SharedPlanEvidence";
 import { formatWhen } from "./sharedFormat";
 import { SharedNav } from "./SharedNav";
 import styles from "./shared.module.css";
@@ -29,6 +34,12 @@ export function SharedParticipationPage() {
   const [planRevision, setPlanRevision] = useState(0);
   const [planScope, setPlanScope] = useState<"shift" | "recovery">("shift");
   const [recoveryShifts, setRecoveryShifts] = useState(0);
+  const [options, setOptions] = useState<RosterOptions>(SHARED_ROSTER_OPTIONS);
+  const [evaluation, setEvaluation] = useState<RosterEvaluation | null>(null);
+  const [planShiftIds, setPlanShiftIds] = useState<string[]>([]);
+  const [answer, setAnswer] = useState<SharedAnswer | null>(null);
+  const [asking, setAsking] = useState("");
+  const [answerError, setAnswerError] = useState("");
   const [rejectReason, setRejectReason] = useState("Hours were not confirmed.");
 
   const shifts = useMemo(
@@ -80,6 +91,21 @@ export function SharedParticipationPage() {
     setNotice({ tone, message });
   }
 
+  function resetEvidence() {
+    setEvaluation(null);
+    setPlanShiftIds([]);
+    setAnswer(null);
+    setAnswerError("");
+  }
+
+  function updateOption(key: keyof RosterOptions, value: boolean) {
+    setOptions((current) => ({ ...current, [key]: value }));
+    setPlan([]);
+    setPlanRevision(0);
+    setRecoveryShifts(0);
+    resetEvidence();
+  }
+
   async function run(key: string, action: () => Promise<void>) {
     setBusy(key);
     setNotice(null);
@@ -98,16 +124,17 @@ export function SharedParticipationPage() {
     setBusy("build");
     setNotice(null);
     try {
-      const evaluation = await evaluateSharedRoster(
-        sync.organizationId,
-        [shift.id],
-        SHARED_ROSTER_OPTIONS,
-      );
-      const next = evaluation.plan.assignments;
+      const shiftIds = [shift.id];
+      const result = await evaluateSharedRoster(sync.organizationId, shiftIds, options);
+      const next = result.plan.assignments;
       setPlan(next);
-      setPlanRevision(evaluation.revision);
+      setPlanRevision(result.revision);
+      setEvaluation(result);
+      setPlanShiftIds(shiftIds);
       setPlanScope("shift");
       setRecoveryShifts(0);
+      setAnswer(null);
+      setAnswerError("");
       flash(
         next.length > 0 ? "good" : "bad",
         next.length > 0
@@ -126,14 +153,19 @@ export function SharedParticipationPage() {
     setBusy("build");
     setNotice(null);
     try {
-      const evaluation = await evaluateSharedRoster(sync.organizationId, [], SHARED_ROSTER_OPTIONS);
-      const next = evaluation.plan.assignments;
+      const shiftIds: string[] = [];
+      const result = await evaluateSharedRoster(sync.organizationId, shiftIds, options);
+      const next = result.plan.assignments;
       const shifts = new Set(next.map((assignment) => assignment.shiftId)).size;
       setPlan(next);
-      setPlanRevision(evaluation.revision);
+      setPlanRevision(result.revision);
+      setEvaluation(result);
+      setPlanShiftIds(shiftIds);
       setPlanScope("recovery");
       setRecoveryShifts(shifts);
-      const open = evaluation.plan.unfilled.length;
+      setAnswer(null);
+      setAnswerError("");
+      const open = result.plan.unfilled.length;
       flash(
         next.length > 0 ? "good" : "bad",
         next.length > 0
@@ -144,6 +176,44 @@ export function SharedParticipationPage() {
       flash("bad", messageOf(error));
     } finally {
       setBusy("");
+    }
+  }
+
+  function alternativesFor(assignment: PlannedAssignment) {
+    return (evaluation?.candidates ?? [])
+      .filter(
+        (candidate) =>
+          candidate.candidateId !== assignment.candidateId &&
+          candidate.eligibleRoles.includes(assignment.role),
+      )
+      .slice(0, 4);
+  }
+
+  async function askWhyNot(
+    assignment: PlannedAssignment,
+    candidateId: string,
+    candidateName: string,
+  ) {
+    if (!sync.organizationId) return;
+    setAsking(candidateId);
+    setAnswerError("");
+    try {
+      const result = await explainSharedRoster(
+        sync.organizationId,
+        planShiftIds,
+        candidateId,
+        assignment.explanation.slotId,
+        options,
+      );
+      setAnswer({
+        slotId: assignment.explanation.slotId,
+        candidateName,
+        answer: result,
+      });
+    } catch (error) {
+      setAnswerError(messageOf(error));
+    } finally {
+      setAsking("");
     }
   }
 
@@ -164,6 +234,7 @@ export function SharedParticipationPage() {
       );
       setPlan([]);
       setRecoveryShifts(0);
+      resetEvidence();
       flash(
         "good",
         planScope === "recovery"
@@ -464,16 +535,61 @@ export function SharedParticipationPage() {
                             key={`${assignment.shiftId}:${assignment.candidateId}`}
                             className={styles.planItem}
                           >
-                            <ClipboardCheck aria-hidden size={14} />
-                            <span className={styles.strong}>{assignment.candidateName}</span>
-                            <span className={styles.muted}>as {assignment.role}</span>
-                            <span className={styles.muted}>
-                              {assignment.explanation.selectionReason}
-                            </span>
+                            <div className={styles.planLine}>
+                              <ClipboardCheck aria-hidden size={14} />
+                              <span className={styles.strong}>{assignment.candidateName}</span>
+                              <span className={styles.muted}>as {assignment.role}</span>
+                              <span className={styles.muted}>
+                                {assignment.explanation.selectionReason}
+                              </span>
+                            </div>
+                            <SharedPlanEvidence
+                              explanation={assignment.explanation}
+                              alternatives={alternativesFor(assignment)}
+                              asking={asking}
+                              answer={answer}
+                              error={answerError}
+                              onAsk={(candidateId, candidateName) =>
+                                void askWhyNot(assignment, candidateId, candidateName)
+                              }
+                            />
                           </li>
                         ))}
                       </ul>
                     )}
+                    <details className={styles.engineOptions}>
+                      <summary>Matching settings</summary>
+                      <p className={styles.engineHint}>
+                        These change the next plan only. The organization policy and the server
+                        still check every assignment before it is applied.
+                      </p>
+                      <div className={styles.toggles}>
+                        <Toggle
+                          label="Prefer Spanish speakers"
+                          hint="Adds up to 10 points to bilingual candidates."
+                          checked={options.preferSpanish}
+                          onChange={(value) => updateOption("preferSpanish", value)}
+                        />
+                        <Toggle
+                          label="Include waitlist"
+                          hint="Waiting volunteers can be promoted into a gap."
+                          checked={options.includeWaitlist}
+                          onChange={(value) => updateOption("includeWaitlist", value)}
+                        />
+                        <Toggle
+                          label="Block overlapping shifts"
+                          hint="Keeps anyone already booked at this time out of the plan."
+                          checked={options.blockConflicts}
+                          onChange={(value) => updateOption("blockConflicts", value)}
+                        />
+                        <Toggle
+                          label="Cap at 2 shifts per week"
+                          hint="Protects volunteers from over-scheduling."
+                          checked={options.capWeekly}
+                          onChange={(value) => updateOption("capWeekly", value)}
+                        />
+                      </div>
+                    </details>
                   </div>
                 </section>
               </>

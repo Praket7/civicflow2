@@ -2,26 +2,29 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { PlannedAssignment, RosterEvaluation } from "../../types/domain";
+import type { CandidateAnswer, PlannedAssignment, RosterEvaluation } from "../../types/domain";
 import { SharedParticipationPage } from "./SharedParticipationPage";
 
 const ORG = "11111111-1111-4111-8111-111111111111";
 const SHIFT = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee2";
 const OPPORTUNITY = "dddddddd-dddd-4ddd-8ddd-ddddddddddd1";
 const VOLUNTEER = "cccccccc-cccc-4ccc-8ccc-ccccccccccc1";
+const OTHER = "cccccccc-cccc-4ccc-8ccc-ccccccccccc2";
 
-const { evaluate, apply } = vi.hoisted(() => ({
+const { evaluate, explain, apply } = vi.hoisted(() => ({
   evaluate: vi.fn(),
+  explain: vi.fn(),
   apply: vi.fn(),
 }));
 
 vi.mock("../../lib/sync/sharedRoster", () => ({
   evaluateSharedRoster: evaluate,
+  explainSharedRoster: explain,
   SHARED_ROSTER_OPTIONS: {
-    preferSpanish: false,
+    preferSpanish: true,
+    includeWaitlist: true,
     blockConflicts: true,
     capWeekly: false,
-    includeWaitlist: false,
   },
 }));
 
@@ -78,6 +81,45 @@ const assignment: PlannedAssignment = {
   },
 };
 
+const answer: CandidateAnswer = {
+  explanation: {
+    candidateId: OTHER,
+    candidateName: "Omar Other",
+    candidateInitials: "OO",
+    slotId: `${SHIFT}-Greeter-1`,
+    shiftId: SHIFT,
+    role: "Greeter",
+    eligible: true,
+    checks: [
+      {
+        name: "Required skill",
+        passed: true,
+        detail: "Welcoming on the profile",
+      },
+    ],
+    components: [],
+    totalScore: 70,
+    selected: false,
+    selectionReason: "Omar clears the requirements but the plan prefers Vera's availability.",
+  },
+  comparison: {
+    candidateId: OTHER,
+    candidateName: "Omar Other",
+    slotId: `${SHIFT}-Greeter-1`,
+    shiftId: SHIFT,
+    role: "Greeter",
+    filledBefore: 1,
+    filledAfter: 1,
+    requiredFilledBefore: 1,
+    requiredFilledAfter: 1,
+    totalScoreBefore: 90,
+    totalScoreAfter: 70,
+    changedAssignments: [],
+    becomesUncovered: [],
+    summary: ["Forcing Omar into this seat lowers the plan score by 20 points."],
+  },
+};
+
 const evaluation: RosterEvaluation = {
   generatedAt: "2030-05-01T00:00:00.000Z",
   policyVersion: 1,
@@ -87,13 +129,27 @@ const evaluation: RosterEvaluation = {
     unfilled: [],
     totalScore: 90,
     slotsConsidered: 1,
-    candidatesConsidered: 1,
+    candidatesConsidered: 2,
     deterministicSeed: 1,
     policyVersion: 1,
     generatedAt: "2030-05-01T00:00:00.000Z",
     revision: 8,
   },
-  candidates: [],
+  candidates: [
+    {
+      candidateId: OTHER,
+      candidateName: "Omar Other",
+      candidateInitials: "OO",
+      eligibleRoles: ["Greeter"],
+      bestScore: 70,
+      availability: "available",
+      conflict: null,
+      weeklyShifts: 0,
+      weeklyMinutes: 0,
+      waitlistedShiftIds: [],
+      slots: [],
+    },
+  ],
 };
 
 vi.mock("../../lib/sync/sharedReplica", () => ({
@@ -157,8 +213,10 @@ vi.mock("../../lib/sync/sharedReplica", () => ({
 
 beforeEach(() => {
   evaluate.mockReset();
+  explain.mockReset();
   apply.mockReset();
   evaluate.mockResolvedValue(evaluation);
+  explain.mockResolvedValue(answer);
   (window as unknown as { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ = {};
 });
 
@@ -173,9 +231,10 @@ describe("shared participation planning", () => {
 
     await user.click(await screen.findByRole("button", { name: "Quick plan" }));
     expect(await screen.findByText("Vera Volunteer")).toBeInTheDocument();
+    expect(screen.getByText("Why Vera?")).toBeInTheDocument();
     expect(
-      await screen.findByText("Vera Volunteer matches the required Welcoming skill"),
-    ).toBeInTheDocument();
+      await screen.findAllByText("Vera Volunteer matches the required Welcoming skill"),
+    ).toHaveLength(2);
     expect(evaluate).toHaveBeenCalledWith(ORG, [SHIFT], expect.any(Object));
 
     await user.click(screen.getByRole("button", { name: "Apply 1 assignments" }));
@@ -185,5 +244,43 @@ describe("shared participation planning", () => {
         8,
       ),
     );
+  });
+
+  it("exposes matching settings and the contrastive explanation path", async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <SharedParticipationPage />
+      </MemoryRouter>,
+    );
+
+    await user.click(await screen.findByText("Matching settings"));
+    const preferSpanish = screen.getByRole("switch", { name: "Prefer Spanish speakers" });
+    expect(preferSpanish).toHaveAttribute("aria-checked", "true");
+    await user.click(preferSpanish);
+
+    await user.click(screen.getByRole("button", { name: "Quick plan" }));
+    await waitFor(() =>
+      expect(evaluate).toHaveBeenCalledWith(
+        ORG,
+        [SHIFT],
+        expect.objectContaining({ preferSpanish: false }),
+      ),
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Omar" }));
+    await waitFor(() =>
+      expect(explain).toHaveBeenCalledWith(
+        ORG,
+        [SHIFT],
+        OTHER,
+        `${SHIFT}-Greeter-1`,
+        expect.objectContaining({ preferSpanish: false }),
+      ),
+    );
+    expect(await screen.findByText("Why not Omar Other?")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Forcing Omar into this seat lowers the plan score by 20 points."),
+    ).toBeInTheDocument();
   });
 });

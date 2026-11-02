@@ -396,8 +396,11 @@ export interface SharedAssignment {
   role: string;
 }
 
-export async function applySharedRosterPlan(assignments: SharedAssignment[]): Promise<void> {
-  const revision = desktopSyncSnapshot().revision;
+export async function applySharedRosterPlan(
+  assignments: SharedAssignment[],
+  baseRevision?: number,
+): Promise<void> {
+  const revision = baseRevision ?? desktopSyncSnapshot().revision;
   await enqueue("APPLY_ROSTER_PLAN", { assignments }, {}, revision);
 }
 

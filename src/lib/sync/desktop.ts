@@ -22,8 +22,8 @@ import { messageOf } from "../errors";
  * The hosted page inside `/shared` remains the full coordinator surface. This
  * runtime proves the desktop can hold the same organization in its encrypted
  * SQLite database: it bootstraps once, then uses the same SyncEngine as the
- * phone, with TauriSyncStore as the durable store. No coordinator screen writes
- * through it yet, so every row here is server-authored.
+ * phone, with TauriSyncStore as the durable store. The coordinator screens
+ * write through its outbox; this runtime owns the replica and the queue.
  */
 
 export type DesktopSyncPhase = "idle" | "starting" | "ready" | "offline" | "error";

@@ -283,10 +283,11 @@ on-screen table and the CSV keep every program. The packet leaves out volunteer 
 individual credentials, and the browser's print dialog names the file after the organization and
 period.
 
-AutoRoster's local planner still runs as Rust code over the local SQLite workspace. On the
-shared screens, Quick plan and Rescue upcoming gaps build a deterministic plan over the replica,
-then send it through one revision-guarded `APPLY_ROSTER_PLAN`; the server applies every
-assignment or refuses the whole plan.
+AutoRoster has one planner. The local screen runs it over the SQLite workspace; the shared
+screens adapt the synchronized replica into the same candidate and slot types and call the same
+Rust min-cost flow solver, policy, and explanation model. Quick plan and Rescue upcoming gaps
+then send one revision-guarded `APPLY_ROSTER_PLAN`; the server applies every assignment or
+refuses the whole plan.
 
 **Settings → Shared workspace → Publish local schedule** copies this computer's opportunities,
 shifts and roles into the selected hosted organization. It skips a program with the same title
@@ -295,9 +296,9 @@ the schedule. Volunteers, hours and attendance stay on the machine that owns the
 
 ### The native desktop replica
 
-`/shared/replica` is a second way to read a hosted organization, this time into the desktop's
-encrypted SQLite database instead of the framed client. It is the foundation for making the
-coordinator screens themselves server-authoritative, not a replacement for them yet.
+`/shared/replica` is a read-only view of the same encrypted SQLite replica the native
+coordinator screens use. It shows what the server has delivered without becoming a second
+source of truth.
 
 A fresh device calls `bootstrap_workspace`, which returns the current visible rows, the change
 cursor and the organization revision from one snapshot. Later changes arrive through the same
@@ -522,7 +523,7 @@ coverage maths, preview repository behavior, hosted identity parsing, print styl
 Ask CivicFlow matcher. The Rust suite covers migrations, foreign keys, accounts, membership
 and invitations, ownership invariants, role refusal, snapshot redaction, registrations,
 waitlists, attendance, hours, credentials, recurrence, recovery, reports, exports, AutoRoster
-against a brute-force oracle, plan staleness, and backup restore.
+against a brute-force oracle, plan staleness, shared-replica planning, and backup restore.
 
 Generated checks:
 
@@ -741,8 +742,8 @@ been exercised on a physical phone.
   which carries the same offline outbox and command authority as the phone. Native coordinator
   screens write opportunities, shifts, series, attendance, hours decisions, volunteer records
   and roster plans through the same command log. The shared impact report reads the replica,
-  exports CSV, and prints a funder packet without volunteer names or individual credentials; the
-  local AutoRoster still runs on the local workspace and travels as an export.
+  exports CSV, and prints a funder packet without volunteer names or individual credentials. The
+  same Rust AutoRoster plans both the local workspace and the synchronized replica.
 - The native desktop replica at `/shared/replica` is read-only by design. It bootstraps, pulls,
   survives a restart and shows the server's rows. Writes happen on `/shared/schedule`,
   `/shared/participation` and `/shared/volunteers`; `/shared/reports` reads the same replica.

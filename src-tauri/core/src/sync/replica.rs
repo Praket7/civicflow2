@@ -810,10 +810,9 @@ pub fn next_ready(
                     state, attempts, last_error, next_attempt_at, sending_at, result
              FROM sync_outbox
              WHERE user_id = ?1 AND organization_id = ?2 AND state = 'pending'
-               AND next_attempt_at <= ?3
              ORDER BY coalesce(sequence_number, 0), id
              LIMIT 1",
-            params![user_id, organization_id, now_ms],
+            params![user_id, organization_id],
             |row| {
                 Ok((
                     row.get(0)?,
@@ -851,6 +850,11 @@ pub fn next_ready(
     else {
         return Ok(None);
     };
+    // A backed-off command is a barrier. Looking past it for another ready row
+    // would let a dependent command overtake the one that must land first.
+    if next_attempt_at > now_ms {
+        return Ok(None);
+    }
     validate_command(&command)?;
     let envelope_text = envelope.ok_or_else(|| {
         CoreError::rule(

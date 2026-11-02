@@ -252,10 +252,11 @@ jobs:
             Verify a download against SHA256SUMS.txt:
             `sha256sum -c SHA256SUMS.txt`
 
-            First launch seeds a local demo workspace, and the welcome screen
-            opens it without a password. Before entering real volunteer data,
-            create your own organization or connect a hosted workspace, then
-            set a password from Settings → Accounts.
+            First launch starts empty. The welcome screen can open the local
+            demo workspace without a password, but it never seeds or opens one
+            behind your back. Before entering real volunteer data, create your
+            own organization or connect a hosted workspace, then set a
+            password from Settings → Accounts.
           releaseDraft: false
           # A tag with a hyphen is a release candidate and must never become
           # `latest`, because the updater reads releases/latest.

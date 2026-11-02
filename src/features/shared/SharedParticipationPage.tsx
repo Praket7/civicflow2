@@ -4,7 +4,7 @@ import { Button, Page, PageHeader, SelectField, TextField } from "../../componen
 import { isTauri } from "../../lib/platform";
 import { useSharedReplica } from "../../lib/sync/sharedReplica";
 import { number, text, type SharedRow } from "../../lib/sync/sharedRows";
-import { planShift, planUpcoming } from "../../lib/sync/sharedPlan";
+import { evaluateSharedRoster, SHARED_ROSTER_OPTIONS } from "../../lib/sync/sharedRoster";
 import {
   applySharedRosterPlan,
   cancelSharedRegistration,
@@ -12,8 +12,8 @@ import {
   checkOutShared,
   markNoShowShared,
   reviewSharedHours,
-  type SharedAssignment,
 } from "../../lib/sync/writes";
+import type { PlannedAssignment } from "../../types/domain";
 import { DesktopOnlyNotice } from "./DesktopOnlyNotice";
 import { formatWhen } from "./sharedFormat";
 import { SharedNav } from "./SharedNav";
@@ -25,7 +25,8 @@ export function SharedParticipationPage() {
   const [selectedId, setSelectedId] = useState("");
   const [busy, setBusy] = useState("");
   const [notice, setNotice] = useState<{ tone: "good" | "bad"; message: string } | null>(null);
-  const [plan, setPlan] = useState<SharedAssignment[]>([]);
+  const [plan, setPlan] = useState<PlannedAssignment[]>([]);
+  const [planRevision, setPlanRevision] = useState(0);
   const [planScope, setPlanScope] = useState<"shift" | "recovery">("shift");
   const [recoveryShifts, setRecoveryShifts] = useState(0);
   const [rejectReason, setRejectReason] = useState("Hours were not confirmed.");
@@ -92,31 +93,58 @@ export function SharedParticipationPage() {
     }
   }
 
-  function buildPlan() {
-    if (!shift) return;
-    const next = planShift(data, shift.id);
-    setPlan(next);
-    setPlanScope("shift");
-    setRecoveryShifts(0);
-    flash(
-      next.length > 0 ? "good" : "bad",
-      next.length > 0
-        ? `Prepared ${next.length} assignment${next.length === 1 ? "" : "s"}. The server still checks every rule before applying them.`
-        : "No volunteer is free for these slots. Add availability or adjust the roster by hand.",
-    );
+  async function buildPlan() {
+    if (!shift || !sync.organizationId) return;
+    setBusy("build");
+    setNotice(null);
+    try {
+      const evaluation = await evaluateSharedRoster(
+        sync.organizationId,
+        [shift.id],
+        SHARED_ROSTER_OPTIONS,
+      );
+      const next = evaluation.plan.assignments;
+      setPlan(next);
+      setPlanRevision(evaluation.revision);
+      setPlanScope("shift");
+      setRecoveryShifts(0);
+      flash(
+        next.length > 0 ? "good" : "bad",
+        next.length > 0
+          ? `Prepared ${next.length} assignment${next.length === 1 ? "" : "s"} with the Rust solver. The server still checks every rule before applying them.`
+          : "No volunteer is free for these slots. Add availability or adjust the roster by hand.",
+      );
+    } catch (error) {
+      flash("bad", messageOf(error));
+    } finally {
+      setBusy("");
+    }
   }
 
-  function buildRecovery() {
-    const recovery = planUpcoming(data);
-    setPlan(recovery.assignments);
-    setPlanScope("recovery");
-    setRecoveryShifts(recovery.shifts);
-    flash(
-      recovery.assignments.length > 0 ? "good" : "bad",
-      recovery.assignments.length > 0
-        ? `Rescue plan prepared: ${recovery.assignments.length} assignments across ${recovery.shifts} upcoming shifts, with ${recovery.unfilledSeats} seats still open.`
-        : `No upcoming gap can be filled from this replica. ${recovery.unfilledSeats} seats remain open.`,
-    );
+  async function buildRecovery() {
+    if (!sync.organizationId) return;
+    setBusy("build");
+    setNotice(null);
+    try {
+      const evaluation = await evaluateSharedRoster(sync.organizationId, [], SHARED_ROSTER_OPTIONS);
+      const next = evaluation.plan.assignments;
+      const shifts = new Set(next.map((assignment) => assignment.shiftId)).size;
+      setPlan(next);
+      setPlanRevision(evaluation.revision);
+      setPlanScope("recovery");
+      setRecoveryShifts(shifts);
+      const open = evaluation.plan.unfilled.length;
+      flash(
+        next.length > 0 ? "good" : "bad",
+        next.length > 0
+          ? `Rescue plan prepared: ${next.length} assignments across ${shifts} upcoming shifts, with ${open} seats still open.`
+          : `No upcoming gap can be filled from this replica. ${open} seats remain open.`,
+      );
+    } catch (error) {
+      flash("bad", messageOf(error));
+    } finally {
+      setBusy("");
+    }
   }
 
   async function applyPlan() {
@@ -126,7 +154,14 @@ export function SharedParticipationPage() {
     }
     setBusy("plan");
     try {
-      await applySharedRosterPlan(plan);
+      await applySharedRosterPlan(
+        plan.map((assignment) => ({
+          shiftId: assignment.shiftId,
+          volunteerId: assignment.candidateId,
+          role: assignment.role,
+        })),
+        planRevision,
+      );
       setPlan([]);
       setRecoveryShifts(0);
       flash(
@@ -260,7 +295,7 @@ export function SharedParticipationPage() {
                         variant="secondary"
                         icon={<Wand2 aria-hidden size={14} />}
                         disabled={busy !== "" || loading}
-                        onClick={buildPlan}
+                        onClick={() => void buildPlan()}
                       >
                         Quick plan
                       </Button>
@@ -268,7 +303,7 @@ export function SharedParticipationPage() {
                         variant="ghost"
                         icon={<RefreshCw aria-hidden size={14} />}
                         disabled={busy !== "" || loading}
-                        onClick={buildRecovery}
+                        onClick={() => void buildRecovery()}
                       >
                         Rescue upcoming gaps
                       </Button>
@@ -403,8 +438,8 @@ export function SharedParticipationPage() {
                       </h2>
                       <p className={styles.panelCopy}>
                         {planScope === "recovery"
-                          ? `A local plan across ${recoveryShifts} upcoming shifts. It fills only open seats, puts waitlisted volunteers first, and never double-books an overlap. The server applies every assignment or refuses the whole plan.`
-                          : "A greedy local plan over the replica. It runs without a network, and the server applies all assignments or refuses the whole plan if the revision moved or any rule fails."}
+                          ? `A Rust solver plan across ${recoveryShifts} upcoming shifts. It fills only open seats, puts waitlisted volunteers first, and never double-books an overlap. The server applies every assignment or refuses the whole plan.`
+                          : "The same Rust solver AutoRoster uses, reading only this replica. The server applies every assignment or refuses the whole plan if the revision moved or any rule fails."}
                       </p>
                     </div>
                     <Button
@@ -419,20 +454,22 @@ export function SharedParticipationPage() {
                   <div className={styles.panelBody}>
                     {plan.length === 0 ? (
                       <p className={styles.panelCopy}>
-                        Use Quick plan to fill the open role slots, then review the names here.
+                        Use Quick plan to ask the Rust solver for the open role slots, then review
+                        the names and reasons here.
                       </p>
                     ) : (
                       <ul className={styles.planList}>
                         {plan.map((assignment) => (
                           <li
-                            key={`${assignment.shiftId}:${assignment.volunteerId}`}
+                            key={`${assignment.shiftId}:${assignment.candidateId}`}
                             className={styles.planItem}
                           >
                             <ClipboardCheck aria-hidden size={14} />
-                            <span className={styles.strong}>
-                              {text(volunteers.get(assignment.volunteerId), "name") || "Volunteer"}
-                            </span>
+                            <span className={styles.strong}>{assignment.candidateName}</span>
                             <span className={styles.muted}>as {assignment.role}</span>
+                            <span className={styles.muted}>
+                              {assignment.explanation.selectionReason}
+                            </span>
                           </li>
                         ))}
                       </ul>

@@ -95,5 +95,5 @@ Record results here:
   shared report reads the replica, previews the funder packet page by page, exports CSV, and
   prints those measured sheets: the preview is the print path, so its sheet count is the PDF's
   page count. The packet lists the eighteen programs with the most verified hours; the screen and
-  the CSV keep every program. AutoRoster still runs over the local SQLite workspace, and local
-  reports travel as exports.
+  the CSV keep every program. The same Rust AutoRoster plans the local SQLite workspace and the
+  synchronized replica; local reports travel as exports.

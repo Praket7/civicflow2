@@ -418,6 +418,47 @@ fn a_queued_command_is_built_from_the_bound_workspace() {
 }
 
 #[test]
+fn a_backed_off_command_blocks_later_commands() {
+    let database = database();
+    let conn = database.connection();
+    replica::configure(conn, ORG, USER, 3).expect("configure");
+
+    let first = replica::enqueue_command(
+        conn,
+        ORG,
+        CommandType::CreateShift,
+        &json!({ "id": SHIFT }),
+        &BTreeMap::new(),
+        None,
+    )
+    .expect("first");
+    let second = replica::enqueue_command(
+        conn,
+        ORG,
+        CommandType::UpdateShift,
+        &json!({ "id": SHIFT, "capacity": 6 }),
+        &BTreeMap::new(),
+        None,
+    )
+    .expect("second");
+    replica::mark_retry(conn, first, "serialization failure", 5_000).expect("retry");
+
+    assert!(replica::next_ready(conn, USER, ORG, 1_000)
+        .unwrap()
+        .is_none());
+    let ready = replica::next_ready(conn, USER, ORG, 5_000)
+        .unwrap()
+        .expect("the first command after backoff");
+    assert_eq!(ready.id, first);
+
+    replica::mark_sent(conn, first, &json!({ "status": "applied" })).expect("sent");
+    let ready = replica::next_ready(conn, USER, ORG, 5_000)
+        .unwrap()
+        .expect("the dependent command");
+    assert_eq!(ready.id, second);
+}
+
+#[test]
 fn conflicts_can_be_listed_and_closed() {
     let database = database();
     let conn = database.connection();

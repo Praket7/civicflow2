@@ -26,6 +26,7 @@ use civicflow_core::recurrence::{self, RecurrenceRule, SeriesResult, ShiftSeries
 use civicflow_core::reports::{self, ExportFormat, ReportDocument, ReportRequest};
 use civicflow_core::sync::protocol::{Change, CommandType};
 use civicflow_core::sync::replica::{self as sync_replica, OutboxItem, SyncStatus};
+use civicflow_core::sync::shared_roster;
 use civicflow_core::Database;
 use civicflow_core::{auth, backups, roster, services, workflows};
 use serde::Serialize;
@@ -1597,6 +1598,44 @@ fn import_encrypted_backup(
 // ---------------------------------------------------------------------------
 
 #[tauri::command]
+fn shared_evaluate_roster(
+    state: State<'_, AppState>,
+    organization_id: String,
+    shift_ids: Vec<String>,
+    options: RosterOptions,
+) -> Result<civicflow_core::matching::RosterEvaluation, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    shared_roster::evaluate_roster(
+        database.connection(),
+        &organization_id,
+        &shift_ids,
+        &options,
+    )
+    .map_err(AppError::from)
+}
+
+#[tauri::command]
+fn shared_explain_roster(
+    state: State<'_, AppState>,
+    organization_id: String,
+    shift_ids: Vec<String>,
+    options: RosterOptions,
+    candidate_id: String,
+    slot_id: String,
+) -> Result<CandidateAnswer, AppError> {
+    let database = state.database.lock().map_err(|_| lock_error())?;
+    shared_roster::explain_candidate(
+        database.connection(),
+        &organization_id,
+        &shift_ids,
+        &options,
+        &candidate_id,
+        &slot_id,
+    )
+    .map_err(AppError::from)
+}
+
+#[tauri::command]
 fn sync_configure(
     state: State<'_, AppState>,
     organization_id: String,
@@ -1989,6 +2028,8 @@ pub fn run() {
             sync_mark_refused,
             sync_pending_count,
             sync_open_conflict_count,
+            shared_evaluate_roster,
+            shared_explain_roster,
             installation_access,
             list_backups,
             create_backup,

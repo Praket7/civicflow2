@@ -59,17 +59,17 @@ class MemoryStore implements SyncStore {
   }
 
   async nextReady(userId: string, organizationId: string, now: number): Promise<OutboxRow | null> {
-    return (
+    const earliest =
       this.rows
         .filter(
           (row) =>
             row.userId === userId &&
             row.organizationId === organizationId &&
-            row.state === "pending" &&
-            row.nextAttemptAt <= now,
+            row.state === "pending",
         )
-        .sort((left, right) => (left.id ?? 0) - (right.id ?? 0))[0] ?? null
-    );
+        .sort((left, right) => (left.id ?? 0) - (right.id ?? 0))[0] ?? null;
+    if (!earliest || earliest.nextAttemptAt > now) return null;
+    return earliest;
   }
 
   async markSending(id: number): Promise<void> {
@@ -263,6 +263,32 @@ describe("sync engine", () => {
     expect(commit).toBe(1);
     expect(store.rows[0]?.state).toBe("sent");
     expect(store.rows[0]?.result?.status).toBe("already_applied");
+  });
+
+  it("does not let a later command overtake one waiting for retry", async () => {
+    const store = new MemoryStore();
+    const first = store.enqueue(ORG, "CREATE_SHIFT", { id: "shift-1" });
+    store.enqueue(ORG, "UPDATE_SHIFT", { id: "shift-1", capacity: 2 });
+    const sent: string[] = [];
+    let clock = 0;
+    const sync = transport(async (envelope) => {
+      sent.push(envelope.command);
+      if (envelope.command === "CREATE_SHIFT" && sent.length === 1) {
+        return { status: "retryable_error", message: "serialization failure" };
+      }
+      return { status: "applied", cursor: 1 };
+    });
+
+    const engine = engineFor(store, sync, () => clock);
+    await engine.start(USER, ORG);
+    expect(sent).toEqual(["CREATE_SHIFT"]);
+    expect(first.state).toBe("pending");
+
+    clock = 10_000;
+    await engine.syncNow();
+    engine.stop();
+    expect(sent).toEqual(["CREATE_SHIFT", "CREATE_SHIFT", "UPDATE_SHIFT"]);
+    expect(first.state).toBe("sent");
   });
 
   it("refuses a second device's roster plan after the revision moved", async () => {

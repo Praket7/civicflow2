@@ -7,3 +7,4 @@
 
 pub mod protocol;
 pub mod replica;
+pub mod shared_roster;

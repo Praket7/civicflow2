@@ -42,9 +42,12 @@ export class DexieSyncStore implements SyncStore {
     const rows = await this.outbox
       .where("[userId+organizationId+state]")
       .equals([userId, organizationId, "pending"])
-      .filter((row) => row.nextAttemptAt <= now)
       .sortBy("id");
-    return rows[0] ?? null;
+    const earliest = rows[0];
+    // A backed-off command is a barrier. Skipping it would let an UPDATE reach
+    // the server before the CREATE it depends on.
+    if (!earliest || earliest.nextAttemptAt > now) return null;
+    return earliest;
   }
 
   async markSending(id: number): Promise<void> {

@@ -7,7 +7,7 @@ import {
   VolunteerDatabase,
   volunteerDb,
 } from "./db";
-import { queueCommand } from "./localStore";
+import { DexieSyncStore, queueCommand } from "./localStore";
 
 const ORG = "11111111-1111-4111-8111-111111111111";
 
@@ -95,6 +95,39 @@ describe("volunteer replica", () => {
     );
     expect(await entityById(ORG, "registrations", "reg-1")).toBeNull();
     expect(await readCursor(ORG)).toBe(2);
+  });
+
+  it("holds the outbox at the earliest command until its retry is due", async () => {
+    const first = await queueCommand({
+      userId: "user-alice",
+      organizationId: ORG,
+      membershipEpoch: 2,
+      command: "CREATE_SHIFT",
+      payload: { id: "shift-1" },
+    });
+    const second = await queueCommand({
+      userId: "user-alice",
+      organizationId: ORG,
+      membershipEpoch: 2,
+      command: "UPDATE_SHIFT",
+      payload: { id: "shift-1", capacity: 2 },
+    });
+    const store = new DexieSyncStore();
+
+    await expect(store.nextReady("user-alice", ORG, 1_000)).resolves.toMatchObject({
+      id: first.id,
+    });
+    await store.markRetry(first.id!, "serialization failure", 5_000);
+
+    await expect(store.nextReady("user-alice", ORG, 4_999)).resolves.toBeNull();
+    await expect(store.nextReady("user-alice", ORG, 5_000)).resolves.toMatchObject({
+      id: first.id,
+    });
+
+    await store.markSent(first.id!, { status: "applied" });
+    await expect(store.nextReady("user-alice", ORG, 5_000)).resolves.toMatchObject({
+      id: second.id,
+    });
   });
 
   it("keeps an unsent command, and its owner, across a fresh database handle", async () => {

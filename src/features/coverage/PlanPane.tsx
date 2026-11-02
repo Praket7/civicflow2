@@ -13,7 +13,7 @@ export function PlanPane({
   applied,
   appliedCount,
   plan,
-  plannedCandidates,
+  activePlan,
   afterRolePercent,
   beforeRolePercent,
   beforeSeatPercent,
@@ -51,12 +51,12 @@ export function PlanPane({
               : applied
                 ? `Applied ${appliedCount} assignment${appliedCount === 1 ? "" : "s"} to the live roster.`
                 : plan
-                  ? plannedCandidates.length > 0
+                  ? activePlan.length > 0
                     ? t(
-                        plannedCandidates.length === 1
+                        activePlan.length === 1
                           ? "{count} person would close a gap in this plan."
                           : "{count} people would close the gaps in this plan.",
-                        { count: plannedCandidates.length },
+                        { count: activePlan.length },
                       )
                     : t("Nobody clears the current rules for this shift.")
                   : t("Run the optimizer to see who fits each open role, and why.")}
@@ -158,10 +158,10 @@ export function PlanPane({
             </Link>
           </div>
         </div>
-      ) : plannedCandidates.length > 0 ? (
+      ) : activePlan.length > 0 ? (
         <>
           <p className={styles.planSummary}>
-            {plannedCandidates.length} assignment{plannedCandidates.length === 1 ? "" : "s"} across{" "}
+            {activePlan.length} assignment{activePlan.length === 1 ? "" : "s"} across{" "}
             {distinctPeople} volunteer{distinctPeople === 1 ? "" : "s"}
             {unfilledCount > 0
               ? ` · ${unfilledCount} role${unfilledCount === 1 ? "" : "s"} still open`
@@ -240,9 +240,7 @@ export function PlanPane({
             >
               {applying
                 ? "Applying…"
-                : `Apply ${plannedCandidates.length} assignment${
-                    plannedCandidates.length === 1 ? "" : "s"
-                  }`}
+                : `Apply ${activePlan.length} assignment${activePlan.length === 1 ? "" : "s"}`}
             </Button>
             <p className={styles.applyNote}>
               Nothing is saved until you apply. The batch is checked again before it writes.

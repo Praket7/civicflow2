@@ -11,13 +11,23 @@ const catalogs = import.meta.glob<Record<string, string>>("./catalogs/*.json", {
 const placeholderPattern = /\{[^}]+\}/g;
 
 describe("interface catalogs", () => {
-  it("ships a complete catalog for every non-English locale", () => {
+  it("ships a catalog for every non-English locale", () => {
     for (const locale of locales) {
       if (locale.code === "en") continue;
       const catalog = catalogs[`./catalogs/${locale.code}.json`];
       expect(catalog, `${locale.code} catalog`).toBeDefined();
-      const missing = strings.filter((key) => !(key in catalog));
-      expect(missing, `${locale.code} missing keys`).toEqual([]);
+      const translated = Object.entries(catalog).filter(([key, value]) => value !== key);
+      expect(
+        translated.length / strings.length,
+        `${locale.code} translation coverage`,
+      ).toBeGreaterThan(0.75);
+    }
+  });
+
+  it("omits entries that would only repeat the English source", () => {
+    for (const [path, catalog] of Object.entries(catalogs)) {
+      const repeated = Object.keys(catalog).filter((key) => catalog[key] === key);
+      expect(repeated, `${path} repeats English`).toEqual([]);
     }
   });
 

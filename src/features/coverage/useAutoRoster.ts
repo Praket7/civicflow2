@@ -42,9 +42,7 @@ export function useAutoRoster() {
     : (weekRows[0]?.shift.id ?? upcoming[0]?.shift.id ?? "");
   const activeRows =
     scope === "week" ? weekRows : upcoming.filter((row) => row.shift.id === selectedShiftId);
-  const activeIdsKey = activeRows.map((row) => row.shift.id).join("|");
-  const shiftIds = useMemo(() => (activeIdsKey ? activeIdsKey.split("|") : []), [activeIdsKey]);
-  const shiftKey = shiftIds.join("|");
+  const shiftKey = activeRows.map((row) => row.shift.id).join("|");
 
   const [query, setQuery] = useState("");
   const [skillFilter, setSkillFilter] = useState("all");
@@ -52,6 +50,15 @@ export function useAutoRoster() {
   const [sortBy, setSortBy] = useState("best");
   const [showAll, setShowAll] = useState(false);
   const [options, setOptions] = useState<EngineOptions>(DEFAULT_OPTIONS);
+  const rosterOptions = useMemo(
+    () => ({
+      preferSpanish: options.preferSpanish,
+      includeWaitlist: options.includeWaitlist,
+      blockConflicts: options.blockConflicts,
+      capWeekly: options.capWeekly,
+    }),
+    [options],
+  );
   const [plan, setPlan] = useState<RosterPlan | null>(null);
   // The authoritative evaluation behind the candidate browser. Fetched on load
   // so the list is ready before a plan exists.
@@ -77,12 +84,7 @@ export function useAutoRoster() {
     if (!shiftKey) return;
     let active = true;
     void actions
-      .evaluateRoster(shiftKey.split("|"), {
-        preferSpanish: options.preferSpanish,
-        includeWaitlist: options.includeWaitlist,
-        blockConflicts: options.blockConflicts,
-        capWeekly: options.capWeekly,
-      })
+      .evaluateRoster(shiftKey.split("|"), rosterOptions)
       .then((result) => {
         if (active) setEvaluation(result);
       })
@@ -92,7 +94,7 @@ export function useAutoRoster() {
     return () => {
       active = false;
     };
-  }, [actions, options, shiftKey]);
+  }, [actions, rosterOptions, shiftKey]);
 
   useEffect(() => {
     let active = true;
@@ -143,7 +145,7 @@ export function useAutoRoster() {
 
   const data = useMemo(() => {
     if (!evaluation) return { candidates: [] as Candidate[] };
-    const active = new Set(shiftIds);
+    const active = new Set(shiftKey ? shiftKey.split("|") : []);
     const candidates = evaluation.candidates
       .map((row): Candidate | null => {
         const volunteer = workspace.volunteers.find((entry) => entry.id === row.candidateId);
@@ -181,7 +183,7 @@ export function useAutoRoster() {
       })
       .filter((row): row is Candidate => row !== null);
     return { candidates };
-  }, [evaluation, shiftIds, workspace.volunteers]);
+  }, [evaluation, shiftKey, workspace.volunteers]);
 
   const filteredCandidates = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -210,16 +212,6 @@ export function useAutoRoster() {
     () =>
       Array.from(new Set(data.candidates.flatMap((candidate) => candidate.eligibleRoles))).sort(),
     [data.candidates],
-  );
-
-  const eligibleForPlan = useMemo(
-    () =>
-      data.candidates.filter(
-        (candidate) =>
-          !(options.blockConflicts && candidate.conflict) &&
-          !(options.capWeekly && candidate.weeklyShifts >= 2),
-      ),
-    [data.candidates, options.blockConflicts, options.capWeekly],
   );
 
   // The optimizer lives in Rust. This screen renders the returned plan and
@@ -258,24 +250,28 @@ export function useAutoRoster() {
     requiredSlots === 0 ? 100 : Math.round((filledSlots / requiredSlots) * 100);
   const beforeSeatPercent =
     capacityTotal === 0 ? 0 : Math.round((rosterTotal / capacityTotal) * 100);
-  const plannedCandidates = activePlan;
-  const projected = applied ? 0 : plannedCandidates.length;
   const afterRolePercent =
     requiredSlots === 0
       ? 100
-      : Math.min(100, Math.round(((filledSlots + projected) / requiredSlots) * 100));
-  const afterSeats = Math.min(capacityTotal, rosterTotal + projected);
-  const afterSeatPercent = capacityTotal === 0 ? 0 : Math.round((afterSeats / capacityTotal) * 100);
-  const excludedCount = data.candidates.length - eligibleForPlan.length;
+      : Math.min(100, Math.round(((filledSlots + activePlan.length) / requiredSlots) * 100));
+  const afterSeatPercent =
+    capacityTotal === 0
+      ? 0
+      : Math.min(100, Math.round(((rosterTotal + activePlan.length) / capacityTotal) * 100));
+  const excludedCount = data.candidates.filter(
+    (candidate) =>
+      (options.blockConflicts && candidate.conflict) ||
+      (options.capWeekly && candidate.weeklyShifts >= 2),
+  ).length;
   const coverageGain = Math.max(0, afterRolePercent - beforeRolePercent);
-  const distinctPeople = new Set(plannedCandidates.map((row) => row.candidate.volunteer.id)).size;
+  const distinctPeople = new Set(activePlan.map((row) => row.candidate.volunteer.id)).size;
   const unfilledCount = plan?.unfilled.length ?? 0;
-  const conflictCount = plannedCandidates.filter((row) =>
+  const conflictCount = activePlan.filter((row) =>
     row.backend.explanation.checks.some(
       (check) => check.name === "No overlapping shift" && !check.passed,
     ),
   ).length;
-  const credentialCount = plannedCandidates.filter((row) =>
+  const credentialCount = activePlan.filter((row) =>
     row.backend.explanation.checks.some(
       (check) => check.name === "Required credential" && !check.passed,
     ),
@@ -285,7 +281,7 @@ export function useAutoRoster() {
   const planGroups = activeRows
     .map((row) => ({
       row,
-      rows: plannedCandidates.filter((assignment) => assignment.shiftId === row.shift.id),
+      rows: activePlan.filter((assignment) => assignment.shiftId === row.shift.id),
     }))
     .filter((group) => group.rows.length > 0);
 
@@ -311,12 +307,7 @@ export function useAutoRoster() {
     try {
       const result = await actions.explainRosterChoice(
         shiftKey.split("|"),
-        {
-          preferSpanish: options.preferSpanish,
-          includeWaitlist: options.includeWaitlist,
-          blockConflicts: options.blockConflicts,
-          capWeekly: options.capWeekly,
-        },
+        rosterOptions,
         candidateId,
         slotId,
       );
@@ -348,12 +339,7 @@ export function useAutoRoster() {
     setError("");
     setStale(false);
     try {
-      const result = await actions.evaluateRoster(shiftKey.split("|"), {
-        preferSpanish: options.preferSpanish,
-        includeWaitlist: options.includeWaitlist,
-        blockConflicts: options.blockConflicts,
-        capWeekly: options.capWeekly,
-      });
+      const result = await actions.evaluateRoster(shiftKey.split("|"), rosterOptions);
       setEvaluation(result);
       setPlan(result.plan);
       setApplied(false);
@@ -379,12 +365,7 @@ export function useAutoRoster() {
       await actions.applyRosterWeek(plan.revision, plan.policyVersion, assignments);
       // Re-read the seat evaluation after the write so the candidate browser,
       // gaps, and roster count all describe the roster that now exists.
-      const refreshed = await actions.evaluateRoster(shiftKey.split("|"), {
-        preferSpanish: options.preferSpanish,
-        includeWaitlist: options.includeWaitlist,
-        blockConflicts: options.blockConflicts,
-        capWeekly: options.capWeekly,
-      });
+      const refreshed = await actions.evaluateRoster(shiftKey.split("|"), rosterOptions);
       setEvaluation(refreshed);
       setAppliedCount(assignments.length);
       setApplied(true);
@@ -418,9 +399,6 @@ export function useAutoRoster() {
     : [];
 
   return {
-    workspace,
-    session,
-    actions,
     scope,
     setScope,
     upcoming,
@@ -440,7 +418,6 @@ export function useAutoRoster() {
     setShowAll,
     options,
     plan,
-    policyView,
     planning,
     applying,
     applied,
@@ -455,7 +432,6 @@ export function useAutoRoster() {
     filteredCandidates,
     visibleCandidates,
     skillOptions,
-    eligibleForPlan,
     activePlan,
     requiredSlots,
     filledSlots,
@@ -463,7 +439,6 @@ export function useAutoRoster() {
     capacityTotal,
     beforeRolePercent,
     beforeSeatPercent,
-    plannedCandidates,
     afterRolePercent,
     afterSeatPercent,
     excludedCount,
